@@ -61,8 +61,8 @@ func Submit(ctx context.Context, problemID int64, solution string) (int64, error
 
 	result, err := db.Execute(ctx,
 		"INSERT INTO submissions" +
-		"(problem_id, submission_data, submission_uuid) " +
-		"VALUES(?, ?, ?)",
+		"(problem_id, submission_data, submission_uuid, submission_submitted) " +
+		"VALUES(?, ?, ?, CURRENT_TIMESTAMP())",
 		problemID, solution, poseID)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to insert a submission")
