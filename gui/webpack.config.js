@@ -1,6 +1,6 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -8,14 +8,17 @@ module.exports = {
 
   devtool: 'inline-source-map',
   plugins: [
-    new HtmlWebpackPlugin({
-      // title: 'pixi-ts',
-    }),
+    // new HtmlWebpackPlugin({
+    //   // title: 'pixi-ts',
+    // }),
     new CopyPlugin({
       patterns: [
         {
-          from: 'assets/**',
+          from: 'index.html',
         },
+        // {
+        //   from: 'assets/**',
+        // },
       ],
     }),
   ],
