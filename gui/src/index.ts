@@ -96,7 +96,14 @@ class ProblemRenderer {
     this.vertices = vertices;
     this.epsilon = inputJson.epsilon;
     for (const [k, v] of vertices.entries()) {
-      v.on("drag", () => this.updateVertex(k));
+      v.on("drag", () => this.updateVertex(k)).on("dragend", () => {
+        const { x, y } = v.position;
+        v.position.set(Math.round(x), Math.round(y));
+        this.updateVertex(k);
+        (document.getElementById("output-json") as any).value = JSON.stringify(
+          this.saveSolution()
+        );
+      });
     }
   }
 
@@ -131,6 +138,10 @@ class ProblemRenderer {
       this.vertices[i].position.set(...v);
       this.updateVertex(i);
     }
+  }
+
+  saveSolution(): Solution {
+    return { vertices: this.vertices.map((v) => xyFromPoint(v)) };
   }
 
   render(c: Container): void {
