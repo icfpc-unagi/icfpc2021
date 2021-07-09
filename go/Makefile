@@ -2,6 +2,7 @@
 build:
 	docker build \
 		--build-arg=UNAGI_PASSWORD=$$UNAGI_PASSWORD \
+		--build-arg=UNAGI_PORTAL_PASSWORD=$$UNAGI_PORTAL_PASSWORD \
 		--build-arg=UNAGI_API_KEY=$$UNAGI_API_KEY \
 		-t server .
 
