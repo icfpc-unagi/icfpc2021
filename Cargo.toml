@@ -22,3 +22,6 @@ web-sys = { version = "*", features = ["console"] }
 console_error_panic_hook = { version = "*", optional = true }
 wee_alloc = { version = "*", optional = true }
 getrandom = { version = "*", features = ["js"] }
+
+[profile.release]
+debug = true
