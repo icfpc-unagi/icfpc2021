@@ -15,10 +15,37 @@ import (
 )
 
 func init() {
-	http.HandleFunc("/api/submit", handleSubmit)
+	http.HandleFunc("/api/submit", handleAPISubmit)
+	http.HandleFunc("/submit", handleSubmit)
 }
 
 func handleSubmit(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	if r.Method == "GET" {
+		fmt.Fprintln(w, `
+<body><form action="/submit" method="POST">
+Problem ID: <input type="text" name="problem_id"><br><br>
+JSON:
+<textarea name="data"></textarea><br><br>
+<input type="submit" value="Submit">
+</form></body>
+`)
+		return
+	}
+	r.ParseForm()
+	problemID, err := strconv.ParseInt(r.Form.Get("problem_id"), 10, 64)
+	if err != nil {
+		fmt.Fprintf(w, "Failed to parse problem_id: %+v", err)
+	}
+	submissionID, err := Submit(ctx, problemID, r.Form.Get("data"))
+	if err != nil {
+		fmt.Fprintf(w, "Failed to submit: %+v", err)
+	}
+	fmt.Fprintf(w, "Submission ID: %d", submissionID)
+}
+
+func handleAPISubmit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Body == nil {

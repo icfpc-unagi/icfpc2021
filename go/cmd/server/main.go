@@ -28,7 +28,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	glog.Info("Initializing...")
-	http.HandleFunc("/", handler)
+	//http.HandleFunc("/", handler)
 	glog.Infof("Starting server on %s...", *port)
 	if err := http.ListenAndServe(*port, nil); err != nil {
 		glog.Fatal(err.Error())

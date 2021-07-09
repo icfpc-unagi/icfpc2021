@@ -10,7 +10,7 @@ run: build
 	docker run -p 8080:8080 --name=server -ti --init --rm server
 
 .PHONY: push
-push:
+push: build
 	docker tag server asia.gcr.io/icfpc-primary/server
 	docker push asia.gcr.io/icfpc-primary/server
 	gcloud --project=icfpc-primary run services update \
