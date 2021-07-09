@@ -44,6 +44,7 @@ function drawProblem(inputJson: Input) {
   mainContainer.addChild(hole);
 
   const fig = inputJson.figure;
+  const edges: [number, number, Graphics][] = [];
   for (const [i, j] of fig.edges) {
     const g = new Graphics().lineStyle({
       color: 0x0000ff,
@@ -51,17 +52,37 @@ function drawProblem(inputJson: Input) {
       cap: "round" as any,
     });
     g.moveTo(...fig.vertices[i]).lineTo(...fig.vertices[j]);
+    edges.push([i, j, g]);
     mainContainer.addChild(g);
   }
 
+  const vertices: Graphics[] = [];
   for (const [x, y] of fig.vertices) {
     const g = new Graphics().beginFill(0x008000).drawCircle(0, 0, 6 / guiScale);
     g.position.set(x, y);
     dragHandler.register(g);
-    g.on("drag", () => {
-      // todo
-    });
     mainContainer.addChild(g);
+    vertices.push(g);
+  }
+
+  for (const [k, v] of vertices.entries()) {
+    v.on("drag", () => {
+      for (const [i, j, segment] of edges) {
+        if ([i, j].includes(k)) {
+          const { x: xi, y: yi } = vertices[i].position;
+          const { x: xj, y: yj } = vertices[j].position;
+          segment
+            .clear()
+            .lineStyle({
+              color: 0x0000ff,
+              width: 3 / guiScale,
+              cap: "round" as any,
+            })
+            .moveTo(xi, yi)
+            .lineTo(xj, yj);
+        }
+      }
+    });
   }
 }
 
