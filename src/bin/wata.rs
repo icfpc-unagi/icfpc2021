@@ -1,21 +1,48 @@
 use icfpc2021::{*, util::*};
 
-const INF: i64 = 1 << 50;
+pub fn get_time() -> f64 {
+	static mut STIME: f64 = -1.0;
+	let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap();
+	let ms = t.as_secs() as f64 + t.subsec_nanos() as f64 * 1e-9;
+	unsafe {
+		if STIME < 0.0 {
+			STIME = ms;
+		}
+		ms - STIME
+	}
+}
 
 struct Data {
 	input: Input,
-	min_x: i64,
-	max_x: i64,
-	min_y: i64,
-	max_y: i64,
+	inside: Vec<Vec<bool>>,
 	g: Vec<Vec<usize>>,
 	parent: Vec<usize>,
 	cand: Vec<Vec<Point>>,
 }
 
-fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, count: &mut usize) {
+fn compute_score(input: &Input, out: &Vec<Point>) -> i64 {
+	let mut score = 0;
+	for &p in &input.hole {
+		let mut min = i64::max_value();
+		for &q in out {
+			min.setmin((p - q).abs2());
+		}
+		score += min;
+	}
+	score
+}
+
+const TL: f64 = 10.0;
+
+fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, best: &mut Vec<Point>, best_score: &mut i64) {
 	if i == order.len() {
-		*count += 1;
+		if best_score.setmin(compute_score(&data.input, out)) {
+			eprintln!("{:.3}: {}", get_time(), best_score);
+			*best = out.clone();
+		}
+		return;
+	}
+	if get_time() > TL {
 		return;
 	}
 	let u = order[i];
@@ -23,6 +50,9 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 	let r = out[data.parent[u]];
 	for &d in &data.cand[u] {
 		out[u] = r + d;
+		if out[u].0 < 0 || out[u].1 < 0 || out[u].0 >= data.inside.len() as i64 || out[u].1 >= data.inside[0].len() as i64 || !data.inside[out[u].0 as usize][out[u].1 as usize] {
+			continue;
+		}
 		let mut ok = true;
 		for &v in &data.g[u] {
 			if used[v] {
@@ -35,7 +65,15 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 			}
 		}
 		if ok {
-			rec(data, i + 1, order, out, used, count);
+			for &v in &data.g[u] {
+				if used[v] && !P::contains_s(&data.input.hole, (out[u], out[v])) {
+					ok = false;
+					break;
+				}
+			}
+			if ok {
+				rec(data, i + 1, order, out, used, best, best_score);
+			}
 		}
 	}
 	used[u] = false;
@@ -79,11 +117,18 @@ fn main() {
 			}
 		}
 	}
-	dbg!(&order);
 	let min_x = input.hole.iter().map(|p| p.0).min().unwrap();
 	let max_x = input.hole.iter().map(|p| p.0).max().unwrap();
 	let min_y = input.hole.iter().map(|p| p.1).min().unwrap();
 	let max_y = input.hole.iter().map(|p| p.1).max().unwrap();
+	let mut inside = mat![false; max_x as usize + 1; max_y as usize + 1];
+	for x in min_x ..= max_x {
+		for y in min_y ..= max_y {
+			inside[x as usize][y as usize] = P::contains_p(&input.hole, P(x, y)) >= 0;
+		}
+	}
+	assert!(min_x >= 0);
+	assert!(min_y >= 0);
 	let mut cand = vec![vec![]; n];
 	for i in 0..n {
 		let r = parent[i];
@@ -98,13 +143,21 @@ fn main() {
 			}
 		}
 	}
-	let data = Data { input, min_x, max_x, min_y, max_y, g, parent, cand };
-	let mut out = vec![P(0, 0); n];
-	let mut used = vec![false; n];
-	used[order[0]] = true;
-	let mut count = 0;
-	rec(&data, 1, &order, &mut out, &mut used, &mut count);
-	dbg!(count);
 	
-	write_output(&Output { vertices: out });
+	let data = Data { input, inside, g, parent, cand };
+	let mut best = vec![];
+	let mut best_score = i64::max_value();
+	get_time();
+	for x in min_x ..= max_x {
+		for y in min_y ..= max_y {
+			if data.inside[x as usize][y as usize] {
+				let mut out = vec![P(x, y); n];
+				let mut used = vec![false; n];
+				used[order[0]] = true;
+				rec(&data, 1, &order, &mut out, &mut used, &mut best, &mut best_score);
+			}
+		}
+	}
+	eprintln!("Score = {}", best_score);
+	write_output(&Output { vertices: best });
 }
