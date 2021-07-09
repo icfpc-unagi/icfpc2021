@@ -1,7 +1,5 @@
 use icfpc2021::{*, util::*};
 
-const ZENKAN: bool = true;
-
 pub fn get_time() -> f64 {
 	static mut STIME: f64 = -1.0;
 	let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap();
@@ -25,9 +23,6 @@ struct Data {
 }
 
 fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, min: &Vec<i64>, best: &mut Vec<Point>, best_score: &mut i64, until: f64) {
-	if ZENKAN && order.len() - i < min.iter().filter(|&&v| v > 0).count() {
-		return;
-	}
 	if i == order.len() {
 		if best_score.setmin(min.iter().sum()) {
 			eprintln!("{:.3}: {}", get_time(), best_score);
