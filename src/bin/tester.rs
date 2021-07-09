@@ -26,8 +26,9 @@ struct Args {
 
 fn exec(cmd: &str, input: &std::path::PathBuf, parent: &str) -> (i64, f64, String) {
 	let name = input.file_name().unwrap();
+	let id = input.file_stem().unwrap().to_str().unwrap();
 	let output = std::path::Path::new(parent).join("out").join(name);
-	let mut cmd_args = cmd.split_whitespace().chain([input.file_stem().unwrap().to_str().unwrap()]);
+	let mut cmd_args = cmd.split_whitespace().chain([id]);
 	let ms = {
 		let input_file = std::fs::File::open(input).unwrap();
 		let output_file = std::fs::File::create(&output).unwrap();
@@ -47,17 +48,18 @@ fn exec(cmd: &str, input: &std::path::PathBuf, parent: &str) -> (i64, f64, Strin
 		t.as_secs() as f64 + t.subsec_nanos() as f64 * 1e-9
 	};
 	let input = read_input_from_file(&input);
-	let output = read_output_from_file(&output);
-	let score = compute_score(&input, &output);
+	let out = read_output_from_file(&output);
+	let score = compute_score(&input, &out);
 	let mut svg = vec![];
-	if output.vertices.len() > 0 {
-		icfpc2021::paths::render_pose_svg(&input, &output, &mut svg).unwrap();
+	if out.vertices.len() > 0 {
+		icfpc2021::paths::render_pose_svg(&input, &out, &mut svg).unwrap();
 	}
 	let mut html = format!("<h2>{}</h2>", name.to_string_lossy().trim_end_matches(".txt"));
 	html += &format!("<p>Score = {}</p>", score);
 	if svg.len() > 0 {
 		html += &String::from_utf8(svg).unwrap();
 	}
+	assert!(std::process::Command::new("curl").args(vec!["-X", "POST", "-d", &format!("@{}", output.to_str().unwrap()), &format!("https://icfpc.sx9.jp/api/submit?problem_id={}", id)]).stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null()).status().unwrap().success());
 	(score, ms, html)
 }
 
