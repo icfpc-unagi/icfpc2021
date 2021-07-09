@@ -74,4 +74,50 @@ mod tests {
     fn rect12() {
         assert_eq!(P::contains_s(&generate_rectangle(), (P(1, 0), P(9, 9))), true);
     }
+
+    #[test]
+    fn rect13() {
+        assert_eq!(P::contains_s(&generate_rectangle(), (P(-1, 0), P(0, 0))), false);
+    }
+
+    fn generate_tsubo() -> Vec<Point> {
+        vec![
+            P(0, 0),
+            P(2, 4),
+            P(0, 8),
+            P(8, 8),
+            P(6, 4),
+            P(8, 0),
+        ]
+    }
+
+    #[test]
+    fn tsubo1() {
+        assert_eq!(P::contains_s(&generate_tsubo(), (P(0, 0), P(0, 8))), false);
+    }
+
+    #[test]
+    fn tsubo2() {
+        assert_eq!(P::contains_s(&generate_tsubo(), (P(1, 2), P(1, 6))), false);
+    }
+
+    #[test]
+    fn tsubo3() {
+        assert_eq!(P::contains_s(&generate_tsubo(), (P(1, 2), P(0, 8))), false);
+    }
+
+    #[test]
+    fn tsubo4() {
+        assert_eq!(P::contains_s(&generate_tsubo(), (P(0, 0), P(1, 6))), false);
+    }
+
+    #[test]
+    fn tsubo5() {
+        assert_eq!(P::contains_s(&generate_tsubo(), (P(2, 2), P(2, 6))), true);
+    }
+
+    #[test]
+    fn tsubo6() {
+        assert_eq!(P::contains_s(&generate_tsubo(), (P(1, 2), P(1, 6))), false);
+    }
 }
