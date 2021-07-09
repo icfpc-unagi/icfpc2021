@@ -1,0 +1,27 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '* * * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: leaderboard
+    - name: Configuration
+      run: |
+        git config --local user.email '5896564+ninetan@users.noreply.github.com'
+        git config --local user.name Ninetan
+    - name: Download
+      run: |
+        curl https://poses.live/teams > $(date +%Y%m%d-%H%M).html
+    - name: Commit files
+      run: |
+        git add *.html
+        git commit -m "Add data" -a
+        git push origin leaderboard
