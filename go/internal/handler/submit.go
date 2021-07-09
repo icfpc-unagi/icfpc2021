@@ -113,7 +113,7 @@ func Submit(ctx context.Context, problemID int64, solution string, force bool) (
 		"INSERT INTO submissions" +
 		"(problem_id, submission_data, submission_estimated_score, submission_uuid, submission_submitted) " +
 		"VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP())",
-		problemID, solution, poseID)
+		problemID, solution, estimatedScore, poseID)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to insert a submission")
 	}
