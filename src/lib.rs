@@ -1,4 +1,5 @@
 pub mod util;
+pub mod paths;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm;
