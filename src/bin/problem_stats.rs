@@ -4,6 +4,7 @@ use icfpc2021::*;
 struct ProblemStat {
     problem_id: i64,
     max_coord: i64,
+    mean_edge_len: f64,
     epsilon: i64,
     n_hole_vs: usize,
     n_figure_vs: usize,
@@ -41,11 +42,24 @@ fn n_triangles(figure: &Figure) -> usize {
     n_triangles
 }
 
+fn mean_edge_len(figure: &Figure) -> f64 {
+    let mut lens = vec![];
+    for e in &figure.edges {
+        let p0 = figure.vertices[e.0];
+        let p1 = figure.vertices[e.1];
+        let d = ((p0 - p1).abs2() as f64).sqrt();
+        lens.push(d);
+    }
+
+    lens.iter().sum::<f64>() / (lens.len() as f64)
+}
+
 impl ProblemStat {
     pub fn new(problem_id: i64, input: &Input) -> Self {
         ProblemStat {
             problem_id,
             max_coord: max_coord(input),
+            mean_edge_len: mean_edge_len(&input.figure),
             epsilon: input.epsilon,
             n_hole_vs: input.hole.len(),
             n_figure_vs: input.figure.vertices.len(),
@@ -75,6 +89,6 @@ fn main() {
     problem_stats.sort_by_key(|ps| ps.problem_id);
 
     for ps in problem_stats {
-        println!("{}\t{}\t{}\t{}\t{}\t{}\t{}", ps.problem_id, ps.max_coord, ps.epsilon, ps.n_hole_vs, ps.n_figure_vs, ps.n_figure_es, ps.n_triangles)
+        println!("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}", ps.problem_id, ps.max_coord, ps.mean_edge_len, ps.epsilon, ps.n_hole_vs, ps.n_figure_vs, ps.n_figure_es, ps.n_triangles)
     }
 }
