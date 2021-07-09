@@ -1,3 +1,7 @@
 /target
 .DS_Store
+<<<<<<< HEAD
 .idea
+=======
+/tmp
+>>>>>>> origin/main
