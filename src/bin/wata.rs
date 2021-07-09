@@ -206,7 +206,7 @@ fn main() {
 						min[i] = (P(x, y) - data.input.hole[i]).abs2();
 					}
 					used[order[0]] = true;
-					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 100.0);
+					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
 				}
 			}
 		}

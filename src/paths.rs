@@ -29,6 +29,7 @@ pub fn render_problem_svg<W: io::Write>(prob: &Input, w: W) -> io::Result<()> {
   let figure_path = paths::path(&prob.figure.edges, &prob.figure.vertices);
 
   let svg = svg::Document::new()
+    .set("height", 500).set("width", 500).set("viewBox", (0, 0, prob.hole.iter().map(|p| p.0).max().unwrap(), prob.hole.iter().map(|p| p.1).max().unwrap()))
     .add(
       Polygon::new()
         .set("fill", "grey")
@@ -44,7 +45,8 @@ pub fn render_pose_svg<W: io::Write>(prob: &Input, pose: &Output, w: W) -> io::R
   let figure_path = paths::path(&prob.figure.edges, &pose.vertices);
 
   let svg = svg::Document::new()
-    .add(
+  .set("height", 500).set("width", 500).set("viewBox", (0, 0, prob.hole.iter().map(|p| p.0).max().unwrap(), prob.hole.iter().map(|p| p.1).max().unwrap()))
+  .add(
       Polygon::new()
         .set("fill", "grey")
         .set("points", hole_polygon),

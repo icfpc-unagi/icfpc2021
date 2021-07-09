@@ -8,6 +8,7 @@ pub mod wasm;
 use std::ops::*;
 use std::cmp::Ordering;
 use serde::{Serialize, Deserialize};
+use util::*;
 
 pub type Point = P<i64>;
 
@@ -41,8 +42,58 @@ pub fn read_input() -> Input {
 	input
 }
 
+
+pub fn read_input_from_file(f: &std::path::PathBuf) -> Input {
+	let mut input: Input = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
+	let mut area = 0;
+	for i in 0..input.hole.len() {
+		area += input.hole[i].det(input.hole[(i + 1) % input.hole.len()]);
+	}
+	if area > 0 { // 時計回りにする
+		input.hole.reverse();
+	}
+	input
+}
+
 pub fn write_output(out: &Output) {
 	println!("{}", serde_json::to_string(out).unwrap());
+}
+
+pub fn read_output_from_file(f: &std::path::PathBuf) -> Output {
+	serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap()
+}
+
+pub fn compute_score(input: &Input, out: &Output) -> i64 {
+	if out.vertices.len() != input.figure.vertices.len() {
+		return 1000000000;
+	}
+	let mut score = 0;
+	for &p in &input.hole {
+		let mut min = i64::max_value();
+		for &q in &out.vertices {
+			min.setmin((p - q).abs2());
+		}
+		score += min;
+	}
+	for &p in &out.vertices {
+		if P::contains_p(&input.hole, p) < 0 {
+			eprintln!("outside point");
+			return 1000000000;
+		}
+	}
+	for &(i, j) in &input.figure.edges {
+		if !P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])) {
+			eprintln!("cross edge");
+			return 1000000000;
+		}
+		let before = (input.figure.vertices[i] - input.figure.vertices[j]).abs2();
+		let after = (out.vertices[i] - out.vertices[j]).abs2();
+		if (after * 1000000 - before * 1000000).abs() > input.epsilon * before {
+			eprintln!("illegal length");
+			return 1000000000;
+		}
+	}
+	score
 }
 
 #[derive(Clone, Copy, Default, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
