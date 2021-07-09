@@ -1,9 +1,3 @@
-// lib.rsを弄るとぶつかりまくってだるいことになりそうだからとりあえず別ファイルで作業する
-
-use super::*;
-
-#[cfg(test)]
-mod tests {
     use super::*;
 
     fn generate_rectangle() -> Vec<Point> {
@@ -153,4 +147,3 @@ mod tests {
     fn boko4() {
         assert_eq!(P::contains_s(&generate_boko(), (P(1, 4), P(7, 4))), true);
     }
-}

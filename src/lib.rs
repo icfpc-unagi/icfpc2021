@@ -1,5 +1,7 @@
 pub mod util;
 pub mod paths;
+
+#[cfg(test)]
 mod test_contains_s;
 
 #[cfg(target_arch = "wasm32")]
