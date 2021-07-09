@@ -120,4 +120,37 @@ mod tests {
     fn tsubo6() {
         assert_eq!(P::contains_s(&generate_tsubo(), (P(1, 2), P(1, 6))), false);
     }
+
+    fn generate_boko() -> Vec<Point> {
+        vec![
+            P(0, 0),
+            P(0, 8),
+            P(2, 8),
+            P(2, 4),
+            P(6, 4),
+            P(6, 8),
+            P(8, 8),
+            P(8, 0),
+        ]
+    }
+
+    #[test]
+    fn boko1() {
+        assert_eq!(P::contains_s(&generate_boko(), (P(1, 8), P(7, 8))), false);
+    }
+
+    #[test]
+    fn boko2() {
+        assert_eq!(P::contains_s(&generate_boko(), (P(0, 8), P(8, 8))), false);
+    }
+
+    #[test]
+    fn boko3() {
+        assert_eq!(P::contains_s(&generate_boko(), (P(2, 8), P(6, 8))), false);
+    }
+
+    #[test]
+    fn boko4() {
+        assert_eq!(P::contains_s(&generate_boko(), (P(1, 4), P(7, 4))), true);
+    }
 }
