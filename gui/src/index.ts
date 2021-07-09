@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
+import { DragHandler } from "./dragdrop";
 
 PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
 const app = new PIXI.Application({
