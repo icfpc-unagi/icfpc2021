@@ -28,6 +28,8 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 Problem ID: <input type="text" name="problem_id"><br><br>
 JSON:
 <textarea name="data"></textarea><br><br>
+強制アップデート（スコアを確認しない）:
+<input type="checkbox" name="force" value="1"><br><br>
 <input type="submit" value="Submit">
 </form></body>
 `)
@@ -38,7 +40,7 @@ JSON:
 	if err != nil {
 		fmt.Fprintf(w, "Failed to parse problem_id: %+v", err)
 	}
-	submissionID, err := Submit(ctx, problemID, r.Form.Get("data"))
+	submissionID, err := Submit(ctx, problemID, r.Form.Get("data"), r.Form.Get("force") == "1")
 	if err != nil {
 		fmt.Fprintf(w, "Failed to submit: %+v", err)
 	}
@@ -69,7 +71,7 @@ func handleAPISubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poseID, err := Submit(ctx, problemID, string(buf))
+	poseID, err := Submit(ctx, problemID, string(buf), false)
 	if err != nil {
 		glog.Errorf("Failed to submit: %+v", err)
 		w.WriteHeader(400)
@@ -80,7 +82,28 @@ func handleAPISubmit(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d", poseID)
 }
 
-func Submit(ctx context.Context, problemID int64, solution string) (int64, error) {
+func Submit(ctx context.Context, problemID int64, solution string, force bool) (int64, error) {
+	estimatedScore, err := EstimateScore(ctx, problemID, solution)
+	if err != nil {
+		return 0, err
+	}
+	if estimatedScore < 0 {
+		return 0, errors.New("solution is invalid")
+	}
+
+	var bestScore int64
+	err = db.Cell(ctx, &bestScore, "SELECT COALESCE(MIN(submission_score), -1) FROM submissions WHERE problem_id = ? AND submission_score >= 0", problemID)
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to get the best score")
+	}
+
+	if !force {
+		if bestScore != -1 && bestScore <= estimatedScore {
+			glog.Infof("Score is not updated: problem_id=%d, score=%d, best=%d", problemID, estimatedScore, bestScore)
+			return 0, nil
+		}
+	}
+
 	poseID, err := submitToOfficial(problemID, solution)
 	if err != nil {
 		return 0, err
@@ -88,8 +111,8 @@ func Submit(ctx context.Context, problemID int64, solution string) (int64, error
 
 	result, err := db.Execute(ctx,
 		"INSERT INTO submissions" +
-		"(problem_id, submission_data, submission_uuid, submission_submitted) " +
-		"VALUES(?, ?, ?, CURRENT_TIMESTAMP())",
+		"(problem_id, submission_data, submission_estimated_score, submission_uuid, submission_submitted) " +
+		"VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP())",
 		problemID, solution, poseID)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to insert a submission")
