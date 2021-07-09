@@ -41,10 +41,6 @@ pub fn read_input() -> Input {
 	input
 }
 
-pub fn read_output() -> Output {
-	serde_json::from_reader(std::io::stdin()).unwrap()
-}
-
 pub fn write_output(out: &Output) {
 	println!("{}", serde_json::to_string(out).unwrap());
 }
