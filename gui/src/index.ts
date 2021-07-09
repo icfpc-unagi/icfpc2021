@@ -2,6 +2,18 @@ import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
+type XY = [number, number];
+
+function abs2([x0, y0]: XY, [x1, y1]: XY): number {
+  const x = x0 - x1;
+  const y = y0 - y1;
+  return x * x + y * y;
+}
+
+function xyFromPoint({ x, y }: { x: number; y: number }): XY {
+  return [x, y];
+}
+
 PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
 const app = new PIXI.Application({
   width: 800,
@@ -44,7 +56,7 @@ function drawProblem(inputJson: Input) {
   mainContainer.addChild(hole);
 
   const fig = inputJson.figure;
-  const edges: [number, number, Graphics][] = [];
+  const edges: [number, number, Graphics, number][] = [];
   for (const [i, j] of fig.edges) {
     const g = new Graphics().lineStyle({
       color: 0x0000ff,
@@ -52,7 +64,7 @@ function drawProblem(inputJson: Input) {
       cap: "round" as any,
     });
     g.moveTo(...fig.vertices[i]).lineTo(...fig.vertices[j]);
-    edges.push([i, j, g]);
+    edges.push([i, j, g, abs2(fig.vertices[i], fig.vertices[j])]);
     mainContainer.addChild(g);
   }
 
@@ -65,21 +77,25 @@ function drawProblem(inputJson: Input) {
     vertices.push(g);
   }
 
+  const epsilon = inputJson.epsilon;
   for (const [k, v] of vertices.entries()) {
     v.on("drag", () => {
-      for (const [i, j, segment] of edges) {
+      for (const [i, j, segment, d2Orig] of edges) {
         if ([i, j].includes(k)) {
-          const { x: xi, y: yi } = vertices[i].position;
-          const { x: xj, y: yj } = vertices[j].position;
+          const p0 = xyFromPoint(vertices[i].position);
+          const p1 = xyFromPoint(vertices[j].position);
+          const d2Now = abs2(p0, p1);
+          const ok = Math.abs(d2Now / d2Orig - 1) < epsilon / 1_000_000;
+          const color = ok ? 0x0000ff : 0xff0000;
           segment
             .clear()
             .lineStyle({
-              color: 0x0000ff,
+              color,
               width: 3 / guiScale,
               cap: "round" as any,
             })
-            .moveTo(xi, yi)
-            .lineTo(xj, yj);
+            .moveTo(...p0)
+            .lineTo(...p1);
         }
       }
     });
