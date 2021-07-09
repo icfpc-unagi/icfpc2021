@@ -115,7 +115,7 @@ class ProblemRenderer {
         const p1 = xyFromPoint(vertices[j].position);
         const d2Now = abs2(p0, p1);
         const ok = Math.abs(d2Now / d2Orig - 1) < this.epsilon / 1_000_000;
-        const color = ok ? 0x0000ff : 0xff0000;
+        const color = ok ? 0x0000ff : d2Now < d2Orig ? 0x9900ff : 0xff0000;
         segment
           .clear()
           .lineStyle({
