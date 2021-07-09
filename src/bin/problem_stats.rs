@@ -3,6 +3,7 @@ use icfpc2021::*;
 #[derive(Debug)]
 struct ProblemStat {
     problem_id: i64,
+    url: String,
     max_coord: i64,
     mean_edge_len: f64,
     tol_for_mean_edge: f64,
@@ -62,6 +63,7 @@ impl ProblemStat {
 
         ProblemStat {
             problem_id,
+            url: format!("https://poses.live/problems/{}", problem_id),
             max_coord: max_coord(input),
             mean_edge_len,
             tol_for_mean_edge,
@@ -74,7 +76,7 @@ impl ProblemStat {
     }
 
     pub fn println(&self) {
-        print!("{}", self.problem_id);
+        print!("{}\t{}", self.problem_id, self.url);
         print!("\t{}\t{}\t{}\t{}", self.max_coord, self.epsilon, self.mean_edge_len, self.tol_for_mean_edge);
         print!("\t{}\t{}\t{}\t{}", self.n_hole_vs, self.n_figure_vs, self.n_figure_es, self.n_triangles);
         println!();
