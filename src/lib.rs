@@ -28,7 +28,15 @@ pub struct Output {
 }
 
 pub fn read_input() -> Input {
-	serde_json::from_reader(std::io::stdin()).unwrap()
+	let mut input: Input = serde_json::from_reader(std::io::stdin()).unwrap();
+	let mut area = 0;
+	for i in 0..input.hole.len() {
+		area += input.hole[i].det(input.hole[(i + 1) % input.hole.len()]);
+	}
+	if area > 0 { // 時計回りにする
+		input.hole.reverse();
+	}
+	input
 }
 
 pub fn write_output(out: &Output) {
@@ -46,6 +54,14 @@ impl<T> Add for P<T> where T: Copy + Add<Output = T> {
 	}
 }
 
+impl<T> AddAssign for P<T> where T: Copy + AddAssign {
+	#[inline]
+	fn add_assign(&mut self, a: P<T>) {
+		self.0 += a.0;
+		self.1 += a.1;
+	}
+}
+
 impl<T> Sub for P<T> where T: Copy + Sub<Output = T> {
 	type Output = P<T>;
 	#[inline]
@@ -54,11 +70,27 @@ impl<T> Sub for P<T> where T: Copy + Sub<Output = T> {
 	}
 }
 
+impl<T> SubAssign for P<T> where T: Copy + SubAssign {
+	#[inline]
+	fn sub_assign(&mut self, a: P<T>) {
+		self.0 -= a.0;
+		self.1 -= a.1;
+	}
+}
+
 impl<T> Mul<T> for P<T> where T: Copy + Mul<Output = T> {
 	type Output = P<T>;
 	#[inline]
 	fn mul(self, a: T) -> P<T> {
 		P(self.0 * a, self.1 * a)
+	}
+}
+
+impl<T> MulAssign<T> for P<T> where T: Copy + MulAssign {
+	#[inline]
+	fn mul_assign(&mut self, a: T) {
+		self.0 *= a;
+		self.1 *= a;
 	}
 }
 
@@ -193,5 +225,71 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 		if d == T::default() { return None }
 		let r = p1 * d + (p2 - p1) * (q2 - q1).det(q1 - p1);
 		Some(P(R(r.0, d), R(r.1, d)))
+	}
+	/// 点の多角形に対する内外判定
+	/// 内部のときは1、辺上のときは0、外部のときは-1を返す
+	pub fn contains_p(ps: &Vec<P<T>>, q: P<T>) -> i32 {
+		let n = ps.len();
+		let mut ret = -1;
+		for i in 0..n {
+			let mut a = ps[i] - q;
+			let mut b = ps[(i + 1) % n] - q;
+			if a.1 > b.1 {
+				std::mem::swap(&mut a, &mut b);
+			}
+			if a.1 <= T::default() && b.1 > T::default() && a.det(b) > T::default() {
+				ret = -ret;
+			}
+			if a.det(b) == T::default() && a.dot(b) <= T::default() {
+				return 0;
+			}
+		}
+		ret
+	}
+	// 多角形(境界を含む)に線分が完全に含まれているか
+	// psは時計回り
+	// O(n)
+	pub fn contains_s(ps: &Vec<P<T>>, (q1, q2): (P<T>, P<T>)) -> bool {
+		if P::contains_p(ps, q1) < 0 || P::contains_p(ps, q2) < 0 {
+			return false;
+		}
+		let n = ps.len();
+		for i in 0..n {
+			if P::crs_ss((q1, q2), (ps[i], ps[(i + 1) % n])) {
+				let mut r = P::pi_ll((q1, q2), (ps[i], ps[(i + 1) % n]));
+				if r.is_none() && (q1 - ps[i]).dot(q2 - ps[i]) <= T::default() {
+					r = Some(ps[i].into());
+				}
+				if let Some(r) = r {
+					if r == q2.into() || r == ps[(i + 1) % n].into() {
+						continue;
+					}
+					if r == ps[i].into() {
+						let p = ps[(i + 1) % n] - ps[i];
+						let q = q2 - ps[i];
+						let r = ps[(i + n - 1) % n] - ps[i];
+						let pr = p.det(r);
+						let pq = p.det(q);
+						let qr = q.det(r);
+						if pr == T::default() && p.dot(r) < T::default() && pq > T::default() {
+							return false;
+						}
+						if pr > T::default() && pq > T::default() && qr > T::default() {
+							return false;
+						}
+						if pr < T::default() && (pq > T::default() || qr > T::default()) {
+							return false;
+						}
+					} else if r == q1.into() {
+						if (ps[(i + 1) % n] - ps[i]).det(q2 - ps[i]) > T::default() {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
+			}
+		}
+		true
 	}
 }
