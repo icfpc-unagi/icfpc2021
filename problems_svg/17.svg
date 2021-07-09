@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<polygon fill="grey" points="0,31 18,0 48,18 30,48 0,65 "/>
+<path d="M27 36L0 57M27 36L28 0M27 36L32 70M0 57L32 70M28 0L29 35M32 70L29 35" stroke="red"/>
+</svg>
