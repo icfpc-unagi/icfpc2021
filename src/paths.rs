@@ -1,5 +1,7 @@
 use std::fmt::*;
-use crate::P;
+use svg::node::element::*;
+use std::io;
+use crate::*;
 
 pub fn polygon<T: std::fmt::Display>(points: &[P<T>]) -> String {
   let mut s = String::new();
@@ -19,4 +21,35 @@ pub fn path<T: std::fmt::Display>(edges: &[(usize, usize)], vertices: &[P<T>]) -
     ).unwrap();
   }
   s
+}
+
+
+pub fn render_problem_svg<W: io::Write>(prob: &Input, w: W) -> io::Result<()> {
+  let hole_polygon = paths::polygon(&prob.hole);
+  let figure_path = paths::path(&prob.figure.edges, &prob.figure.vertices);
+
+  let svg = svg::Document::new()
+    .add(
+      Polygon::new()
+        .set("fill", "grey")
+        .set("points", hole_polygon),
+    )
+    .add(Path::new().set("stroke", "red").set("d", figure_path));
+
+    svg::write(w, &svg)
+}
+
+pub fn render_pose_svg<W: io::Write>(prob: &Input, pose: &Output, w: W) -> io::Result<()> {
+  let hole_polygon = paths::polygon(&prob.hole);
+  let figure_path = paths::path(&prob.figure.edges, &pose.vertices);
+
+  let svg = svg::Document::new()
+    .add(
+      Polygon::new()
+        .set("fill", "grey")
+        .set("points", hole_polygon),
+    )
+    .add(Path::new().set("stroke", "red").set("d", figure_path));
+
+  svg::write(w, &svg)
 }

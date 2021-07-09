@@ -1,5 +1,5 @@
 use icfpc2021::*;
-use svg::node::element::*;
+use icfpc2021::paths::*;
 use std::fs::File;
 
 // Usage: show_problem [problem.json]
@@ -11,19 +11,5 @@ fn main() -> std::io::Result<()> {
 		serde_json::from_reader(File::open(&args[2])?)?
 	};
 
-	let hole_polygon = paths::polygon(&prob.hole);
-
-	let figure_path = paths::path(&prob.figure.edges, &prob.figure.vertices);
-
-	let svg = svg::Document::new()
-		.add(
-			Polygon::new()
-				.set("fill", "grey")
-				.set("points", hole_polygon),
-		)
-		.add(Path::new().set("stroke", "red").set("d", figure_path));
-
-	svg::write(std::io::stdout(), &svg)?;
-
-	Ok(())
+	render_problem_svg(&prob, std::io::stdout())
 }
