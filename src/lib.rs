@@ -2,3 +2,196 @@ pub mod util;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm;
+
+use std::ops::*;
+use std::cmp::Ordering;
+use serde::{Serialize, Deserialize};
+
+pub type Point = P<i64>;
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Input {
+	pub hole: Vec<Point>,
+	pub figure: Figure,
+	pub epsilon: i64,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Figure {
+	pub edges: Vec<(usize, usize)>,
+	pub vertices: Vec<Point>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Output {
+	pub vertices: Vec<Point>
+}
+
+pub fn read_input() -> Input {
+	serde_json::from_reader(std::io::stdin()).unwrap()
+}
+
+pub fn write_output(out: &Output) {
+	println!("{}", serde_json::to_string(out).unwrap());
+}
+
+#[derive(Clone, Copy, Default, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct P<T>(pub T, pub T);
+
+impl<T> Add for P<T> where T: Copy + Add<Output = T> {
+	type Output = P<T>;
+	#[inline]
+	fn add(self, a: P<T>) -> P<T> {
+		P(self.0 + a.0, self.1 + a.1)
+	}
+}
+
+impl<T> Sub for P<T> where T: Copy + Sub<Output = T> {
+	type Output = P<T>;
+	#[inline]
+	fn sub(self, a: P<T>) -> P<T> {
+		P(self.0 - a.0, self.1 - a.1)
+	}
+}
+
+impl<T> Mul<T> for P<T> where T: Copy + Mul<Output = T> {
+	type Output = P<T>;
+	#[inline]
+	fn mul(self, a: T) -> P<T> {
+		P(self.0 * a, self.1 * a)
+	}
+}
+
+impl<T> P<T> where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Neg<Output = T> {
+	#[inline]
+	pub fn dot(self, a: P<T>) -> T {
+		(self.0 * a.0) + (self.1 * a.1)
+	}
+	#[inline]
+	pub fn det(self, a: P<T>) -> T {
+		(self.0 * a.1) - (self.1 * a.0)
+	}
+	#[inline]
+	pub fn abs2(self) -> T {
+		self.dot(self)
+	}
+	#[inline]
+	pub fn rot(self) -> P<T> {
+		P(-self.1, self.0)
+	}
+}
+
+
+macro_rules! impl_cmp {
+	($name:ident $(<$($t:ident),*>)*; |$x:ident, $y:ident| $e:expr; $($w:tt)*) => {
+		impl $(<$($t),*>)* Ord for $name $(<$($t),*>)* $($w)* {
+			#[inline]
+			fn cmp(&self, $y: &Self) -> ::std::cmp::Ordering {
+				let $x = &self;
+				$e
+			}
+		}
+		impl $(<$($t),*>)* PartialOrd for $name $(<$($t),*>)* $($w)* {
+			#[inline]
+			fn partial_cmp(&self, a: &Self) -> Option<::std::cmp::Ordering> {
+				Some(self.cmp(a))
+			}
+		}
+		impl $(<$($t),*>)* PartialEq for $name $(<$($t),*>)* $($w)* {
+			#[inline]
+			fn eq(&self, a: &Self) -> bool {
+				self.cmp(a) == ::std::cmp::Ordering::Equal
+			}
+		}
+		impl $(<$($t),*>)* Eq for $name $(<$($t),*>)* $($w)* {}
+	}
+}
+
+/// R(n,d) := n / d.
+#[derive(Clone, Copy, Debug)]
+pub struct R<T>(pub T, pub T);
+impl_cmp!(R<T>; |a, b| {
+		match (a.1 * b.1).cmp(&T::default()) {
+			Ordering::Greater => (a.0 * b.1).cmp(&(a.1 * b.0)),
+			Ordering::Less => (a.1 * b.0).cmp(&(a.0 * b.1)),
+			_ => panic!("division by zero")
+		}
+	}; where T: Copy + Default + Ord + Mul<Output = T>);
+
+impl<T> From<T> for R<T> where T: From<u8> {
+	#[inline]
+	fn from(x: T) -> R<T> { R(x, T::from(1)) }
+}
+
+impl<T> From<P<T>> for P<R<T>> where R<T>: From<T> {
+	#[inline]
+	fn from(p: P<T>) -> P<R<T>> { P(p.0.into(), p.1.into()) }
+}
+
+impl<T> R<T> where T: Div<Output = T> {
+	#[inline]
+	pub fn val(self) -> T { self.0 / self.1 }
+}
+
+impl<T> From<P<R<T>>> for P<T> where T: Div<Output = T> {
+	#[inline]
+	fn from(x: P<R<T>>) -> P<T> {
+		P(x.0.val(), x.1.val())
+	}
+}
+
+#[inline]
+fn sig<T>(x: T) -> i32 where T: Default + Ord {
+	match x.cmp(&T::default()) {
+		Ordering::Greater => 1,
+		Ordering::Less => -1,
+		_ => 0
+	}
+}
+
+/// 直線に関する演算. 分数を用いて計算誤差なしで行う.
+impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Neg<Output = T> {
+	/// Square distance between segment and point. (D^4,D^2).
+	pub fn dist2_sp((p1, p2): (P<T>, P<T>), q: P<T>) -> R<T> {
+		if (p2 - p1).dot(q - p1) <= T::default() { (q - p1).abs2().into() }
+		else if (p1 - p2).dot(q - p2) <= T::default() { (q - p2).abs2().into() }
+		else { P::dist2_lp((p1, p2), q) }
+	}
+	/// Square distance between line and point. (D^4,D^2).
+	pub fn dist2_lp((p1, p2): (P<T>, P<T>), q: P<T>) -> R<T> {
+		let det = (p2 - p1).det(q - p1);
+		R(det * det, (p2 - p1).abs2())
+	}
+	/// D^2.
+	pub fn crs_sp((p1, p2): (P<T>, P<T>), q: P<T>) -> bool {
+		P::crs_lp((p1, p2), q) && (q - p1).dot(q - p2) <= T::default()
+	}
+	/// D^2.
+	pub fn crs_lp((p1, p2): (P<T>, P<T>), q: P<T>) -> bool {
+		(p2 - p1).det(q - p1) == T::default()
+	}
+	/// D^2.
+	pub fn crs_ss((p1, p2): (P<T>, P<T>), (q1, q2): (P<T>, P<T>)) -> bool {
+		let sort = |a, b| { if a < b { (a, b) } else { (b, a) }};
+		let (lp0, up0) = sort(p1.0, p2.0);
+		let (lq0, uq0) = sort(q1.0, q2.0);
+		let (lp1, up1) = sort(p1.1, p2.1);
+		let (lq1, uq1) = sort(q1.1, q2.1);
+		if up0 < lq0 || uq0 < lp0 || up1 < lq1 || uq1 < lp1 { return false }
+		return sig((p2 - p1).det(q1 - p1)) * sig((p2 - p1).det(q2 - p1)) <= 0
+			&& sig((q2 - q1).det(p1 - q1)) * sig((q2 - q1).det(p2 - q1)) <= 0
+	}
+	/// (D^3,D^2).
+	pub fn proj((p1, p2): (P<T>, P<T>), q: P<T>) -> P<R<T>> {
+		let d = (p2 - p1).abs2();
+		let r = p1 * d + (p2 - p1) * (p2 - p1).dot(q - p1);
+		P(R(r.0, d), R(r.1, d))
+	}
+	/// (D^3,D^2).
+	pub fn pi_ll((p1, p2): (P<T>, P<T>), (q1, q2): (P<T>, P<T>)) -> Option<P<R<T>>> {
+		let d = (q2 - q1).det(p2 - p1);
+		if d == T::default() { return None }
+		let r = p1 * d + (p2 - p1) * (q2 - q1).det(q1 - p1);
+		Some(P(R(r.0, d), R(r.1, d)))
+	}
+}
