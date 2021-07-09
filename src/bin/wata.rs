@@ -32,9 +32,7 @@ fn compute_score(input: &Input, out: &Vec<Point>) -> i64 {
 	score
 }
 
-const TL: f64 = 10.0;
-
-fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, best: &mut Vec<Point>, best_score: &mut i64) {
+fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, best: &mut Vec<Point>, best_score: &mut i64, until: f64) {
 	if i == order.len() {
 		if best_score.setmin(compute_score(&data.input, out)) {
 			eprintln!("{:.3}: {}", get_time(), best_score);
@@ -42,7 +40,7 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 		}
 		return;
 	}
-	if get_time() > TL {
+	if get_time() > until {
 		return;
 	}
 	let u = order[i];
@@ -72,7 +70,7 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 				}
 			}
 			if ok {
-				rec(data, i + 1, order, out, used, best, best_score);
+				rec(data, i + 1, order, out, used, best, best_score, until);
 			}
 		}
 	}
@@ -129,34 +127,41 @@ fn main() {
 	}
 	assert!(min_x >= 0);
 	assert!(min_y >= 0);
-	let mut cand = vec![vec![]; n];
-	for i in 0..n {
-		let r = parent[i];
-		if r < n {
-			let orig = (input.figure.vertices[r] - input.figure.vertices[i]).abs2();
-			for dx in -(max_x - min_x) ..= (max_x - min_x) {
-				for dy in -(max_y - min_y) ..= (max_y - min_y) {
-					if (P(dx, dy).abs2() * 1000000 - orig * 1000000).abs() <= input.epsilon * orig {
-						cand[i].push(P(dx, dy));
+	let mut data = Data { input, inside, g, parent, cand: vec![] };
+	let mut best = vec![];
+	let mut best_score = i64::max_value();
+	for _ in 0..20 {
+		eprintln!("eps = {}", data.input.epsilon);
+		let mut cand = vec![vec![]; n];
+		for i in 0..n {
+			let r = data.parent[i];
+			if r < n {
+				let orig = (data.input.figure.vertices[r] - data.input.figure.vertices[i]).abs2();
+				for dx in -(max_x - min_x) ..= (max_x - min_x) {
+					for dy in -(max_y - min_y) ..= (max_y - min_y) {
+						if (P(dx, dy).abs2() * 1000000 - orig * 1000000).abs() <= data.input.epsilon * orig {
+							cand[i].push(P(dx, dy));
+						}
 					}
 				}
 			}
 		}
-	}
-	
-	let data = Data { input, inside, g, parent, cand };
-	let mut best = vec![];
-	let mut best_score = i64::max_value();
-	get_time();
-	for x in min_x ..= max_x {
-		for y in min_y ..= max_y {
-			if data.inside[x as usize][y as usize] {
-				let mut out = vec![P(x, y); n];
-				let mut used = vec![false; n];
-				used[order[0]] = true;
-				rec(&data, 1, &order, &mut out, &mut used, &mut best, &mut best_score);
+		data.cand = cand;
+		let stime = get_time();
+		for x in min_x ..= max_x {
+			for y in min_y ..= max_y {
+				if data.inside[x as usize][y as usize] {
+					let mut out = vec![P(x, y); n];
+					let mut used = vec![false; n];
+					used[order[0]] = true;
+					rec(&data, 1, &order, &mut out, &mut used, &mut best, &mut best_score, stime + 10.0);
+				}
 			}
 		}
+		if data.input.epsilon == 0 {
+			break;
+		}
+		data.input.epsilon /= 2;
 	}
 	eprintln!("Score = {}", best_score);
 	write_output(&Output { vertices: best });
