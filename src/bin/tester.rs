@@ -25,7 +25,7 @@ struct Args {
 fn exec(cmd: &str, input: &std::path::PathBuf) -> (i64, f64, String) {
 	let name = input.file_name().unwrap();
 	let output = std::path::Path::new("tmp/out").join(name);
-	let mut cmd_args = cmd.split_whitespace();
+	let mut cmd_args = cmd.split_whitespace().chain([input.file_stem().unwrap().to_str().unwrap()]);
 	let ms = {
 		let input_file = std::fs::File::open(input).unwrap();
 		let output_file = std::fs::File::create(&output).unwrap();
