@@ -12,9 +12,13 @@ crate-type = ["rlib", "cdylib"]
 default = ["console_error_panic_hook", "wee_alloc"]
 
 [dependencies]
+image = "*"
+num = "*"
+rand = "*"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "*"
 web-sys = { version = "*", features = ["console"] }
 console_error_panic_hook = { version = "*", optional = true }
 wee_alloc = { version = "*", optional = true }
+getrandom = { version = "*", features = ["js"] }
