@@ -5,6 +5,7 @@ struct ProblemStat {
     problem_id: i64,
     max_coord: i64,
     mean_edge_len: f64,
+    tol_for_mean_edge: f64,
     epsilon: i64,
     n_hole_vs: usize,
     n_figure_vs: usize,
@@ -56,16 +57,27 @@ fn mean_edge_len(figure: &Figure) -> f64 {
 
 impl ProblemStat {
     pub fn new(problem_id: i64, input: &Input) -> Self {
+        let mean_edge_len = mean_edge_len(&input.figure);
+        let tol_for_mean_edge = (((input.epsilon as f64) / 1_000_000.0 + 1.0).sqrt() - 1.0) * mean_edge_len;
+
         ProblemStat {
             problem_id,
             max_coord: max_coord(input),
-            mean_edge_len: mean_edge_len(&input.figure),
+            mean_edge_len,
+            tol_for_mean_edge,
             epsilon: input.epsilon,
             n_hole_vs: input.hole.len(),
             n_figure_vs: input.figure.vertices.len(),
             n_figure_es: input.figure.edges.len(),
             n_triangles: n_triangles(&input.figure),
         }
+    }
+
+    pub fn println(&self) {
+        print!("{}", self.problem_id);
+        print!("\t{}\t{}\t{}\t{}", self.max_coord, self.epsilon, self.mean_edge_len, self.tol_for_mean_edge);
+        print!("\t{}\t{}\t{}\t{}", self.n_hole_vs, self.n_figure_vs, self.n_figure_es, self.n_triangles);
+        println!();
     }
 }
 
@@ -89,6 +101,6 @@ fn main() {
     problem_stats.sort_by_key(|ps| ps.problem_id);
 
     for ps in problem_stats {
-        println!("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}", ps.problem_id, ps.max_coord, ps.mean_edge_len, ps.epsilon, ps.n_hole_vs, ps.n_figure_vs, ps.n_figure_es, ps.n_triangles)
+        ps.println()
     }
 }
