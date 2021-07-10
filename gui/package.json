@@ -15,7 +15,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "icfpc2021": "file:../pkg/icfpc2021",
+    "icfpc2021": "file:../pkg",
     "pixi.js": "^6.0.4"
   }
 }
