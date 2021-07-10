@@ -23,7 +23,6 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '16'
-        cache: 'npm'
     - name: rust
       run: |
           rustup target add x86_64-unknown-linux-musl
@@ -31,11 +30,11 @@ jobs:
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
           wasm-pack build
     - name: npm
+      working-directory: gui
       run: |
-          cd ./gui
           npm install
           npm run build
     - name: upload
       run: |
-          gsutil -m cp -r ./dist/* \
+          gsutil -m cp -r ./gui/dist/* \
               gs://icfpc2021/gui
