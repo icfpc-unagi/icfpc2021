@@ -10,6 +10,7 @@ test:
 
 .PHONY: docker
 docker:
+	$(MAKE) -C web build
 	docker build -t server \
 		--build-arg=UNAGI_PASSWORD="$${UNAGI_PASSWORD}" \
 		-f server.Dockerfile .
