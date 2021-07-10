@@ -390,13 +390,13 @@ fn stretch_within<T: num::traits::Signed + From<i32> + Copy>(d2: T, base_d2: T, 
 // shortest path
 //
 
-fn compute_adjmat(input: &Input) -> Vec<Vec<bool>> {
-	let n_vs = input.hole.len();
+fn compute_adjmat(hole: &Vec<Point>) -> Vec<Vec<bool>> {
+	let n_vs = hole.len();
 	let mut adjmat = vec![vec![false; n_vs]; n_vs];
 
 	for u in 0..n_vs {
 		for v in (u + 1)..n_vs {
-			let b = P::contains_s(&input.hole, (input.hole[u], input.hole[v]));
+			let b = P::contains_s(&hole, (hole[u], hole[v]));
 			adjmat[u][v] = b;
 			adjmat[v][u] = b;
 		}
@@ -419,19 +419,19 @@ fn shortest_path_rec(i: usize, j: usize, via: &Vec<Vec<usize>>, path: &mut Vec<u
 ///
 /// p0, p1はhole内部あるいは境界上であること。
 /// 距離と、通過する端点の列（holeの頂点番号）を返す。
-pub fn shortest_path(input: &Input, p0: Point, p1: Point) -> (f64, Vec<usize>) {
+pub fn shortest_path(hole: &Vec<Point>, p0: Point, p1: Point) -> (f64, Vec<usize>) {
 	// 直接いけるならもういいよ
-	if P::contains_s(&input.hole, (p0, p1)) {
+	if P::contains_s(&hole, (p0, p1)) {
 		return (((p1 - p0).abs2() as f64).sqrt(), vec![]);
 	}
 
 	// TODO: adjmat作るのが重かったらここキャッシュできる
-	let mut adjmat = compute_adjmat(input);
+	let mut adjmat = compute_adjmat(hole);
 
-	let n_hole_vs = input.hole.len();
+	let n_hole_vs = hole.len();
 	for u in 0..n_hole_vs {
-		adjmat[u].push(P::contains_s(&input.hole, (input.hole[u], p0)));
-		adjmat[u].push(P::contains_s(&input.hole, (input.hole[u], p1)));
+		adjmat[u].push(P::contains_s(&hole, (hole[u], p0)));
+		adjmat[u].push(P::contains_s(&hole, (hole[u], p1)));
 	}
 
 	let mut row0: Vec<bool> = (0..n_hole_vs).map(|i| adjmat[i][n_hole_vs]).collect();
@@ -442,7 +442,7 @@ pub fn shortest_path(input: &Input, p0: Point, p1: Point) -> (f64, Vec<usize>) {
 	adjmat.push(row0);
 	adjmat.push(row1);
 
-	let mut ps = input.hole.clone();
+	let mut ps = hole.clone();
 	ps.push(p0);
 	ps.push(p1);
 
@@ -477,3 +477,19 @@ pub fn shortest_path(input: &Input, p0: Point, p1: Point) -> (f64, Vec<usize>) {
 
 	(dst[s][t], path)
 }
+
+/*
+#[cfg(test)]
+mod shortest_path_tests {
+	use super::*;
+
+	fn generate_tsubo() -> Vec<Point> {
+		vec![P(0, 0), P(2, 4), P(0, 8), P(8, 8), P(6, 4), P(8, 0)]
+	}
+
+	#[test]
+	fn tsubo1() {
+		shortest_path()
+	}
+}
+*/
