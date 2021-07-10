@@ -54,9 +54,31 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 		P(right, bottom),
 		P(left, bottom),
 	]));
-	let (edges_ok, edges_ng): (Vec::<(usize, usize)>, Vec::<(usize, usize)>) = prob.figure.edges.iter().partition(|&e| P::contains_s(&prob.hole, (vertices[e.0], vertices[e.1])));
+
+	let mut edges_ok = Vec::new();
+	let mut edges_short = Vec::new();
+	let mut edges_long = Vec::new();
+	let mut edges_out = Vec::new();
+	for &(i, j) in prob.figure.edges.iter() {
+		if P::contains_s(&prob.hole, (vertices[i], vertices[j])) {
+			match stretch_within(
+				(vertices[i] - vertices[j]).abs2(),
+				(prob.figure.vertices[i] - prob.figure.vertices[j]).abs2(),
+				prob.epsilon,
+			) {
+				Ordering::Less => &mut edges_short,
+				Ordering::Equal => &mut edges_ok,
+				Ordering::Greater => &mut edges_long,
+			}
+		} else {
+			&mut edges_out
+		}
+		.push((i, j))
+	}
 	let figure_ok_path = paths::segments(&edges_ok, &vertices);
-	let figure_ng_path = paths::segments(&edges_ng, &vertices);
+	let figure_short_path = paths::segments(&edges_short, &vertices);
+	let figure_long_path = paths::segments(&edges_long, &vertices);
+	let figure_out_path = paths::segments(&edges_out, &vertices);
 
 	let svg = svg::Document::new()
 		.set("height", 500)
@@ -64,18 +86,33 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 		.set("viewBox", (left, top, right - left, bottom - top))
 		.add(
 			Path::new()
+				.set("class", "hole")
 				.set("style", "fill:#00000066;fill-rule:evenodd;stroke:none;")
 				.set("d", hole_polygon),
 		)
 		.add(
 			Path::new()
-				.set("style", "fill:none;stroke:#ff0000;stroke-linecap:round")
+				.set("class", "ok")
+				.set("style", "fill:none;stroke:#0000ff;stroke-linecap:round")
 				.set("d", figure_ok_path),
 		)
 		.add(
 			Path::new()
-				.set("style", "fill:none;stroke:#0000ff;stroke-linecap:round")
-				.set("d", figure_ng_path),
+				.set("class", "short")
+				.set("style", "fill:none;stroke:#00ff99;stroke-linecap:round")
+				.set("d", figure_short_path),
+		)
+		.add(
+			Path::new()
+				.set("class", "long")
+				.set("style", "fill:none;stroke:#ff0099;stroke-linecap:round")
+				.set("d", figure_long_path),
+		)
+		.add(
+			Path::new()
+				.set("class", "out")
+				.set("style", "fill:none;stroke:#ff0000;stroke-linecap:round")
+				.set("d", figure_out_path),
 		);
 
 	svg::write(w, &svg)
