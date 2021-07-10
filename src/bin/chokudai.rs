@@ -1,5 +1,6 @@
 #![allow(unused)]
 use icfpc2021::*;
+use num::integer::Roots;
 use rand::prelude::*;
 use std::env;
 
@@ -8,6 +9,7 @@ fn main() {
 
 	let input_path = format!("{}{}{}", "./problems/", args[1], ".json");
 	let output_path = format!("{}{}{}", "./best/", args[1], ".json");
+	//let output_path = format!("{}{}{}", "./chokudai_test/", args[1], ".json");
 	//let output_path= format!("{}{}{}", "../../Users/choku/Dropbox/ICFPC2021/best/", args[1], ".json");
 
 	let filesize = std::fs::File::open(&output_path).unwrap().metadata().unwrap().len();
@@ -20,8 +22,8 @@ fn main() {
 		output = read_output_from_file(&output_path);
 	}
 	//let output = &Output { vertices: input.figure.vertices.clone() };
-	dbg!(&input);
-	dbg!(&output);
+	//bg!(&input);
+	//dbg!(&output);
 
 
 	let n = output.vertices.len();
@@ -85,10 +87,17 @@ fn main() {
 	for i in 0..n {
 		//first_now[i] = P(maxnum as i64 / 2, maxnum as i64 / 2);
 		//first_now[i] = P(maxnum as i64 - input.figure.vertices[i].0 - 1, maxnum as i64 - input.figure.vertices[i].1 - 1);
+		//first_now[i] = P(maxnum as i64 * 3 / 4 - input.figure.vertices[i].0 / 2 - 1, maxnum as i64 * 3 / 4 - input.figure.vertices[i].1 / 2 - 1);
 		//first_now[i] = P(maxnum as i64 - output.vertices[i].0 - 1, maxnum as i64 - output.vertices[i].1 - 1);
+		//
 		
 		first_now[i] = output.vertices[i].clone();
+		//first_now[i] = input.figure.vertices[i].clone();
+		//first_now[i] = P(input.figure.vertices[i].0 / 2 + maxnum as i64 / 4, input.figure.vertices[i].1 / 2 + maxnum as i64 / 4);
+		//first_now[i] = P(input.figure.vertices[i].0 / 4 + maxnum as i64 * 3 / 8, input.figure.vertices[i].1 / 4 + maxnum as i64 * 3 / 8);
+
 		//first_now[i] = P(thread_rng().gen_range(0..maxnum) as i64, thread_rng().gen_range(0..maxnum) as i64);
+		//first_now[i] = P(thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4, thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4);
 	}
 
 	let eps = input.epsilon;
@@ -147,6 +156,26 @@ fn main() {
 	}
 
 
+	//holeの長さからholeと頂点を決め打ちするやつ
+	
+	/*
+	for i in 0..v {
+		let d1 = (input.hole[i] - input.hole[(i+1)%v]).abs2();
+		let d2 = (input.hole[(i + 1)% v] - input.hole[(i+2)%v]).abs2();
+
+		for j in 0..n {
+			let mut flag = 0;
+			for k in &v_list[j] {
+				let d3 = (input.figure.vertices[j] - input.figure.vertices[*k]).abs2();
+				if (d1-d3).abs() * 1000000 <= d1*eps {flag |= 1;}
+				if (d2-d3).abs() * 1000000 <= d2*eps {flag |= 2;}
+			}
+			if flag == 3 {
+				println!("{} is {}", i, j);
+			}
+		}
+	}
+	*/
 
 	let mut allbest =  -9999999999999999.0;
 	let mut allbest2 =  -9999999999999999.0;
@@ -158,7 +187,7 @@ fn main() {
 		allbest2 = ret.0;
 	}
 
-	eprintln!("start : {}", &allbest);
+	//eprintln!("start : {}", &allbest);
 
 	let mut best_part = vec![0; v];
 	for i in 0..v {
@@ -184,6 +213,8 @@ fn main() {
 				
 				now_temp[i] = P(nexty, nextx);
 			}
+			
+			//now_temp[i] = P(thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4, thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4);
 		}
 		
 
@@ -215,12 +246,32 @@ fn main() {
 
 		let loopend = 3000000;
 
+		let none = 9999;
+		let mut prechoose = none;
+		let mut premove = none;
+
+		let mut prescore = bestscore;
+
 		for cnt in 0..loopend{
 			if update < 0 { break; }
 			update -= 1;
-			let target =  thread_rng().gen_range(0..n);
-			let now_score = get_all_score(&input, &now, eps, &point_board);
-			let move_type = thread_rng().gen_range(0..8);
+			let now_score = prescore; //get_all_score(&input, &now, eps, &point_board);
+			let target =  {
+				if prechoose == none {
+					thread_rng().gen_range(0..n)
+				}
+				else{
+					prechoose
+				}
+			};
+			let move_type = {
+				if prechoose == none {
+					thread_rng().gen_range(0..8)
+				}
+				else{
+					premove
+				}
+			};
 
 			let mut move_vec = vec![0; 0];
 			move_vec.push(target);
@@ -244,16 +295,21 @@ fn main() {
 
 			//println!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
 			
-			if now_score.0 - next_score.0 > thread_rng().gen_range(0..1000) as f64 * pow3(pow3(pow3(1.0 - temp))) / 200.0 {
+			if now_score - next_score.0 > thread_rng().gen_range(0..1000) as f64 * pow3(pow3(pow3(1.0 - temp))) / 200.0 {
 				
 				for i in &move_vec {
 					now[*i] = now[*i] - vp[move_type];
 				}
-				
+				premove = none;
+				prechoose = none;
 				//now[target] = now[target] - vp[move_type];
 			}
 			else{
-				//println!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
+				prescore = next_score.0;
+				premove = move_type;
+				prechoose = target;
+
+				//rintln!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
 				if next_score.0 > bestscore{
 					//println!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
 					bestscore = next_score.0;
@@ -279,13 +335,13 @@ fn main() {
 		//	best_part = nowpart.clone();
 		//}
 
-		eprintln!("{}", bestscore);
+		//eprintln!("{}", bestscore);
 
 		if allbest >= 100000.0 { break; }
 	}
 	
-	eprintln!("ans : {}", 100000.0 - allbest);
-	eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone() }));
+	//eprintln!("ans : {}", 100000.0 - allbest);
+	//eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone() }));
 
 	write_output(&Output { vertices: best_ans.clone() })
 }
@@ -301,7 +357,7 @@ fn main() {
 fn get_all_score(inp: &Input, now: &Vec<P<i64>>, eps: i64, point_board: &Vec<Vec<f64>>) -> (f64, f64) {
 
 	let outside_value = 20.0;
-	let outside_value2 = 1000000.0;
+	let outside_value2 = 1000.0; //1000000.0;
 	let distance_value = 100.0;
 
 	let mut score = 0.0;
@@ -355,6 +411,15 @@ fn get_all_score(inp: &Input, now: &Vec<P<i64>>, eps: i64, point_board: &Vec<Vec
 
 
 		if !P::contains_s(&inp.hole, (now[e.0], now[e.1])) {
+			if point_board[now[e.0].0 as usize][now[e.0].1 as usize]!= 0.0 || point_board[now[e.1].0 as usize][now[e.1].1 as usize] != 0.0{
+				score -= 100.0 * outside_value2;
+			}
+			else{
+				let d2 = shortest_path(&inp.hole, now[e.0], now[e.1]);
+				let d1 = (now[e.0] - now[e.1]).abs2().sqrt();
+				let mul = (d2.0 - d1 as f64) / 2.0 + 1.0;
+				score -= mul * mul * outside_value2;
+			}
 			score -= outside_value2;
 		}
 	}
@@ -405,82 +470,3 @@ pub fn get_time() -> f64 {
 }
 
 
-
-fn get_all_score2(inp: &Input, now: &Vec<P<i64>>, eps: i64, point_board: &Vec<Vec<f64>>) -> (f64, f64) {
-
-	let outside_value = 20.0;
-	let outside_value2 = 1000000.0;
-	let distance_value = 100.0;
-
-	let mut score = 0.0;
-	let vs = inp.figure.vertices.clone();
-	let es = inp.figure.edges.clone();
-	let n = vs.len();
-	//let Hole = inp.hole;
-
-	for v in 0..n{
-		score -= pow3(point_board[now[v].0 as usize][now[v].1 as usize]) * outside_value;
-	}
-
-	for e in es {
-		let d1 = (vs[e.0]- vs[e.1]).abs2(); 
-		let d2 = (now[e.0]- now[e.1]).abs2(); 
-		let epsd = (d1 * eps) as f64 / 1000000.0;
-		let mut dd = (d2 - d1).abs() as f64;
-		if dd <= epsd {
-			dd = 0.0;
-			//dd /= 5.0;
-			//inner_flag = true;
-		}
-		else {dd = dd - epsd + 0.1; }
-
-		//let before = (vs[e.0] - vs[e.1]).abs2();
-		//let after = (now[e.0] - now[e.1]).abs2();
-		
-		//if (after * 1000000 - before * 1000000).abs() > eps * before {
-		//	if dd < 0.1 { dd = 0.1; println!("!?"); }
-		//}
-
-		
-		if dd <= 1.0{
-			dd /= 2.0;
-		}
-		else if dd <= 2.0{
-			//dd /= 20.0;
-		}
-		else if dd <= 3.0{
-			//dd /= 10.0;
-		}
-		
-		score -= dd * distance_value;
-
-
-		if !P::contains_s(&inp.hole, (now[e.0], now[e.1])) {
-			score -= outside_value2;
-		}
-	}
-
-	let okflag = score;
-
-	if true {
-		score += 100000.0;
-		for i in &inp.hole{
-			let mut min_dist = 99999999999;
-			for j in 0..n {
-				let dist = hyp(now[j].0 - i.0, now[j].1 - i.1);
-				if dist < min_dist {
-					min_dist = dist;
-				}
-			}
-			score -= min_dist as f64;
-		}
-	}
-
-	/*
-	score += 100000.0;
-	for i in 0..inp.hole.len() {
-		score -= hyp(now[part[i]].0 -  inp.hole[i].0, now[part[i]].1 -  inp.hole[i].1) as f64;
-	}
-	*/
-	return (score, okflag);
-}
