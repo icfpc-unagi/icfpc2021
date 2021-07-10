@@ -114,8 +114,10 @@ class ProblemRenderer {
         const p0 = xyFromPoint(vertices[i].position);
         const p1 = xyFromPoint(vertices[j].position);
         const d2Now = abs2(p0, p1);
-        const ok = Math.abs(d2Now / d2Orig - 1) < this.epsilon / 1_000_000;
-        const color = ok ? 0x0000ff : d2Now < d2Orig ? 0x9900ff : 0xff0000;
+        const atol = d2Orig * this.epsilon;
+        const target = 1_000_000 * d2Orig;
+        const ok = Math.abs(1_000_000 * d2Now - target) <= atol;
+        const color = ok ? 0x0000ff : d2Now < d2Orig ? 0xcccc00 : 0xff0000;
         segment
           .clear()
           .lineStyle({
