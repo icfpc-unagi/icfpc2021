@@ -92,21 +92,23 @@ func Submit(ctx context.Context, problemID int64, solution string, force bool) (
 	}
 
 	var bestScore int64
-	err = db.Cell(ctx, &bestScore, "SELECT COALESCE(MIN(submission_score), -1) FROM submissions WHERE problem_id = ? AND submission_score >= 0", problemID)
+	err = db.Cell(ctx, &bestScore, `
+SELECT COALESCE(MIN(submission_estimated_score), -1)
+FROM submissions
+WHERE problem_id = ? AND submission_estimated_score >= 0
+`, problemID)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to get the best score")
 	}
 
-	if !force {
-		if bestScore != -1 && bestScore <= estimatedScore {
-			glog.Infof("Score is not updated: problem_id=%d, score=%d, best=%d", problemID, estimatedScore, bestScore)
-			return 0, nil
+	var poseID string
+	if bestScore == -1 || estimatedScore < bestScore || force {
+		poseID, err = submitToOfficial(problemID, solution)
+		if err != nil {
+			return 0, err
 		}
-	}
-
-	poseID, err := submitToOfficial(problemID, solution)
-	if err != nil {
-		return 0, err
+	} else {
+		glog.Infof("Skipping submission: %d vs %d", estimatedScore, bestScore)
 	}
 
 	result, err := db.Execute(ctx,
