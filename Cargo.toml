@@ -22,6 +22,7 @@ svg = "*"
 docopt = "1.1.1"
 indicatif = "0.16.2"
 chrono = "0.4.19"
+ordered-float = "2.6.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = "*"

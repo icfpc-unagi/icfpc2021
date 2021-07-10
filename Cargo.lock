@@ -233,6 +233,7 @@ dependencies = [
  "image",
  "indicatif",
  "num",
+ "ordered-float",
  "rand",
  "serde",
  "serde_json",
@@ -454,6 +455,15 @@ name = "number_prefix"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "830b246a0e5f20af87141b25c173cd1b609bd7779a4617d6ec582abaf90870f3"
+
+[[package]]
+name = "ordered-float"
+version = "2.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6dea6388d3d5498ec651701f14edbaf463c924b5d8829fb2848ccf0bcc7b3c69"
+dependencies = [
+ "num-traits",
+]
 
 [[package]]
 name = "png"
