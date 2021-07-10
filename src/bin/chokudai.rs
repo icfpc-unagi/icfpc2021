@@ -23,8 +23,10 @@ fn main() {
 	dbg!(&input);
 	dbg!(&output);
 
+
 	let n = output.vertices.len();
 	let v = input.hole.len();
+	
 	
 	let mut first_now = output.vertices.clone();
 	
@@ -137,6 +139,15 @@ fn main() {
 	*/
 
 
+	let mut v_list = vec![vec![0; 0]; n];
+
+	for i in &input.figure.edges{
+		v_list[i.0].push(i.1);
+		v_list[i.1].push(i.0);
+	}
+
+
+
 	let mut allbest =  -9999999999999999.0;
 	let mut allbest2 =  -9999999999999999.0;
 	let mut best_ans = first_now.clone();
@@ -195,14 +206,14 @@ fn main() {
 
 		let ret = get_all_score(&input, &now, eps, &point_board);
 		let mut bestscore  = ret.0;
-		let updatenum = 20000;
+		let updatenum = 30000;
 		let mut update = updatenum;
 
 		//eprintln!(" first_score : {}", bestscore);
 		//eprintln!(" first_score2 : {}", compute_score(&input, &Output { vertices: now.clone() }));
 
 
-		let loopend = 2000000;
+		let loopend = 3000000;
 
 		for cnt in 0..loopend{
 			if update < 0 { break; }
@@ -210,12 +221,22 @@ fn main() {
 			let target =  thread_rng().gen_range(0..n);
 			let now_score = get_all_score(&input, &now, eps, &point_board);
 			let move_type = thread_rng().gen_range(0..8);
-			now[target] = now[target] + vp[move_type];
 
-			if now[target].0 < 0 || now[target].1 < 0 || now[target].0 >= maxnum as i64 || now[target].1 >= maxnum as i64 {
-				now[target] = now[target] - vp[move_type];
-				continue;
+			let mut move_vec = vec![0; 0];
+			move_vec.push(target);
+			let move_rate = thread_rng().gen_range(0..100);
+
+			for i in &v_list[target] {
+				if thread_rng().gen_range(0..100) < move_rate {
+					move_vec.push(*i);
+				}
 			}
+
+			for i in &move_vec {
+				now[*i] = now[*i] + vp[move_type];
+			}
+
+			//now[target] = now[target] + vp[move_type];
 
 			let temp =  cnt as f64 / loopend as f64;
 
@@ -224,7 +245,12 @@ fn main() {
 			//println!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
 			
 			if now_score.0 - next_score.0 > thread_rng().gen_range(0..1000) as f64 * pow3(pow3(pow3(1.0 - temp))) / 200.0 {
-				now[target] = now[target] - vp[move_type];
+				
+				for i in &move_vec {
+					now[*i] = now[*i] - vp[move_type];
+				}
+				
+				//now[target] = now[target] - vp[move_type];
 			}
 			else{
 				//println!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
@@ -283,6 +309,13 @@ fn get_all_score(inp: &Input, now: &Vec<P<i64>>, eps: i64, point_board: &Vec<Vec
 	let es = inp.figure.edges.clone();
 	let n = vs.len();
 	//let Hole = inp.hole;
+
+	for i in 0..n {
+		if now[i].0 < 0 {return (-999999999999.9, -9999999999999.9);}
+		if now[i].1 < 0 {return (-999999999999.9, -9999999999999.9);}
+		if now[i].0 >= point_board.len() as i64 {return (-999999999999.9, -9999999999999.9);}
+		if now[i].1 >= point_board.len() as i64 {return (-999999999999.9, -9999999999999.9);}
+	}
 
 	for v in 0..n{
 		score -= pow3(point_board[now[v].0 as usize][now[v].1 as usize]) * outside_value;
