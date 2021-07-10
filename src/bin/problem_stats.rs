@@ -13,6 +13,8 @@ struct ProblemStat {
     n_figure_vs: usize,
     n_figure_es: usize,
     n_triangles: usize,
+    out_bonuses: Vec<Bonus>,
+    in_bonuses: Vec<(i64, Bonus)>,
 }
 
 fn max_coord(input: &Input) -> i64 {
@@ -79,6 +81,8 @@ impl ProblemStat {
             n_figure_vs: input.figure.vertices.len(),
             n_figure_es: input.figure.edges.len(),
             n_triangles: n_triangles(&input.figure),
+            out_bonuses: input.bonuses.clone(),
+            in_bonuses: vec![]
         }
     }
 
@@ -92,6 +96,11 @@ impl ProblemStat {
             "\t{}\t{}\t{}\t{}",
             self.n_hole_vs, self.n_figure_vs, self.n_figure_es, self.n_triangles
         );
+        print!(
+            "\t{}\t{}",
+            self.in_bonuses.iter().map(|(p, b)| format!("{} {:?}", p, b.bonus)).collect::<Vec<_>>().join(", "),
+            self.out_bonuses.iter().map(|b| format!("{} {:?}", b.problem, b.bonus)).collect::<Vec<_>>().join(", "),
+        );
         println!();
     }
 }
@@ -99,6 +108,7 @@ impl ProblemStat {
 fn main() {
     let mut problem_stats = vec![];
 
+    let mut in_bonuses = std::collections::HashMap::new();
     for entry in glob::glob("./problems/*.json").unwrap() {
         let path = entry.unwrap();
 
@@ -116,9 +126,19 @@ fn main() {
         let input: Input = serde_json::from_reader(reader).unwrap();
 
         problem_stats.push(ProblemStat::new(problem_id, &input));
+
+        for bonus in input.bonuses {
+            in_bonuses.entry(bonus.problem).or_insert(vec![]).push((problem_id, bonus));
+        }
     }
 
+    for ps in problem_stats.iter_mut() {
+        if let Some(bonuses) = in_bonuses.remove(&(ps.problem_id as u32)) {
+            ps.in_bonuses = bonuses;
+        }
+    }
     problem_stats.sort_by_key(|ps| ps.problem_id);
+
 
     for ps in problem_stats {
         ps.println()
