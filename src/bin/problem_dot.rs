@@ -24,14 +24,17 @@ fn main() {
         let out_file = std::fs::File::create(&out_path).unwrap();
         let mut writer = std::io::BufWriter::new(out_file);
         writer.write("graph{\n".as_bytes()).unwrap();
-        for i in 0..input.figure.vertices.len() {
+        let vs = input.figure.vertices;
+        for i in 0..vs.len() {
             writer
-                .write(format!("{} [shape=circle]", i).as_bytes())
+                .write(format!("{} [shape=circle]\n", i).as_bytes())
                 .unwrap();
         }
-        for (x, y) in input.figure.edges {
+        for (a, b) in input.figure.edges {
+            let d2 = (vs[a] - vs[b]).abs2();
+            let d = (d2 as f64).ln_1p() / 5.0 + 0.1;
             writer
-                .write(format!("{} -- {}\n", x, y).as_bytes())
+                .write(format!("{} -- {} [len={}]\n", a, b, d).as_bytes())
                 .unwrap();
         }
         writer.write("}\n".as_bytes()).unwrap();
