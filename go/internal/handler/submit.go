@@ -91,6 +91,23 @@ func Submit(ctx context.Context, problemID int64, solution string, force bool) (
 		return 0, errors.New("solution is invalid")
 	}
 
+	var officialBestScore int64
+	err = db.Cell(ctx, &officialBestScore, `
+SELECT COALESCE(MIN(submission_score), -1)
+FROM submissions
+WHERE problem_id = ? AND submission_score >= 0
+`, problemID)
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to get the best score")
+	}
+
+	if !force {
+		if officialBestScore != -1 && officialBestScore <= estimatedScore {
+			glog.Infof("Official best score is better: %d vs %d", estimatedScore, officialBestScore)
+			return 0, nil
+		}
+	}
+
 	var bestScore int64
 	err = db.Cell(ctx, &bestScore, `
 SELECT COALESCE(MIN(submission_estimated_score), -1)

@@ -1,19 +1,20 @@
 use icfpc2021::{*, util::*};
 use std::fs::File;
 
+
 fn compute_score(input: &Input, out: &Output) -> i64 {
-	let mut score = 0;
+       let mut score = 0;
     if input.figure.vertices.len() != out.vertices.len() {
         return -1;
     }
-	for &p in &input.hole {
-		let mut min = i64::max_value();
-		for q in &out.vertices {
-			min.setmin((p - q.to_owned()).abs2());
-		}
-		score += min;
-	}
-	score
+       for &p in &input.hole {
+               let mut min = i64::max_value();
+               for q in &out.vertices {
+                       min.setmin((p - q.to_owned()).abs2());
+               }
+               score += min;
+       }
+       score
 }
 
 fn main() -> std::io::Result<()> {
@@ -27,6 +28,10 @@ fn main() -> std::io::Result<()> {
 
   
     let score = compute_score(&prob, &pose);
-    println!("{}", score);
+    if score >= 1000000000 {
+        println!("-1");
+    } else {
+        println!("{}", score);
+    }
     Ok(())
 }
