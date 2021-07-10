@@ -8,7 +8,7 @@ fn main() -> std::io::Result<()> {
     let prob = if args.len() < 2 {
         read_input()
     } else {
-        serde_json::from_reader(File::open(&args[2])?)?
+        serde_json::from_reader(File::open(&args[1])?)?
     };
 
     render_problem_svg(&prob, std::io::stdout())
