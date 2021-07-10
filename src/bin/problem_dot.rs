@@ -24,6 +24,11 @@ fn main() {
         let out_file = std::fs::File::create(&out_path).unwrap();
         let mut writer = std::io::BufWriter::new(out_file);
         writer.write("graph{\n".as_bytes()).unwrap();
+        for i in 0..input.figure.vertices.len() {
+            writer
+                .write(format!("{} [shape=circle]", i).as_bytes())
+                .unwrap();
+        }
         for (x, y) in input.figure.edges {
             writer
                 .write(format!("{} -- {}\n", x, y).as_bytes())
