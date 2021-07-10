@@ -160,7 +160,7 @@ fn main() {
 	let mut data = Data { input, dist, inside, g, cand: vec![] };
 	let mut best = vec![];
 	let mut best_score = i64::max_value();
-	for _ in 0..1 {
+	for _ in 0..3 {
 		eprintln!("eps = {}", data.input.epsilon);
 		let mut cand = mat![vec![]; n; n];
 		for i in 0..n {
