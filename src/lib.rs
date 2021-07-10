@@ -55,7 +55,7 @@ pub fn read_input() -> Input {
 }
 
 
-pub fn read_input_from_file(f: &std::path::PathBuf) -> Input {
+pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
 	let mut input: Input = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
 	for i in 0..input.figure.edges.len() {
 		if input.figure.edges[i].0 > input.figure.edges[i].1 {
@@ -80,7 +80,7 @@ pub fn write_output(out: &Output) {
 	println!("{}", serde_json::to_string(out).unwrap());
 }
 
-pub fn read_output_from_file(f: &std::path::PathBuf) -> Output {
+pub fn read_output_from_file(f: impl AsRef<std::path::Path>) -> Output {
 	serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap()
 }
 

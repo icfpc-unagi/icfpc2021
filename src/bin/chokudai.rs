@@ -14,10 +14,10 @@ fn main() {
 	//eprintln!("{}", input_path);
 	//eprintln!("{}", output_path);
 
-	let input = read_input_from_file(&input_path.into());
+	let input = read_input_from_file(&input_path);
 	let mut output = Output { vertices: input.figure.vertices.clone()};
 	if filesize > 0 {
-		output = read_output_from_file(&output_path.into());
+		output = read_output_from_file(&output_path);
 	}
 	//let output = &Output { vertices: input.figure.vertices.clone() };
 	dbg!(&input);
