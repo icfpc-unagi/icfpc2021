@@ -25,4 +25,5 @@ jobs:
           rustup target add x86_64-unknown-linux-musl
           cargo vendor
           cargo build --release
-          gsutil cp -r ./target/release gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/rust
+          rm -rf ./target/release/.fingerprint ./target/release/deps
+          gsutil -m cp -r ./target/release gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/rust
