@@ -385,3 +385,95 @@ fn stretch_within<T: num::traits::Signed + From<i32> + Copy>(d2: T, base_d2: T, 
 		Ordering::Greater
 	}
 }
+
+//
+// shortest path
+//
+
+fn compute_adjmat(input: &Input) -> Vec<Vec<bool>> {
+	let n_vs = input.hole.len();
+	let mut adjmat = vec![vec![false; n_vs]; n_vs];
+
+	for u in 0..n_vs {
+		for v in (u + 1)..n_vs {
+			let b = P::contains_s(&input.hole, (input.hole[u], input.hole[v]));
+			adjmat[u][v] = b;
+			adjmat[v][u] = b;
+		}
+	}
+
+	adjmat
+}
+
+fn shortest_path_rec(i: usize, j: usize, via: &Vec<Vec<usize>>, path: &mut Vec<usize>) {
+	if via[i][j] == !0 {
+		path.push(i);
+	} else {
+		let k = via[i][j];
+		shortest_path_rec(i, k, via, path);
+		shortest_path_rec(k, j, via, path);
+	}
+}
+
+/// p0からp1にhole内部だけを通って行く最短経路を計算する。
+///
+/// p0, p1はhole内部あるいは境界上であること。
+/// 距離と、通過する端点の列（holeの頂点番号）を返す。
+pub fn shortest_path(input: &Input, p0: Point, p1: Point) -> (f64, Vec<usize>) {
+	// 直接いけるならもういいよ
+	if P::contains_s(&input.hole, (p0, p1)) {
+		return (((p1 - p0).abs2() as f64).sqrt(), vec![]);
+	}
+
+	// TODO: adjmat作るのが重かったらここキャッシュできる
+	let mut adjmat = compute_adjmat(input);
+
+	let n_hole_vs = input.hole.len();
+	for u in 0..n_hole_vs {
+		adjmat[u].push(P::contains_s(&input.hole, (input.hole[u], p0)));
+		adjmat[u].push(P::contains_s(&input.hole, (input.hole[u], p1)));
+	}
+
+	let mut row0: Vec<bool> = (0..n_hole_vs).map(|i| adjmat[i][n_hole_vs]).collect();
+	let mut row1: Vec<bool> = (0..n_hole_vs).map(|i| adjmat[i][n_hole_vs + 1]).collect();
+	let n_vs = n_hole_vs + 2;
+	row0.resize(n_vs, false);
+	row1.resize(n_vs, false);
+	adjmat.push(row0);
+	adjmat.push(row1);
+
+	let mut ps = input.hole.clone();
+	ps.push(p0);
+	ps.push(p1);
+
+	let mut dst = vec![vec![1e30; n_vs]; n_vs];
+	for u in 0..n_vs {
+		for v in (u + 1)..n_vs {
+			if adjmat[u][v] {
+				let d = ((ps[u] - ps[v]).abs2() as f64).sqrt();
+				dst[u][v] = d;
+				dst[v][u] = d;
+			}
+		}
+	}
+
+	let mut via = vec![vec![!0; n_vs]; n_vs];
+	for k in 0..n_vs {
+		for i in 0..n_vs {
+			for j in 0..n_vs {
+				if dst[i][k] + dst[k][j] < dst[i][j] {
+					dst[i][j] = dst[i][k] + dst[k][j];
+					via[i][j] = k;
+				}
+			}
+		}
+	}
+
+	let mut path = vec![];
+	let s = n_hole_vs;
+	let t = n_hole_vs + 1;
+	shortest_path_rec(s, t, &via, &mut path);
+	assert_eq!(path.remove(0), s);
+
+	(dst[s][t], path)
+}
