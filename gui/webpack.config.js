@@ -34,6 +34,10 @@ module.exports = {
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
+  experiments: {
+    asyncWebAssembly: true
+    // syncWebAssembly: true
+  },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
