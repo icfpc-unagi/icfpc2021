@@ -25,53 +25,33 @@ pub fn path<T: std::fmt::Display>(edges: &[(usize, usize)], vertices: &[P<T>]) -
 }
 
 pub fn render_problem_svg<W: io::Write>(prob: &Input, w: W) -> io::Result<()> {
-    let hole_polygon = paths::polygon(&prob.hole);
-    let figure_path = paths::path(&prob.figure.edges, &prob.figure.vertices);
-
-    let svg = svg::Document::new()
-        .set("height", 500)
-        .set("width", 500)
-        .set(
-            "viewBox",
-            (
-                0,
-                0,
-                prob.hole.iter().map(|p| p.0).max().unwrap(),
-                prob.hole.iter().map(|p| p.1).max().unwrap(),
-            ),
-        )
-        .add(
-            Polygon::new()
-                .set("fill", "grey")
-                .set("points", hole_polygon),
-        )
-        .add(Path::new().set("stroke", "red").set("d", figure_path));
-
-    svg::write(w, &svg)
+    render_svg(prob, &prob.figure.vertices, w)
 }
 
 pub fn render_pose_svg<W: io::Write>(prob: &Input, pose: &Output, w: W) -> io::Result<()> {
+    render_svg(prob, &pose.vertices, w)
+}
+
+fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Result<()> {
+    let width = prob.hole.iter().map(|p| p.0).max().unwrap();
+    let height = prob.hole.iter().map(|p| p.1).max().unwrap();
     let hole_polygon = paths::polygon(&prob.hole);
-    let figure_path = paths::path(&prob.figure.edges, &pose.vertices);
+    let figure_path = paths::path(&prob.figure.edges, &vertices);
 
     let svg = svg::Document::new()
-        .set("height", 500)
+        // .set("height", 500)
         .set("width", 500)
-        .set(
-            "viewBox",
-            (
-                0,
-                0,
-                prob.hole.iter().map(|p| p.0).max().unwrap(),
-                prob.hole.iter().map(|p| p.1).max().unwrap(),
-            ),
-        )
+        .set("viewBox", (0, 0, width, height))
         .add(
             Polygon::new()
                 .set("fill", "grey")
                 .set("points", hole_polygon),
         )
-        .add(Path::new().set("stroke", "red").set("d", figure_path));
+        .add(
+            Path::new()
+                .set("style", "fill:none;stroke:#ff0000;stroke-linecap:round")
+                .set("d", figure_path),
+        );
 
     svg::write(w, &svg)
 }
