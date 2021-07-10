@@ -2,8 +2,9 @@ import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
+// lazy import
 import wasm_ from "icfpc2021";
-let wasm: any;
+let wasm: undefined | typeof wasm_;
 
 const WHITE: number = 0xffffff;
 
@@ -197,13 +198,16 @@ class ProblemRenderer {
 }
 
 mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
+// console.log(wasm);
+// console.log(wasm.check_solution1);
+// console.log(wasm.check_solution1(sampleInput, sampleOutput));
 
 (wasm_ as any)
   .then((wasm__: any) => {
     wasm = wasm__;
   })
-  .catch(() => {
-    console.log("failed to load wasm");
+  .catch((e: any) => {
+    console.log("failed to load wasm:", e);
   })
   .then(() => {
     let r = new ProblemRenderer(sampleInput);
