@@ -83,12 +83,12 @@ struct Data {
 	cand: Vec<Vec<Vec<Point>>>,
 }
 
-fn can_place(data: &Data, out: &Vec<Point>, used: &Vec<bool>, u: usize, p: Point) -> bool {
+fn can_place(data: &Data, out: &Vec<Point>, u: usize, p: Point) -> bool {
 	if p.0 < 0 || p.0 >= data.inside.len() as i64 || p.1 < 0 || p.1 >= data.inside[0].len() as i64 || !data.inside[p.0 as usize][p.1 as usize] {
 		return false;
 	}
 	for &v in &data.g[u] {
-		if !used[v] {
+		if out[v].0 < 0 {
 			continue;
 		}
 		if !P::contains_s(&data.input.hole, (p, out[v])) {
@@ -101,8 +101,8 @@ fn can_place(data: &Data, out: &Vec<Point>, used: &Vec<bool>, u: usize, p: Point
 		}
 	}
 	let mul_ub = (1.0 + data.input.epsilon as f64 * 1e-6).sqrt();
-	for v in 0..used.len() {
-		if !used[v] {
+	for v in 0..out.len() {
+		if out[v].0 < 0 {
 			continue;
 		}
 		let dist = ((p - out[v]).abs2() as f64).sqrt();
@@ -113,21 +113,47 @@ fn can_place(data: &Data, out: &Vec<Point>, used: &Vec<bool>, u: usize, p: Point
 	true
 }
 
-fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
+fn partial_score(input: &Input, out: &Vec<Point>, s: usize, m: usize) -> i64 {
+	let mut score = 0;
+	for i in s..s+m {
+		let i = i % input.hole.len();
+		let mut min = i64::max_value();
+		for &p in out {
+			if p.0 >= 0 {
+				min.setmin((p - input.hole[i]).abs2());
+				
+			}
+		}
+		score += min;
+	}
+	score
+}
+
+const M: i64 = 20;
+
+fn hash(p: Point) -> Point {
+	P(p.0 / M, p.1 / M)
+}
+
+fn dp(data: &Data, node: Node) -> BTreeMap<(Vec<Point>, usize, usize), (i64, Vec<Point>)> {
 	match node {
-		Node::Leaf(_u) => {
-			let mut ret = BTreeSet::new();
+		Node::Leaf(u) => {
+			let mut ret = BTreeMap::new();
 			for x in 0..data.inside.len() {
 				for y in 0..data.inside[x].len() {
 					if data.inside[x][y] {
 						let p = P(x as i64, y as i64);
-						let mut used = vec![];
+						let mut out = vec![P(-1, -1); data.g.len()];
+						out[u] = p;
 						for s in 0..data.input.hole.len() {
-							if data.input.hole[s] == p {
-								used.push(s);
+							for m in 0..=data.input.hole.len() {
+								let mut score = 0;
+								for i in 0..m {
+									score += (data.input.hole[(s + i) % data.input.hole.len()] - p).abs2();
+								}
+								ret.insert((vec![hash(p)], s, m), (score, out.clone()));
 							}
 						}
-						ret.insert((vec![p], used));
 					}
 				}
 			}
@@ -135,11 +161,11 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 			ret
 		},
 		Node::Forget(bag, u, c) => {
-			let mut ret = BTreeSet::new();
+			let mut ret = BTreeMap::new();
 			let i = bag.binary_search(&u).err().unwrap();
-			for (mut ps, used) in dp(data, *c) {
+			for ((mut ps, s, m), (score, out)) in dp(data, *c) {
 				ps.remove(i);
-				ret.insert((ps, used));
+				ret.entry((ps, s, m)).or_insert((i64::max_value(), vec![])).setmin((score, out));
 			}
 			dbg!(ret.len(), bag);
 			ret
@@ -147,37 +173,24 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 		Node::Introduce(bag, u, c) => {
 			let i = bag.iter().position(|&v| v == u).unwrap();
 			let cr = dp(data, *c);
-			let mut out = vec![P(-1, -1); data.cand.len()];
-			let mut used_v = vec![false; data.cand.len()];
-			for &b in &bag {
-				if u != b {
-					used_v[b] = true;
-				}
-			}
-			let mut ret = BTreeSet::new();
-			if let Some(r) = bag.iter().position(|&r| data.g[u].contains(&r)) {
-				for &d in &data.cand[u][bag[r]] {
-					for (ps, used) in &cr {
-						for j in 0..bag.len() {
-							if j < i {
-								out[bag[j]] = ps[j];
-							} else if j > i {
-								out[bag[j]] = ps[j - 1];
-							}
-						}
-						if can_place(data, &out, &used_v, u, ps[r - if r > i { 1 } else { 0 }] + d) {
+			let mut ret = BTreeMap::new();
+			if let Some(&r) = bag.iter().find(|&r| data.g[u].contains(&r)) {
+				for &d in &data.cand[u][r] {
+					for ((ps, s, m), (_, out)) in &cr {
+						let p = out[r] + d;
+						if can_place(data, &out, u, p) {
 							let mut ps = ps.clone();
-							let p = ps[r - if r > i { 1 } else { 0 }] + d;
-							ps.insert(i, p);
-							let mut used = used.clone();
-							for s in 0..data.input.hole.len() {
-								if data.input.hole[s] == p {
-									used.push(s);
-									used.sort();
-									used.dedup();
+							ps.insert(i, hash(p));
+							let mut out = out.clone();
+							out[u] = p;
+							for s2 in 0..=*s {
+								if s + m - s2 <= data.input.hole.len() {
+									ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s2, s + m - s2), out.clone()));
 								}
 							}
-							ret.insert((ps, used));
+							for m2 in *m..=data.input.hole.len() {
+								ret.entry((ps.clone(), *s, m2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, *s, m2), out.clone()));
+							}
 						}
 					}
 				}
@@ -187,26 +200,20 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 					for y in 0..data.inside[x].len() {
 						let p = P(x as i64, y as i64);
 						if data.inside[x][y] {
-							for (ps, used) in &cr {
-								for j in 0..bag.len() {
-									if j < i {
-										out[bag[j]] = ps[j];
-									} else if j > i {
-										out[bag[j]] = ps[j - 1];
-									}
-								}
-								if can_place(data, &out, &used_v, u, p) {
+							for ((ps, s, m), (_, out)) in &cr {
+								if can_place(data, &out, u, p) {
 									let mut ps = ps.clone();
-									ps.insert(i, p);
-									let mut used = used.clone();
-									for s in 0..data.input.hole.len() {
-										if data.input.hole[s] == p {
-											used.push(s);
-											used.sort();
-											used.dedup();
+									ps.insert(i, hash(p));
+									let mut out = out.clone();
+									out[u] = p;
+									for s2 in 0..=*s {
+										if s + m - s2 <= data.input.hole.len() {
+											ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s2, s + m - s2), out.clone()));
 										}
 									}
-									ret.insert((ps, used));
+									for m2 in *m..=data.input.hole.len() {
+										ret.entry((ps.clone(), *s, m2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, *s, m2), out.clone()));
+									}
 								}
 							}
 						}
@@ -217,18 +224,32 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 			ret
 		},
 		Node::Join(_bag, l, r) => {
-			let mut cr = BTreeMap::new();
-			for (ps, used) in dp(data, *r) {
-				cr.entry(ps).or_insert(vec![]).push(used);
-			}
-			let mut ret = BTreeSet::new();
-			for (ps, used) in dp(data, *l) {
-				for used2 in cr.get(&ps).unwrap_or(&vec![]) {
-					let mut used = used.clone();
-					used.extend(used2);
-					used.sort();
-					used.dedup();
-					ret.insert((ps.clone(), used));
+			let cr = dp(data, *r);
+			let mut ret = BTreeMap::new();
+			for ((ps, s, m), (_, out)) in dp(data, *l) {
+				for s2 in 0..=s {
+					if s + m - s2 <= data.input.hole.len() {
+						if let Some((_, out2)) = cr.get(&(ps.clone(), s2, s - s2)) {
+							let mut out = out.clone();
+							for i in 0..out.len() {
+								if out[i].0 < 0 && out2[i].0 >= 0 {
+									out[i] = out2[i];
+								}
+							}
+							ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s2, s + m - s2), out.clone()));
+						}
+					}
+				}
+				for m2 in m..=data.input.hole.len() {
+					if let Some((_, out2)) = cr.get(&(ps.clone(), s + m, m2 - m)) {
+						let mut out = out.clone();
+						for i in 0..out.len() {
+							if out[i].0 < 0 && out2[i].0 >= 0 {
+								out[i] = out2[i];
+							}
+						}
+						ret.entry((ps.clone(), s, m2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s, m2), out.clone()));
+					}
 				}
 			}
 			dbg!(ret.len(), _bag);
@@ -292,7 +313,19 @@ fn main() {
 		}
 	}
 	let data = Data { input, dist, g, inside, cand };
-	let min = dp(&data, root);
-	dbg!(&min);
-	dbg!(min.contains(&(vec![], (0..data.input.hole.len()).collect())));
+	let ret = dp(&data, root);
+	let mut min = i64::max_value();
+	let mut best = vec![];
+	for ((_, s, m), (_score, out)) in ret {
+		let mut score = 0;
+		for &p in &data.input.hole {
+			score += out.iter().map(|&q| (p - q).abs2()).min().unwrap();
+		}
+		dbg!((s, m, _score, score));
+		if min.setmin(score) {
+			best = out.clone();
+		}
+	}
+	eprintln!("Score = {}", min);
+	write_output(&Output { vertices: best });
 }

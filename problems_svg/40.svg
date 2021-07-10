@@ -1,4 +1,6 @@
-<svg viewBox="0 0 65 68" width="500" xmlns="http://www.w3.org/2000/svg">
-<path d="M22 1L11 0L0 5L0 21L1 37L2 54L3 67L23 67L36 66L60 66L53 56L64 53L55 43L60 35L64 19L64 3L52 0L43 6L32 0M0 0L65 0L65 68L0 68" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<path d="M28 0L23 32M28 0L34 64M28 0L56 16M23 32L34 64M23 32L56 16M23 32L0 58M34 64L0 58M56 16L21 29M0 58L21 29" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 68 71" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M22 1L11 0L0 5L0 21L1 37L2 54L3 67L23 67L36 66L60 66L53 56L64 53L55 43L60 35L64 19L64 3L52 0L43 6L32 0M-2 -2L66 -2L66 69L-2 69" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<circle cx="40" cy="26" r="5" style="fill:#ffff0066;stroke:none;"/>
+<path class="ok" d="M23 32L34 64M23 32L56 16M56 16L21 29" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M28 0L23 32M28 0L34 64M28 0L56 16M23 32L0 58M34 64L0 58M0 58L21 29" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>

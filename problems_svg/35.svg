@@ -1,4 +1,6 @@
-<svg viewBox="0 0 63 62" width="500" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 31L15 61L39 55L54 48L62 26L22 0L0 7M0 0L63 0L63 62L0 62" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<path d="M53 0L30 7M53 0L55 23M30 7L20 28M0 15L20 28M0 15L22 4M55 23L35 10M20 28L35 10M20 28L22 4M35 10L33 37M22 4L17 20M17 20L33 37" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 66 65" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M0 31L15 61L39 55L54 48L62 26L22 0L0 7M-2 -2L64 -2L64 63L-2 63" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<circle cx="16" cy="19" r="5" style="fill:#ffff0066;stroke:none;"/>
+<path class="ok" d="M30 7L20 28M0 15L20 28M0 15L22 4M55 23L35 10M20 28L35 10M20 28L22 4M35 10L33 37M22 4L17 20M17 20L33 37" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M53 0L30 7M53 0L55 23" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>

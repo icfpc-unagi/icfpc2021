@@ -26,3 +26,7 @@ push: docker
 		--region=asia-northeast1 \
 		--image=asia.gcr.io/icfpc-primary/server \
 		server
+
+.PHONY: docker/runner
+docker/runner:
+	docker build -t runner -f runner.Dockerfile .

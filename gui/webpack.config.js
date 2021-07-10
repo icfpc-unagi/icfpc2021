@@ -1,6 +1,7 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin"); // "@wasm-tool/wasm-pack-plugin": "^1.4.0",
 
 module.exports = {
   mode: 'development',
@@ -21,6 +22,9 @@ module.exports = {
         // },
       ],
     }),
+    // new WasmPackPlugin({
+    //   crateDirectory: path.join(__dirname, "crate")
+    // }),
   ],
   module: {
     rules: [
@@ -32,7 +36,11 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: [ '.tsx', '.ts', '.js', '.wasm' ],
+  },
+  experiments: {
+    asyncWebAssembly: true
+    // syncWebAssembly: true
   },
   output: {
     filename: 'bundle.js',

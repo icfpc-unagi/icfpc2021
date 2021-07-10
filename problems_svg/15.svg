@@ -1,4 +1,6 @@
-<svg viewBox="0 0 36 45" width="500" xmlns="http://www.w3.org/2000/svg">
-<path d="M0 24L20 44L35 20L15 0M0 0L36 0L36 45L0 45" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<path d="M0 20L20 0M0 20L20 40M20 0L40 20M20 40L40 20M20 40L49 45M40 20L49 45" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 53 49" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M0 24L20 44L35 20L15 0M-2 -2L51 -2L51 47L-2 47" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<circle cx="16" cy="28" r="5" style="fill:#ffff0066;stroke:none;"/>
+<path class="ok" d="" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M0 20L20 0M0 20L20 40M20 0L40 20M20 40L40 20M20 40L49 45M40 20L49 45" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>
