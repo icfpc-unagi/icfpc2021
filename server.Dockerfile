@@ -24,6 +24,7 @@ RUN apt-get update -q && apt-get install -qy openssl ca-certificates
 COPY --from=rust-builder /work/target/release/calculate_score /usr/local/bin/calculate_score
 COPY --from=go-builder /usr/local/bin/server /usr/local/bin/server
 COPY ./problems /problems
+COPY ./problems /static/problems
 COPY ./scripts/server.sh /usr/local/bin/server.sh
 RUN chmod +x /usr/local/bin/server.sh
 ENTRYPOINT server.sh
