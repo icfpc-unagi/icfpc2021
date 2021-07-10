@@ -41,24 +41,27 @@ pub fn render_pose_svg<W: io::Write>(prob: &Input, pose: &Output, w: W) -> io::R
 }
 
 fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Result<()> {
-	let padding = 1;
-	let width = prob.hole.iter().map(|p| p.0).max().unwrap() + padding;
-	let height = prob.hole.iter().map(|p| p.1).max().unwrap() + padding;
+	let padding = 2;
+	let all_points = prob.hole.iter().chain(vertices.iter());
+	let left = all_points.clone().map(|p| p.0).min().unwrap() - padding;
+	let right = all_points.clone().map(|p| p.0).max().unwrap() + padding;
+	let top = all_points.clone().map(|p| p.1).min().unwrap() - padding;
+	let bottom = all_points.map(|p| p.1).max().unwrap() + padding;
 	let mut hole_polygon = polygon_path(&prob.hole);
 	hole_polygon.push_str(&polygon_path(&[
-		P(0, 0),
-		P(width, 0),
-		P(width, height),
-		P(0, height),
+		P(left, top),
+		P(right, top),
+		P(right, bottom),
+		P(left, bottom),
 	]));
 	let (edges_ok, edges_ng): (Vec::<(usize, usize)>, Vec::<(usize, usize)>) = prob.figure.edges.iter().partition(|&e| P::contains_s(&prob.hole, (vertices[e.0], vertices[e.1])));
 	let figure_ok_path = paths::segments(&edges_ok, &vertices);
 	let figure_ng_path = paths::segments(&edges_ng, &vertices);
 
 	let svg = svg::Document::new()
-		// .set("height", 500)
+		.set("height", 500)
 		.set("width", 500)
-		.set("viewBox", (0, 0, width, height))
+		.set("viewBox", (left, top, right - left, bottom - top))
 		.add(
 			Path::new()
 				.set("style", "fill:#00000066;fill-rule:evenodd;stroke:none;")
