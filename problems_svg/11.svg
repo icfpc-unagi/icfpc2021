@@ -1,7 +1,6 @@
 <svg height="500" viewBox="-2 -2 14 14" width="500" xmlns="http://www.w3.org/2000/svg">
 <path class="hole" d="M0 10L10 10L10 0M-2 -2L12 -2L12 12L-2 12" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<circle cx="5" cy="5" r="5" style="fill:#ffff0066;stroke:none;"/>
 <path class="ok" d="M10 0L10 10" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="short" d="" style="fill:none;stroke:#00ff99;stroke-linecap:round"/>
-<path class="long" d="" style="fill:none;stroke:#ff0099;stroke-linecap:round"/>
 <path class="out" d="M0 0L10 0M0 0L10 10" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>

@@ -1,7 +1,6 @@
 <svg height="500" viewBox="1 2 136 139" width="500" xmlns="http://www.w3.org/2000/svg">
 <path class="hole" d="M8 62L8 95L3 119L22 134L50 106L107 106L106 49L135 22L120 4L95 7L62 8L36 4L22 22L49 49M1 2L137 2L137 141L1 141" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<circle cx="106" cy="85" r="5" style="fill:#ffff0066;stroke:none;"/>
 <path class="ok" d="M40 39L48 14M40 39L57 24M40 68L49 83M40 68L57 39M49 83L61 96M56 55L57 39M56 55L62 57M56 55L63 49M57 24L86 24M57 39L79 34M61 96L79 98M62 57L69 55M63 49L69 55M66 70L69 55M66 70L72 74M72 74L78 71M78 57L78 71M78 57L85 54M78 57L85 61M79 34L97 47M79 98L92 85M85 54L91 59M85 61L91 59M86 24L104 43M91 59L97 47M92 85L92 98M92 85L100 73M96 69L97 47M96 69L100 73M100 73L104 43M102 22L104 43" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="short" d="" style="fill:none;stroke:#00ff99;stroke-linecap:round"/>
-<path class="long" d="" style="fill:none;stroke:#ff0099;stroke-linecap:round"/>
 <path class="out" d="M40 39L40 68M44 121L52 115M44 121L71 125M48 14L78 7M49 83L52 115M71 125L98 139M71 125L103 107M78 7L102 22M92 98L103 107M98 139L103 107" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>

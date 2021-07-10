@@ -1,7 +1,6 @@
 <svg height="500" viewBox="3 3 94 94" width="500" xmlns="http://www.w3.org/2000/svg">
 <path class="hole" d="M5 50L30 70L30 90L50 95L70 90L70 70L95 50L95 5L65 15L35 15L5 5M3 3L97 3L97 97L3 97" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<circle cx="95" cy="26" r="5" style="fill:#ffff0066;stroke:none;"/>
 <path class="ok" d="M10 10L10 25M10 25L15 30M10 35L20 50M10 35L30 35M15 30L30 30M20 50L30 50M20 50L30 65M30 30L30 35M30 35L60 35M30 50L30 55M30 50L35 45M30 55L35 60M30 65L40 80M30 65L70 65M35 45L40 45M35 60L40 60M40 20L40 30M40 20L55 20M40 30L60 30M40 45L45 50M40 60L45 55M40 80L50 95M40 80L60 80M45 50L45 55M45 50L55 50M50 95L60 80M55 20L60 30M55 50L55 55M55 50L60 45M55 55L60 60M60 30L60 35M60 35L80 35M60 45L65 45M60 60L65 60M60 80L70 65M65 45L70 50M65 60L70 55M70 50L70 55M70 50L80 50M70 65L80 50M80 30L80 35M80 35L90 35M80 50L90 35" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="short" d="" style="fill:none;stroke:#00ff99;stroke-linecap:round"/>
-<path class="long" d="" style="fill:none;stroke:#ff0099;stroke-linecap:round"/>
 <path class="out" d="M10 10L15 5M15 5L30 5M40 5L40 20M40 5L60 5M55 20L60 5M70 5L80 30M80 30L90 5" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>

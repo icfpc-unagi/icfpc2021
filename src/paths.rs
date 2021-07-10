@@ -80,7 +80,7 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 	let figure_long_path = paths::segments(&edges_long, &vertices);
 	let figure_out_path = paths::segments(&edges_out, &vertices);
 
-	let svg = svg::Document::new()
+	let mut svg = svg::Document::new()
 		.set("height", 500)
 		.set("width", 500)
 		.set("viewBox", (left, top, right - left, bottom - top))
@@ -89,31 +89,46 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 				.set("class", "hole")
 				.set("style", "fill:#00000066;fill-rule:evenodd;stroke:none;")
 				.set("d", hole_polygon),
-		)
-		.add(
-			Path::new()
-				.set("class", "ok")
-				.set("style", "fill:none;stroke:#0000ff;stroke-linecap:round")
-				.set("d", figure_ok_path),
-		)
-		.add(
+		);
+	for bonus in &prob.bonuses {
+		svg = svg.add(
+			Circle::new()
+				.set("cx", bonus.position.0)
+				.set("cy", bonus.position.1)
+				.set("r", 5)
+				.set("style", "fill:#ffff0066;stroke:none;"),
+		);
+	}
+	svg = svg.add(
+		Path::new()
+			.set("class", "ok")
+			.set("style", "fill:none;stroke:#0000ff;stroke-linecap:round")
+			.set("d", figure_ok_path),
+	);
+	if !figure_short_path.is_empty() {
+		svg = svg.add(
 			Path::new()
 				.set("class", "short")
 				.set("style", "fill:none;stroke:#00ff99;stroke-linecap:round")
 				.set("d", figure_short_path),
-		)
-		.add(
+		);
+	}
+	if !figure_long_path.is_empty() {
+		svg = svg.add(
 			Path::new()
 				.set("class", "long")
 				.set("style", "fill:none;stroke:#ff0099;stroke-linecap:round")
 				.set("d", figure_long_path),
-		)
-		.add(
+		);
+	}
+	if !figure_out_path.is_empty() {
+		svg = svg.add(
 			Path::new()
 				.set("class", "out")
 				.set("style", "fill:none;stroke:#ff0000;stroke-linecap:round")
 				.set("d", figure_out_path),
 		);
+	}
 
 	svg::write(w, &svg)
 }
