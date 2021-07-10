@@ -7,6 +7,7 @@ mod test_contains_s;
 #[cfg(target_arch = "wasm32")]
 pub mod wasm;
 pub mod tree_decomposition;
+pub mod ugougo;
 
 use std::{io, ops::*};
 use std::cmp::Ordering;

@@ -1,5 +1,6 @@
 use crate::*;
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -28,7 +29,10 @@ pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 	}
 	let mut ok_e = vec![];
 	for &(i, j) in &input.figure.edges {
-		ok_e.push(P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])));
+		ok_e.push(P::contains_s(
+			&input.hole,
+			(out.vertices[i], out.vertices[j]),
+		));
 	}
 	JsValue::from_serde(&(ok_v, ok_e)).unwrap()
 }
@@ -45,7 +49,8 @@ pub fn render_problem(s: &str) -> Result<String, JsValue> {
 
 #[wasm_bindgen]
 pub fn render_pose(problem: &str, pose: &str) -> Result<String, JsValue> {
-	let prob = read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let prob =
+		read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
 	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
 
 	let mut buf = Vec::new();
@@ -56,8 +61,21 @@ pub fn render_pose(problem: &str, pose: &str) -> Result<String, JsValue> {
 
 #[wasm_bindgen]
 pub fn calculate_score(problem: &str, pose: &str) -> Result<f64, JsValue> {
-	let prob = read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let prob =
+		read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
 	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
 
 	Ok(compute_score(&prob, &pose) as f64)
+}
+
+#[wasm_bindgen]
+pub fn morph(problem: &str, pose: &str, n: usize) -> Result<String, JsValue> {
+	let prob =
+		read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
+
+	let (pose, k) = ugougo::ugougo(&prob, &pose, n);
+	console::log_1(&format!("success rate {}/{}", k, n).into());
+
+	Ok(serde_json::to_string(&pose).map_err(|e| JsValue::from(e.to_string()))?)
 }
