@@ -26,4 +26,4 @@ jobs:
           cargo vendor
           cargo test
           cargo build --release
-          gsutil -m cp -r ./target/release/{wata,chokudai,dp} gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/
+          gsutil -m cp -r ./target/release/{wata,chokudai,chokudai_v1,dp} gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/
