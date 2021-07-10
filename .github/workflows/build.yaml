@@ -23,6 +23,6 @@ jobs:
     - name: Build
       run: |
           rustup target add x86_64-unknown-linux-musl
-        	cargo vendor
+          cargo vendor
           cargo build --release
           gsutil cp -r ./target/release gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/rust
