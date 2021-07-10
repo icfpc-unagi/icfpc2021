@@ -154,15 +154,33 @@ let r = new ProblemRenderer(sampleInput);
 r.render(mainContainer);
 r.loadSolution(sampleOutput);
 
-const fileElem: any = document.getElementById("input-json")!;
-fileElem.addEventListener("change", () => {
-  const file = fileElem.files[0];
-  if (file == null) return;
-  const reader = new FileReader();
-  reader.readAsText(file, "UTF-8");
-  reader.onload = (e) => {
-    const inputJson = JSON.parse(e.target!.result as string);
-    r = new ProblemRenderer(inputJson);
-    r.render(mainContainer);
-  };
-});
+// load problem
+{
+  const fileElem: any = document.getElementById("input-json")!;
+  fileElem.addEventListener("change", () => {
+    const file = fileElem.files[0];
+    if (file == null) return;
+    const reader = new FileReader();
+    reader.readAsText(file, "UTF-8");
+    reader.onload = (e) => {
+      const inputJson = JSON.parse(e.target!.result as string);
+      r = new ProblemRenderer(inputJson);
+      r.render(mainContainer);
+    };
+  });
+}
+
+// load solution
+{
+  const fileElem: any = document.getElementById("input-solution-json")!;
+  fileElem.addEventListener("change", () => {
+    const file = fileElem.files[0];
+    if (file == null) return;
+    const reader = new FileReader();
+    reader.readAsText(file, "UTF-8");
+    reader.onload = (e) => {
+      const solutionJson = JSON.parse(e.target!.result as string);
+      r.loadSolution(solutionJson);
+    };
+  });
+}
