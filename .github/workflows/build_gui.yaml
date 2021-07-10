@@ -20,6 +20,10 @@ jobs:
         project_id: icfpc-primary
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
     - name: rust
       run: |
           rustup target add x86_64-unknown-linux-musl
