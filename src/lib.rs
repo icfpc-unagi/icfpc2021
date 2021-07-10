@@ -22,12 +22,29 @@ pub struct Input {
 	pub hole: Vec<Point>,
 	pub figure: Figure,
 	pub epsilon: i64,
+	#[serde(default)]
+	pub bonuses: Vec<Bonus>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Figure {
 	pub edges: Vec<(usize, usize)>,
 	pub vertices: Vec<Point>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Bonus {
+	pub bonus: BonusType,
+	pub problem: u32,
+	pub position: Point,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub enum BonusType {
+	#[serde(rename = "GLOBALIST")]
+	Globalist,
+	#[serde(rename = "BREAK_A_LEG")]
+	BreakALeg,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
