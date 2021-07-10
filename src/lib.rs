@@ -8,10 +8,12 @@ mod test_contains_s;
 pub mod wasm;
 pub mod tree_decomposition;
 
-use std::ops::*;
+use std::{io, ops::*};
 use std::cmp::Ordering;
+use num::{Signed, Zero};
 use serde::{Serialize, Deserialize};
 use util::*;
+use std::fmt::Debug;
 
 pub type Point = P<i64>;
 
@@ -20,6 +22,8 @@ pub struct Input {
 	pub hole: Vec<Point>,
 	pub figure: Figure,
 	pub epsilon: i64,
+	#[serde(default)]
+	pub bonuses: Vec<Bonus>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -29,34 +33,36 @@ pub struct Figure {
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Bonus {
+	pub bonus: BonusType,
+	pub problem: u32,
+	pub position: Point,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub enum BonusType {
+	#[serde(rename = "GLOBALIST")]
+	Globalist,
+	#[serde(rename = "BREAK_A_LEG")]
+	BreakALeg,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Output {
 	pub vertices: Vec<Point>
 }
 
 pub fn read_input() -> Input {
-	let mut input: Input = serde_json::from_reader(std::io::stdin()).unwrap();
-	for i in 0..input.figure.edges.len() {
-		if input.figure.edges[i].0 > input.figure.edges[i].1 {
-			let t = input.figure.edges[i].0;
-			input.figure.edges[i].0 = input.figure.edges[i].1;
-			input.figure.edges[i].1 = t;
-		}
-	}
-	input.figure.edges.sort();
-	input.figure.edges.dedup();
-	let mut area = 0;
-	for i in 0..input.hole.len() {
-		area += input.hole[i].det(input.hole[(i + 1) % input.hole.len()]);
-	}
-	if area > 0 { // 時計回りにする
-		input.hole.reverse();
-	}
-	input
+	read_input_from_reader(std::io::stdin()).unwrap()
 }
 
 
 pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
-	let mut input: Input = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
+	read_input_from_reader(std::fs::File::open(f).unwrap()).unwrap()
+}
+
+pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
+	let mut input: Input = serde_json::from_reader(r)?;
 	for i in 0..input.figure.edges.len() {
 		if input.figure.edges[i].0 > input.figure.edges[i].1 {
 			let t = input.figure.edges[i].0;
@@ -73,7 +79,7 @@ pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
 	if area > 0 { // 時計回りにする
 		input.hole.reverse();
 	}
-	input
+	Ok(input)
 }
 
 pub fn write_output(out: &Output) {
@@ -168,7 +174,7 @@ impl<T> MulAssign<T> for P<T> where T: Copy + MulAssign {
 	}
 }
 
-impl<T> P<T> where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Neg<Output = T> {
+impl<T> P<T> where T: Copy + Signed {
 	#[inline]
 	pub fn dot(self, a: P<T>) -> T {
 		(self.0 * a.0) + (self.1 * a.1)
@@ -217,12 +223,12 @@ macro_rules! impl_cmp {
 #[derive(Clone, Copy, Debug)]
 pub struct R<T>(pub T, pub T);
 impl_cmp!(R<T>; |a, b| {
-		match (a.1 * b.1).cmp(&T::default()) {
+		match (a.1 * b.1).cmp(&T::zero()) {
 			Ordering::Greater => (a.0 * b.1).cmp(&(a.1 * b.0)),
 			Ordering::Less => (a.1 * b.0).cmp(&(a.0 * b.1)),
 			_ => panic!("division by zero")
 		}
-	}; where T: Copy + Default + Ord + Mul<Output = T>);
+	}; where T: Copy + Zero + Ord + Mul<Output = T>);
 
 impl<T> From<T> for R<T> where T: From<u8> {
 	#[inline]
@@ -247,8 +253,8 @@ impl<T> From<P<R<T>>> for P<T> where T: Div<Output = T> {
 }
 
 #[inline]
-fn sig<T>(x: T) -> i32 where T: Default + Ord {
-	match x.cmp(&T::default()) {
+fn sig<T>(x: T) -> i32 where T: Zero + Ord {
+	match x.cmp(&T::zero()) {
 		Ordering::Greater => 1,
 		Ordering::Less => -1,
 		_ => 0
@@ -256,11 +262,11 @@ fn sig<T>(x: T) -> i32 where T: Default + Ord {
 }
 
 /// 直線に関する演算. 分数を用いて計算誤差なしで行う.
-impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Neg<Output = T> {
+impl<T> P<T> where T: Copy + From<u8> + Ord + Signed {
 	/// Square distance between segment and point. (D^4,D^2).
 	pub fn dist2_sp((p1, p2): (P<T>, P<T>), q: P<T>) -> R<T> {
-		if (p2 - p1).dot(q - p1) <= T::default() { (q - p1).abs2().into() }
-		else if (p1 - p2).dot(q - p2) <= T::default() { (q - p2).abs2().into() }
+		if (p2 - p1).dot(q - p1) <= T::zero() { (q - p1).abs2().into() }
+		else if (p1 - p2).dot(q - p2) <= T::zero() { (q - p2).abs2().into() }
 		else { P::dist2_lp((p1, p2), q) }
 	}
 	/// Square distance between line and point. (D^4,D^2).
@@ -270,11 +276,11 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 	}
 	/// D^2.
 	pub fn crs_sp((p1, p2): (P<T>, P<T>), q: P<T>) -> bool {
-		P::crs_lp((p1, p2), q) && (q - p1).dot(q - p2) <= T::default()
+		P::crs_lp((p1, p2), q) && (q - p1).dot(q - p2) <= T::zero()
 	}
 	/// D^2.
 	pub fn crs_lp((p1, p2): (P<T>, P<T>), q: P<T>) -> bool {
-		(p2 - p1).det(q - p1) == T::default()
+		(p2 - p1).det(q - p1) == T::zero()
 	}
 	/// D^2.
 	pub fn crs_ss((p1, p2): (P<T>, P<T>), (q1, q2): (P<T>, P<T>)) -> bool {
@@ -296,7 +302,7 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 	/// (D^3,D^2).
 	pub fn pi_ll((p1, p2): (P<T>, P<T>), (q1, q2): (P<T>, P<T>)) -> Option<P<R<T>>> {
 		let d = (q2 - q1).det(p2 - p1);
-		if d == T::default() { return None }
+		if d == T::zero() { return None }
 		let r = p1 * d + (p2 - p1) * (q2 - q1).det(q1 - p1);
 		Some(P(R(r.0, d), R(r.1, d)))
 	}
@@ -311,10 +317,10 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 			if a.1 > b.1 {
 				std::mem::swap(&mut a, &mut b);
 			}
-			if a.1 <= T::default() && b.1 > T::default() && a.det(b) > T::default() {
+			if a.1 <= T::zero() && b.1 > T::zero() && a.det(b) > T::zero() {
 				ret = -ret;
 			}
-			if a.det(b) == T::default() && a.dot(b) <= T::default() {
+			if a.det(b) == T::zero() && a.dot(b) <= T::zero() {
 				return 0;
 			}
 		}
@@ -331,7 +337,7 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 		for i in 0..n {
 			if P::crs_ss((q1, q2), (ps[i], ps[(i + 1) % n])) {
 				let mut r = P::pi_ll((q1, q2), (ps[i], ps[(i + 1) % n]));
-				if r.is_none() && (q1 - ps[i]).dot(q2 - ps[i]) <= T::default() {
+				if r.is_none() && (q1 - ps[i]).dot(q2 - ps[i]) <= T::zero() {
 					r = Some(ps[i].into());
 				}
 				if let Some(r) = r {
@@ -345,17 +351,17 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 						let pr = p.det(r);
 						let pq = p.det(q);
 						let qr = q.det(r);
-						if pr == T::default() && p.dot(r) < T::default() && pq > T::default() {
+						if pr == T::zero() && p.dot(r) < T::zero() && pq > T::zero() {
 							return false;
 						}
-						if pr > T::default() && pq > T::default() && qr > T::default() {
+						if pr > T::zero() && pq > T::zero() && qr > T::zero() {
 							return false;
 						}
-						if pr < T::default() && (pq > T::default() || qr > T::default()) {
+						if pr < T::zero() && (pq > T::zero() || qr > T::zero()) {
 							return false;
 						}
 					} else if r == q1.into() {
-						if (ps[(i + 1) % n] - ps[i]).det(q2 - ps[i]) > T::default() {
+						if (ps[(i + 1) % n] - ps[i]).det(q2 - ps[i]) > T::zero() {
 							return false;
 						}
 					} else {
@@ -365,5 +371,17 @@ impl<T> P<T> where T: Copy + Default + From<u8> + Ord + Add<Output = T> + Sub<Ou
 			}
 		}
 		true
+	}
+}
+
+// epsilon 以内の伸び縮み判別
+fn stretch_within<T: num::traits::Signed + From<i32> + Copy>(d2: T, base_d2: T, epsilon: T) -> Ordering {
+	let diff = d2 - base_d2;
+	if !(diff.abs() * 1000000.into() - epsilon * base_d2).is_positive() {
+		Ordering::Equal
+	} else if diff.is_negative() {
+		Ordering::Less
+	} else {
+		Ordering::Greater
 	}
 }

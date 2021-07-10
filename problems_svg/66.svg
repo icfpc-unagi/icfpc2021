@@ -1,4 +1,7 @@
-<svg viewBox="0 0 114 83" width="500" xmlns="http://www.w3.org/2000/svg">
-<path d="M23 17L3 18L0 35L0 52L14 59L0 80L25 81L46 79L39 58L50 46L60 69L68 82L83 82L102 70L113 48L108 31L92 49L79 54L68 42L59 29L69 17L92 21L105 3L81 0L59 0L45 22L38 0M0 0L114 0L114 83L0 83" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<path d="M10 41L12 66M10 41L23 24M12 66L37 64M23 24L45 41M37 64L45 41M37 64L62 72M45 17L45 41M45 17L67 10M45 41L67 48M62 72L67 48M67 10L81 29M67 48L81 29M67 48L88 58M81 29L103 45M88 58L103 45" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 117 86" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M23 17L3 18L0 35L0 52L14 59L0 80L25 81L46 79L39 58L50 46L60 69L68 82L83 82L102 70L113 48L108 31L92 49L79 54L68 42L59 29L69 17L92 21L105 3L81 0L59 0L45 22L38 0M-2 -2L115 -2L115 84L-2 84" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
+<path class="ok" d="M10 41L23 24M12 66L37 64M23 24L45 41M45 41L67 48M62 72L67 48M88 58L103 45" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
+<path class="short" d="" style="fill:none;stroke:#00ff99;stroke-linecap:round"/>
+<path class="long" d="" style="fill:none;stroke:#ff0099;stroke-linecap:round"/>
+<path class="out" d="M10 41L12 66M37 64L45 41M37 64L62 72M45 17L45 41M45 17L67 10M67 10L81 29M67 48L81 29M67 48L88 58M81 29L103 45" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>

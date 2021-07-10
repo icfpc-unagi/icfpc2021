@@ -5,6 +5,8 @@ import { DragHandler } from "./dragdrop";
 import wasm_ from "icfpc2021";
 let wasm: any;
 
+const WHITE: number = 0xffffff;
+
 type XY = [number, number];
 
 function abs2([x0, y0]: XY, [x1, y1]: XY): number {
@@ -79,12 +81,12 @@ class EdgeObject {
     this.g
       .clear()
       .lineStyle({
-        color,
+        color: WHITE,
         width: 1,
         cap: "round" as any,
       })
       .moveTo(...p0)
-      .lineTo(...p1);
+      .lineTo(...p1).tint = color;
   }
 }
 
@@ -113,7 +115,8 @@ class ProblemRenderer {
 
     const vertices: Graphics[] = [];
     for (const [x, y] of fig.vertices) {
-      const g = new Graphics().beginFill(0x008000).drawCircle(0, 0, 6);
+      const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
+      g.tint = 0x008000;
       g.position.set(x, y);
       g.scale.set(1 / guiScale);
       dragHandler.register(g);
@@ -121,7 +124,7 @@ class ProblemRenderer {
     }
 
     this.epsilon = inputJson.epsilon;
-    const edges = [];
+    const edges: EdgeObject[] = [];
     for (const [i, j] of fig.edges) {
       const edge = new EdgeObject(vertices[i], vertices[j], this.epsilon);
       vertices[i].on("myupdate", () => edge.update());
@@ -133,14 +136,32 @@ class ProblemRenderer {
     this.edges = edges;
     this.vertices = vertices;
     for (const [k, v] of vertices.entries()) {
-      v.on("drag", () => v.emit("myupdate")).on("dragend", () => {
+      v.on("drag", () => {
         const { x, y } = v.position;
         v.position.set(Math.round(x), Math.round(y));
         v.emit("myupdate");
-        (document.getElementById("output-json") as any).value = JSON.stringify(
-          this.saveSolution()
-        );
+      }).on("dragend", () => {
+        const sol = this.saveSolution();
+        this.runCheckSolution1(inputJson, sol);
+        (document.getElementById("output-json") as any).value =
+          JSON.stringify(sol);
       });
+    }
+
+    this.runCheckSolution1(inputJson, inputJson.figure);
+  }
+
+  runCheckSolution1(input: Problem, output: Solution): void {
+    if (wasm != null) {
+      const [ok_v, ok_e] = wasm.check_solution1(input, output);
+      for (const [i, ok] of ok_v.entries()) {
+        this.vertices[i].tint = ok ? 0x008000 : 0x800080;
+      }
+      for (const [i, ok] of ok_e.entries()) {
+        if (!ok) {
+          this.edges[i].g.tint = 0x800080;
+        }
+      }
     }
   }
 
@@ -155,6 +176,8 @@ class ProblemRenderer {
     for (const edge of this.edges) {
       edge.update();
     }
+
+    this.runCheckSolution1(this.inputJson, solutionJson);
   }
 
   saveSolution(): Solution {
@@ -175,55 +198,56 @@ class ProblemRenderer {
 
 mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
 
-(wasm_ as any).then((wasm__: any) => {
-  // return;
-  wasm = wasm__;
-  console.log(wasm);
-  console.log(wasm.render_problem);
-  // wasm.render_problem('{"hole":[[45,80],[35,95],[5,95],[35,50],[5,5],[35,5],[95,95],[65,95],[55,80]],"epsilon":150000,"figure":{"edges":[[2,5],[5,4],[4,1],[1,0],[0,8],[8,3],[3,7],[7,11],[11,13],[13,12],[12,18],[18,19],[19,14],[14,15],[15,17],[17,16],[16,10],[10,6],[6,2],[8,12],[7,9],[9,3],[8,9],[9,12],[13,9],[9,11],[4,8],[12,14],[5,10],[10,15]],"vertices":[[20,30],[20,40],[30,95],[40,15],[40,35],[40,65],[40,95],[45,5],[45,25],[50,15],[50,70],[55,5],[55,25],[60,15],[60,35],[60,65],[60,95],[70,95],[80,30],[80,40]]}}');
+(wasm_ as any)
+  .then((wasm__: any) => {
+    wasm = wasm__;
+  })
+  .catch(() => {
+    console.log("failed to load wasm");
+  })
+  .then(() => {
+    let r = new ProblemRenderer(sampleInput);
+    r.render(mainContainer);
+    r.loadSolution(sampleOutput);
 
-  let r = new ProblemRenderer(sampleInput);
-  r.render(mainContainer);
-  r.loadSolution(sampleOutput);
+    // load problem
+    {
+      const fileElem: any = document.getElementById("input-json")!;
+      fileElem.addEventListener("change", () => {
+        const file = fileElem.files[0];
+        if (file == null) return;
+        const reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = (e) => {
+          const inputJson = JSON.parse(e.target!.result as string);
+          r = new ProblemRenderer(inputJson);
+          r.render(mainContainer);
+        };
+      });
+    }
 
-  // load problem
-  {
-    const fileElem: any = document.getElementById("input-json")!;
-    fileElem.addEventListener("change", () => {
-      const file = fileElem.files[0];
-      if (file == null) return;
-      const reader = new FileReader();
-      reader.readAsText(file, "UTF-8");
-      reader.onload = (e) => {
-        const inputJson = JSON.parse(e.target!.result as string);
-        r = new ProblemRenderer(inputJson);
-        r.render(mainContainer);
-      };
-    });
-  }
+    // load solution
+    {
+      const fileElem: any = document.getElementById("input-solution-json")!;
+      fileElem.addEventListener("change", () => {
+        const file = fileElem.files[0];
+        if (file == null) return;
+        const reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = (e) => {
+          const solutionJson = JSON.parse(e.target!.result as string);
+          r.loadSolution(solutionJson);
+        };
+      });
+    }
 
-  // load solution
-  {
-    const fileElem: any = document.getElementById("input-solution-json")!;
-    fileElem.addEventListener("change", () => {
-      const file = fileElem.files[0];
-      if (file == null) return;
-      const reader = new FileReader();
-      reader.readAsText(file, "UTF-8");
-      reader.onload = (e) => {
-        const solutionJson = JSON.parse(e.target!.result as string);
-        r.loadSolution(solutionJson);
-      };
-    });
-  }
-
-  // gui scale
-  {
-    const elem: any = document.getElementById("gui-scale")!;
-    elem.addEventListener("change", () => {
-      guiScale = parseInt(elem.value);
-      mainContainer.scale.set(guiScale);
-      r.updateGuiScale();
-    });
-  }
-});
+    // gui scale
+    {
+      const elem: any = document.getElementById("gui-scale")!;
+      elem.addEventListener("change", () => {
+        guiScale = parseInt(elem.value);
+        mainContainer.scale.set(guiScale);
+        r.updateGuiScale();
+      });
+    }
+  });

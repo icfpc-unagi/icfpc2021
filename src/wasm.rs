@@ -19,6 +19,21 @@ pub fn main() -> Result<(), JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
+	let input: Input = input.into_serde().unwrap();
+	let out: Output = out.into_serde().unwrap();
+	let mut ok_v = vec![];
+	for &p in &out.vertices {
+		ok_v.push(P::contains_p(&input.hole, p) >= 0);
+	}
+	let mut ok_e = vec![];
+	for &(i, j) in &input.figure.edges {
+		ok_e.push(P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])));
+	}
+	JsValue::from_serde(&(ok_v, ok_e)).unwrap()
+}
+
+#[wasm_bindgen]
 pub fn render_problem(s: &str) -> Result<(), JsValue> {
 	let prob = serde_json::from_str::<Input>(s).unwrap();
 

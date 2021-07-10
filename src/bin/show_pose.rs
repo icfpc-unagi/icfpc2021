@@ -1,5 +1,4 @@
-use icfpc2021::paths::*;
-use std::fs::File;
+use icfpc2021::{paths::*, read_input_from_file, read_output_from_file};
 
 // Usage: show_pose problem.json pose.json
 fn main() -> std::io::Result<()> {
@@ -7,9 +6,9 @@ fn main() -> std::io::Result<()> {
     if args.len() < 3 {
         eprintln!("{} <problem.json> <pose.json>", args[0]);
         std::process::exit(1);
-    }
-    let prob = serde_json::from_reader(File::open(&args[1])?)?;
-    let pose = serde_json::from_reader(File::open(&args[2])?)?;
+    };
+    let prob = read_input_from_file(&args[1]);
+    let pose = read_output_from_file(&args[2]);
 
     render_pose_svg(&prob, &pose, std::io::stdout())
 }
