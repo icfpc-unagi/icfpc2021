@@ -184,7 +184,7 @@ fn main() {
 	let mut data = Data { input, dist, inside, g, parent, last, cand: vec![] };
 	let mut best = vec![];
 	let mut best_score = i64::max_value();
-	for _ in 0..20 {
+	for _ in 0..5 {
 		eprintln!("eps = {}", data.input.epsilon);
 		let mut cand = vec![vec![]; n];
 		for i in 0..n {
@@ -201,37 +201,42 @@ fn main() {
 			}
 		}
 		data.cand = cand;
+		let mut ps = vec![];
 		for x in min_x ..= max_x {
 			for y in min_y ..= max_y {
 				if data.inside[x as usize][y as usize] {
-					let stime = get_time();
-					let mut out = vec![P(x, y); n];
-					let mut used = vec![false; n];
-					let mut min = vec![0; data.input.hole.len()];
-					for i in 0..data.input.hole.len() {
-						min[i] = (P(x, y) - data.input.hole[i]).abs2();
-					}
-					used[order[0]] = true;
-					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 0.001);
+					ps.push(P(x, y));
 				}
 			}
 		}
-		if best.len() > 0 {
-			let stime = get_time();
-			let x = best[order[0]].0;
-			let y = best[order[0]].1;
-			let mut out = vec![P(x, y); n];
-			let mut used = vec![false; n];
-			let mut min = vec![0; data.input.hole.len()];
-			for i in 0..data.input.hole.len() {
-				min[i] = (P(x, y) - data.input.hole[i]).abs2();
-			}
-			used[order[0]] = true;
-			rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
-			if stime + 10.0 > get_time() {
-				break;
-			}
+		use rand::prelude::*;
+		ps.shuffle(&mut rand::thread_rng());
+		let p = ps[0];
+		let stime = get_time();
+		let mut out = vec![p; n];
+		let mut used = vec![false; n];
+		let mut min = vec![0; data.input.hole.len()];
+		for i in 0..data.input.hole.len() {
+			min[i] = (p - data.input.hole[i]).abs2();
 		}
+		used[order[0]] = true;
+		rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
+		// if best.len() > 0 {
+		// 	let stime = get_time();
+		// 	let x = best[order[0]].0;
+		// 	let y = best[order[0]].1;
+		// 	let mut out = vec![P(x, y); n];
+		// 	let mut used = vec![false; n];
+		// 	let mut min = vec![0; data.input.hole.len()];
+		// 	for i in 0..data.input.hole.len() {
+		// 		min[i] = (P(x, y) - data.input.hole[i]).abs2();
+		// 	}
+		// 	used[order[0]] = true;
+		// 	rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
+		// 	if stime + 10.0 > get_time() {
+		// 		break;
+		// 	}
+		// }
 		if data.input.epsilon == 0 {
 			break;
 		}
