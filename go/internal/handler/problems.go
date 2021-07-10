@@ -137,7 +137,7 @@ func getOfficialScores(ctx context.Context) ([]Problem, error) {
 
 	var problems []Problem
 	rows := regexp.MustCompile(
-		`<tr><td><a href="/problems/(\d+)">\d+</a></td><td>([^<]+)</td><td>([^<]+)</td></tr>`,
+		`<tr><td><a href="/problems/(\d+)">\d+</a></td><td>([^<]*)</td><td>([^<]*)</td></tr>`,
 		).FindAllStringSubmatch(body, -1)
 	for _, row := range rows {
 		var problem Problem
