@@ -16,7 +16,7 @@ struct ProblemStat {
 }
 
 fn max_coord(input: &Input) -> i64 {
-    input.hole.iter().map(|p|p.0.max(p.1) ).max().unwrap()
+    input.hole.iter().map(|p| p.0.max(p.1)).max().unwrap()
 }
 
 fn n_triangles(figure: &Figure) -> usize {
@@ -60,12 +60,17 @@ fn mean_edge_len(figure: &Figure) -> f64 {
 impl ProblemStat {
     pub fn new(problem_id: i64, input: &Input) -> Self {
         let mean_edge_len = mean_edge_len(&input.figure);
-        let tol_for_mean_edge = (((input.epsilon as f64) / 1_000_000.0 + 1.0).sqrt() - 1.0) * mean_edge_len;
+        let tol_for_mean_edge =
+            (((input.epsilon as f64) / 1_000_000.0 + 1.0).sqrt() - 1.0) * mean_edge_len;
 
         ProblemStat {
             problem_id,
             url: format!("https://poses.live/problems/{}", problem_id),
-            score_weight: 1000.0 * (((input.figure.vertices.len() * input.figure.edges.len() * input.hole.len()) as f64) / 6.0).log2(),
+            score_weight: 1000.0
+                * (((input.figure.vertices.len() * input.figure.edges.len() * input.hole.len())
+                    as f64)
+                    / 6.0)
+                    .log2(),
             max_coord: max_coord(input),
             mean_edge_len,
             tol_for_mean_edge,
@@ -79,8 +84,14 @@ impl ProblemStat {
 
     pub fn println(&self) {
         print!("{}\t{}\t{}", self.problem_id, self.url, self.score_weight);
-        print!("\t{}\t{}\t{}\t{}", self.max_coord, self.epsilon, self.mean_edge_len, self.tol_for_mean_edge);
-        print!("\t{}\t{}\t{}\t{}", self.n_hole_vs, self.n_figure_vs, self.n_figure_es, self.n_triangles);
+        print!(
+            "\t{}\t{}\t{}\t{}",
+            self.max_coord, self.epsilon, self.mean_edge_len, self.tol_for_mean_edge
+        );
+        print!(
+            "\t{}\t{}\t{}\t{}",
+            self.n_hole_vs, self.n_figure_vs, self.n_figure_es, self.n_triangles
+        );
         println!();
     }
 }
@@ -92,12 +103,17 @@ fn main() {
         let path = entry.unwrap();
 
         let path = path.to_str().unwrap();
-        let filename = path.split("/").collect::<Vec<_>>().last().unwrap().to_owned();
+        let filename = path
+            .split("/")
+            .collect::<Vec<_>>()
+            .last()
+            .unwrap()
+            .to_owned();
         let problem_id: i64 = filename.split('.').collect::<Vec<_>>()[0].parse().unwrap();
 
         let file = std::fs::File::open(&path).unwrap();
         let reader = std::io::BufReader::new(file);
-        let input:Input = serde_json::from_reader(reader).unwrap();
+        let input: Input = serde_json::from_reader(reader).unwrap();
 
         problem_stats.push(ProblemStat::new(problem_id, &input));
     }

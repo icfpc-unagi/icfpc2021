@@ -22,6 +22,8 @@ struct Data {
 	cand: Vec<Vec<Point>>,
 }
 
+const BEST_SEARCH: bool = true;
+
 fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, min: &Vec<i64>, best: &mut Vec<Point>, best_score: &mut i64, until: f64) {
 	if i == order.len() {
 		if best_score.setmin(min.iter().sum()) {
@@ -81,7 +83,11 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 			}
 		}
 	}
-	cand.sort();
+	if BEST_SEARCH {
+		cand.sort_by_key(|(min, _)| min.iter().sum::<i64>());
+	} else {
+		cand.sort();
+	}
 	let mut mins: Vec<Vec<i64>> = vec![];
 	for (min, p) in cand {
 		out[u] = p;
@@ -195,10 +201,10 @@ fn main() {
 			}
 		}
 		data.cand = cand;
-		let stime = get_time();
 		for x in min_x ..= max_x {
 			for y in min_y ..= max_y {
 				if data.inside[x as usize][y as usize] {
+					let stime = get_time();
 					let mut out = vec![P(x, y); n];
 					let mut used = vec![false; n];
 					let mut min = vec![0; data.input.hole.len()];
@@ -206,9 +212,22 @@ fn main() {
 						min[i] = (P(x, y) - data.input.hole[i]).abs2();
 					}
 					used[order[0]] = true;
-					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 100.0);
+					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 0.005);
 				}
 			}
+		}
+		if best.len() > 0 {
+			let stime = get_time();
+			let x = best[order[0]].0;
+			let y = best[order[0]].1;
+			let mut out = vec![P(x, y); n];
+			let mut used = vec![false; n];
+			let mut min = vec![0; data.input.hole.len()];
+			for i in 0..data.input.hole.len() {
+				min[i] = (P(x, y) - data.input.hole[i]).abs2();
+			}
+			used[order[0]] = true;
+			rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
 		}
 		if data.input.epsilon == 0 {
 			break;
