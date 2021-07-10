@@ -31,8 +31,6 @@ web-sys = { version = "*", features = [
   'Element',
   'HtmlElement',
   'Node',
-  'SvgCircleElement',
-  'SvgElement',
   'Window',
   "console",
 ] }
