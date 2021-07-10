@@ -478,7 +478,6 @@ pub fn shortest_path(hole: &Vec<Point>, p0: Point, p1: Point) -> (f64, Vec<usize
 	(dst[s][t], path)
 }
 
-/*
 #[cfg(test)]
 mod shortest_path_tests {
 	use super::*;
@@ -489,7 +488,44 @@ mod shortest_path_tests {
 
 	#[test]
 	fn tsubo1() {
-		shortest_path()
+		let (d, p) = shortest_path(&generate_tsubo(), P(2, 2), P(2, 6));
+		assert_eq!(p, Vec::<usize>::new());
+	}
+
+	#[test]
+	fn tsubo2() {
+		let (d, p) = shortest_path(&generate_tsubo(), P(1, 2), P(1, 6));
+		assert_eq!(p, vec![1]);
+	}
+
+	fn generate_boko() -> Vec<Point> {
+		vec![
+			P(0, 0),
+			P(0, 8),
+			P(2, 8),
+			P(2, 4),
+			P(6, 4),
+			P(6, 8),
+			P(8, 8),
+			P(8, 0),
+		]
+	}
+
+	#[test]
+	fn boko1() {
+		let (d, p) = shortest_path(&generate_boko(), P(1, 2), P(7, 2));
+		assert_eq!(p, Vec::<usize>::new());
+	}
+
+	#[test]
+	fn boko2() {
+		let (d, p) = shortest_path(&generate_boko(), P(1, 6), P(7, 6));
+		assert_eq!(p, vec![3, 4]);
+	}
+
+	#[test]
+	fn boko3() {
+		let (d, p) = shortest_path(&generate_boko(), P(7, 6), P(1, 6));
+		assert_eq!(p, vec![4, 3]);
 	}
 }
-*/
