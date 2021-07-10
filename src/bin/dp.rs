@@ -1,6 +1,7 @@
 use icfpc2021::{*, util::*};
 use std::collections::*;
 
+#[derive(Debug)]
 enum Node {
 	Leaf(usize),
 	Forget(Vec<usize>, usize, Box<Node>),
@@ -35,6 +36,7 @@ fn construct_rec(bags: &Vec<Vec<usize>>, g: &Vec<Vec<usize>>, i: usize, parent: 
 			for u in &bags[i] {
 				if !bags[c].contains(u) {
 					bag.push(*u);
+					bag.sort();
 					node = Node::Introduce(bag.clone(), *u, Box::new(node));
 				}
 			}
@@ -72,6 +74,7 @@ fn construct_nice_td(bags: &Vec<Vec<usize>>, es: &Vec<(usize, usize)>) -> Node {
 	node
 }
 
+#[derive(Debug)]
 struct Data {
 	input: Input,
 	dist: Vec<Vec<f64>>,
@@ -128,6 +131,7 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 					}
 				}
 			}
+			dbg!(ret.len());
 			ret
 		},
 		Node::Forget(bag, u, c) => {
@@ -137,6 +141,7 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 				ps.remove(i);
 				ret.insert((ps, used));
 			}
+			dbg!(ret.len(), bag);
 			ret
 		},
 		Node::Introduce(bag, u, c) => {
@@ -145,35 +150,38 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 			let mut out = vec![P(-1, -1); data.cand.len()];
 			let mut used_v = vec![false; data.cand.len()];
 			for &b in &bag {
-				used_v[b] = true;
+				if u != b {
+					used_v[b] = true;
+				}
 			}
 			let mut ret = BTreeSet::new();
-			// if let Some(r) = bag.iter().position(|&r| data.g[u].contains(&r)) {
-			// 	for &d in &data.cand[u][bag[r]] {
-			// 		for (ps, used) in &cr {
-			// 			for j in 0..bag.len() {
-			// 				if j < i {
-			// 					out[bag[j]] = ps[j];
-			// 				} else if j > i {
-			// 					out[bag[j]] = ps[j - 1];
-			// 				}
-			// 			}
-			// 			if can_place(data, &out, &used_v, u, ps[r] + d) {
-			// 				let mut ps = ps.clone();
-			// 				let p = ps[r] + d;
-			// 				ps.insert(i, p);
-			// 				let mut used = used.clone();
-			// 				for s in 0..data.input.hole.len() {
-			// 					if data.input.hole[s] == p {
-			// 						used.push(s);
-			// 						used.sort();
-			// 					}
-			// 				}
-			// 				ret.insert((ps, used));
-			// 			}
-			// 		}
-			// 	}
-			// } else {
+			if let Some(r) = bag.iter().position(|&r| data.g[u].contains(&r)) {
+				for &d in &data.cand[u][bag[r]] {
+					for (ps, used) in &cr {
+						for j in 0..bag.len() {
+							if j < i {
+								out[bag[j]] = ps[j];
+							} else if j > i {
+								out[bag[j]] = ps[j - 1];
+							}
+						}
+						if can_place(data, &out, &used_v, u, ps[r - if r > i { 1 } else { 0 }] + d) {
+							let mut ps = ps.clone();
+							let p = ps[r - if r > i { 1 } else { 0 }] + d;
+							ps.insert(i, p);
+							let mut used = used.clone();
+							for s in 0..data.input.hole.len() {
+								if data.input.hole[s] == p {
+									used.push(s);
+									used.sort();
+									used.dedup();
+								}
+							}
+							ret.insert((ps, used));
+						}
+					}
+				}
+			} else {
 				eprintln!("orz");
 				for x in 0..data.inside.len() {
 					for y in 0..data.inside[x].len() {
@@ -195,6 +203,7 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 										if data.input.hole[s] == p {
 											used.push(s);
 											used.sort();
+											used.dedup();
 										}
 									}
 									ret.insert((ps, used));
@@ -203,7 +212,8 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 						}
 					}
 				}
-			// }
+			}
+			dbg!(ret.len(), bag);
 			ret
 		},
 		Node::Join(_bag, l, r) => {
@@ -221,6 +231,7 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 					ret.insert((ps.clone(), used));
 				}
 			}
+			dbg!(ret.len(), _bag);
 			ret
 		}
 	}
@@ -228,6 +239,7 @@ fn dp(data: &Data, node: Node) -> BTreeSet<(Vec<Point>, Vec<usize>)> {
 
 fn main() {
 	let input = read_input();
+	eprintln!("hole = {}", input.hole.len());
 	let n = input.figure.vertices.len();
 	let td = tree_decomposition::read_tree_decomposition(&format!("tree_decomposition/{}.txt", std::env::args().nth(1).unwrap()));
 	let mut bags = td.bag_vs;
@@ -237,6 +249,7 @@ fn main() {
 	let es = td.es;
 	// let (bags, es) = compute_td(&input);
 	let root = construct_nice_td(&bags, &es);
+	// dbg!(&root);
 	let mut g = vec![vec![]; n];
 	let mut dist = mat![1e20; n; n];
 	for &(i, j) in &input.figure.edges {
@@ -280,5 +293,6 @@ fn main() {
 	}
 	let data = Data { input, dist, g, inside, cand };
 	let min = dp(&data, root);
-	dbg!(min);
+	dbg!(&min);
+	dbg!(min.contains(&(vec![], (0..data.input.hole.len()).collect())));
 }
