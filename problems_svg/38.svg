@@ -1,4 +1,4 @@
-<svg viewBox="0 0 68 64" width="500" xmlns="http://www.w3.org/2000/svg">
-<polygon fill="grey" points="0,16 47,64 68,54 50,9 0,0 "/>
+<svg viewBox="0 0 69 65" width="500" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 16L47 64L68 54L50 9L0 0M0 0L69 0L69 65L0 65" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
 <path d="M0 11L11 0M0 11L14 45M1 85L14 59M1 85L14 88M8 56L14 45M8 56L14 59M11 0L30 37M14 45L14 59M14 45L30 37M14 59L30 56M14 88L30 56M30 37L30 56M30 37L67 64M30 56L56 85M56 85L67 64" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
 </svg>
