@@ -48,9 +48,46 @@ const sampleInput: Problem = {"hole":[[45,80],[35,95],[5,95],[35,50],[5,5],[35,5
 // prettier-ignore
 const sampleOutput: Solution = {"vertices": [[21, 28], [31, 28], [31, 87], [29, 41], [44, 43], [58, 70],[38, 79], [32, 31], [36, 50], [39, 40], [66, 77], [42, 29],[46, 49], [49, 38], [39, 57], [69, 66], [41, 70], [39, 60],[42, 25], [40, 35]]};
 
+class EdgeObject {
+  g: Graphics;
+  d2Orig: number;
+
+  constructor(
+    public vertex0: Graphics,
+    public vertex1: Graphics,
+    public epsilon: number
+  ) {
+    const p0 = xyFromPoint(this.vertex0.position);
+    const p1 = xyFromPoint(this.vertex1.position);
+    this.g = new Graphics();
+    this.d2Orig = abs2(p0, p1);
+    this.update();
+  }
+
+  update(): void {
+    const d2Orig = this.d2Orig;
+    const p0 = xyFromPoint(this.vertex0.position);
+    const p1 = xyFromPoint(this.vertex1.position);
+    const d2Now = abs2(p0, p1);
+    const atol = d2Orig * this.epsilon;
+    const target = 1_000_000 * d2Orig;
+    const ok = Math.abs(1_000_000 * d2Now - target) <= atol;
+    const color = ok ? 0x0000ff : d2Now < d2Orig ? 0xcccc00 : 0xff0000;
+    this.g
+      .clear()
+      .lineStyle({
+        color,
+        width: 3 / guiScale,
+        cap: "round" as any,
+      })
+      .moveTo(...p0)
+      .lineTo(...p1);
+  }
+}
+
 class ProblemRenderer {
   hole: Graphics;
-  edges: [number, number, Graphics, number][];
+  edges: EdgeObject[];
   vertices: Graphics[];
   epsilon: number;
 
@@ -70,16 +107,6 @@ class ProblemRenderer {
     hole.closePath();
 
     const fig = inputJson.figure;
-    const edges: [number, number, Graphics, number][] = [];
-    for (const [i, j] of fig.edges) {
-      const g = new Graphics().lineStyle({
-        color: 0x0000ff,
-        width: 3 / guiScale,
-        cap: "round" as any,
-      });
-      g.moveTo(...fig.vertices[i]).lineTo(...fig.vertices[j]);
-      edges.push([i, j, g, abs2(fig.vertices[i], fig.vertices[j])]);
-    }
 
     const vertices: Graphics[] = [];
     for (const [x, y] of fig.vertices) {
@@ -91,43 +118,27 @@ class ProblemRenderer {
       vertices.push(g);
     }
 
+    this.epsilon = inputJson.epsilon;
+    const edges = [];
+    for (const [i, j] of fig.edges) {
+      const edge = new EdgeObject(vertices[i], vertices[j], this.epsilon);
+      vertices[i].on("myupdate", () => edge.update());
+      vertices[j].on("myupdate", () => edge.update());
+      edges.push(edge);
+    }
+
     this.hole = hole;
     this.edges = edges;
     this.vertices = vertices;
-    this.epsilon = inputJson.epsilon;
     for (const [k, v] of vertices.entries()) {
-      v.on("drag", () => this.updateVertex(k)).on("dragend", () => {
+      v.on("drag", () => v.emit("myupdate")).on("dragend", () => {
         const { x, y } = v.position;
         v.position.set(Math.round(x), Math.round(y));
-        this.updateVertex(k);
+        v.emit("myupdate");
         (document.getElementById("output-json") as any).value = JSON.stringify(
           this.saveSolution()
         );
       });
-    }
-  }
-
-  updateVertex(k: number): void {
-    const vertices = this.vertices;
-    for (const [i, j, segment, d2Orig] of this.edges) {
-      if ([i, j].includes(k)) {
-        const p0 = xyFromPoint(vertices[i].position);
-        const p1 = xyFromPoint(vertices[j].position);
-        const d2Now = abs2(p0, p1);
-        const atol = d2Orig * this.epsilon;
-        const target = 1_000_000 * d2Orig;
-        const ok = Math.abs(1_000_000 * d2Now - target) <= atol;
-        const color = ok ? 0x0000ff : d2Now < d2Orig ? 0xcccc00 : 0xff0000;
-        segment
-          .clear()
-          .lineStyle({
-            color,
-            width: 3 / guiScale,
-            cap: "round" as any,
-          })
-          .moveTo(...p0)
-          .lineTo(...p1);
-      }
     }
   }
 
@@ -138,7 +149,9 @@ class ProblemRenderer {
     }
     for (const [i, v] of solutionJson.vertices.entries()) {
       this.vertices[i].position.set(...v);
-      this.updateVertex(i);
+    }
+    for (const edge of this.edges) {
+      edge.update();
     }
   }
 
@@ -148,7 +161,7 @@ class ProblemRenderer {
 
   render(c: Container): void {
     c.removeChildren();
-    c.addChild(this.hole, ...this.edges.map(([, , g]) => g), ...this.vertices);
+    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.vertices);
   }
 }
 
