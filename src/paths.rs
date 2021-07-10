@@ -11,7 +11,15 @@ pub fn polygon<T: std::fmt::Display>(points: &[P<T>]) -> String {
     s
 }
 
-pub fn path<T: std::fmt::Display>(edges: &[(usize, usize)], vertices: &[P<T>]) -> String {
+fn polygon_path<T: std::fmt::Display>(points: &[P<T>]) -> String {
+    let mut s = String::new();
+    for (i, P(x, y)) in points.iter().enumerate() {
+        write!(s, "{}{} {}", if i == 0 { "M" } else { "L" }, x, y).unwrap();
+    }
+    s
+}
+
+pub fn segments<T: std::fmt::Display>(edges: &[(usize, usize)], vertices: &[P<T>]) -> String {
     let mut s = String::new();
     for &(i, j) in edges {
         write!(
@@ -33,19 +41,26 @@ pub fn render_pose_svg<W: io::Write>(prob: &Input, pose: &Output, w: W) -> io::R
 }
 
 fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Result<()> {
-    let width = prob.hole.iter().map(|p| p.0).max().unwrap();
-    let height = prob.hole.iter().map(|p| p.1).max().unwrap();
-    let hole_polygon = paths::polygon(&prob.hole);
-    let figure_path = paths::path(&prob.figure.edges, &vertices);
+    let padding = 1;
+    let width = prob.hole.iter().map(|p| p.0).max().unwrap() + padding;
+    let height = prob.hole.iter().map(|p| p.1).max().unwrap() + padding;
+    let mut hole_polygon = polygon_path(&prob.hole);
+    hole_polygon.push_str(&polygon_path(&[
+        P(0, 0),
+        P(width, 0),
+        P(width, height),
+        P(0, height),
+    ]));
+    let figure_path = paths::segments(&prob.figure.edges, &vertices);
 
     let svg = svg::Document::new()
         // .set("height", 500)
         .set("width", 500)
         .set("viewBox", (0, 0, width, height))
         .add(
-            Polygon::new()
-                .set("fill", "grey")
-                .set("points", hole_polygon),
+            Path::new()
+                .set("style", "fill:#00000066;fill-rule:evenodd;stroke:none;")
+                .set("d", hole_polygon),
         )
         .add(
             Path::new()

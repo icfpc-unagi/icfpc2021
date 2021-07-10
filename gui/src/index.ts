@@ -23,7 +23,7 @@ const app = new PIXI.Application({
 document.body.appendChild(app.view);
 
 const mainContainer = new Container();
-const guiScale = 4;
+let guiScale = 4;
 mainContainer.scale.set(guiScale); // wip
 app.stage.addChild(mainContainer);
 
@@ -184,5 +184,14 @@ r.loadSolution(sampleOutput);
       const solutionJson = JSON.parse(e.target!.result as string);
       r.loadSolution(solutionJson);
     };
+  });
+}
+
+// gui scale
+{
+  const elem: any = document.getElementById("gui-scale")!;
+  elem.addEventListener("change", () => {
+    guiScale = parseInt(elem.value);
+    mainContainer.scale.set(guiScale);
   });
 }
