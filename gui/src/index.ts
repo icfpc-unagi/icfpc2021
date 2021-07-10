@@ -2,17 +2,8 @@ import * as PIXI from "pixi.js";
 import { Container, Graphics } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
-// import * as wasm from "icfpc2021";
-import * as wasm from "../../pkg/icfpc2021";
-
-// import("../../pkg/icfpc2021")
-
-console.log(wasm);
-(wasm as any).default.then((wasm: any) => {
-  console.log(wasm);
-  console.log(wasm.render_problem);
-  // wasm.render_problem('{"hole":[[45,80],[35,95],[5,95],[35,50],[5,5],[35,5],[95,95],[65,95],[55,80]],"epsilon":150000,"figure":{"edges":[[2,5],[5,4],[4,1],[1,0],[0,8],[8,3],[3,7],[7,11],[11,13],[13,12],[12,18],[18,19],[19,14],[14,15],[15,17],[17,16],[16,10],[10,6],[6,2],[8,12],[7,9],[9,3],[8,9],[9,12],[13,9],[9,11],[4,8],[12,14],[5,10],[10,15]],"vertices":[[20,30],[20,40],[30,95],[40,15],[40,35],[40,65],[40,95],[45,5],[45,25],[50,15],[50,70],[55,5],[55,25],[60,15],[60,35],[60,65],[60,95],[70,95],[80,30],[80,40]]}}');
-});
+import wasm_ from "icfpc2021";
+let wasm: any;
 
 type XY = [number, number];
 
@@ -182,47 +173,57 @@ class ProblemRenderer {
   }
 }
 
-let r = new ProblemRenderer(sampleInput);
-r.render(mainContainer);
-r.loadSolution(sampleOutput);
+mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
 
-// load problem
-{
-  const fileElem: any = document.getElementById("input-json")!;
-  fileElem.addEventListener("change", () => {
-    const file = fileElem.files[0];
-    if (file == null) return;
-    const reader = new FileReader();
-    reader.readAsText(file, "UTF-8");
-    reader.onload = (e) => {
-      const inputJson = JSON.parse(e.target!.result as string);
-      r = new ProblemRenderer(inputJson);
-      r.render(mainContainer);
-    };
-  });
-}
+(wasm_ as any).then((wasm__: any) => {
+  // return;
+  wasm = wasm__;
+  console.log(wasm);
+  console.log(wasm.render_problem);
+  // wasm.render_problem('{"hole":[[45,80],[35,95],[5,95],[35,50],[5,5],[35,5],[95,95],[65,95],[55,80]],"epsilon":150000,"figure":{"edges":[[2,5],[5,4],[4,1],[1,0],[0,8],[8,3],[3,7],[7,11],[11,13],[13,12],[12,18],[18,19],[19,14],[14,15],[15,17],[17,16],[16,10],[10,6],[6,2],[8,12],[7,9],[9,3],[8,9],[9,12],[13,9],[9,11],[4,8],[12,14],[5,10],[10,15]],"vertices":[[20,30],[20,40],[30,95],[40,15],[40,35],[40,65],[40,95],[45,5],[45,25],[50,15],[50,70],[55,5],[55,25],[60,15],[60,35],[60,65],[60,95],[70,95],[80,30],[80,40]]}}');
 
-// load solution
-{
-  const fileElem: any = document.getElementById("input-solution-json")!;
-  fileElem.addEventListener("change", () => {
-    const file = fileElem.files[0];
-    if (file == null) return;
-    const reader = new FileReader();
-    reader.readAsText(file, "UTF-8");
-    reader.onload = (e) => {
-      const solutionJson = JSON.parse(e.target!.result as string);
-      r.loadSolution(solutionJson);
-    };
-  });
-}
+  let r = new ProblemRenderer(sampleInput);
+  r.render(mainContainer);
+  r.loadSolution(sampleOutput);
 
-// gui scale
-{
-  const elem: any = document.getElementById("gui-scale")!;
-  elem.addEventListener("change", () => {
-    guiScale = parseInt(elem.value);
-    mainContainer.scale.set(guiScale);
-    r.updateGuiScale();
-  });
-}
+  // load problem
+  {
+    const fileElem: any = document.getElementById("input-json")!;
+    fileElem.addEventListener("change", () => {
+      const file = fileElem.files[0];
+      if (file == null) return;
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = (e) => {
+        const inputJson = JSON.parse(e.target!.result as string);
+        r = new ProblemRenderer(inputJson);
+        r.render(mainContainer);
+      };
+    });
+  }
+
+  // load solution
+  {
+    const fileElem: any = document.getElementById("input-solution-json")!;
+    fileElem.addEventListener("change", () => {
+      const file = fileElem.files[0];
+      if (file == null) return;
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = (e) => {
+        const solutionJson = JSON.parse(e.target!.result as string);
+        r.loadSolution(solutionJson);
+      };
+    });
+  }
+
+  // gui scale
+  {
+    const elem: any = document.getElementById("gui-scale")!;
+    elem.addEventListener("change", () => {
+      guiScale = parseInt(elem.value);
+      mainContainer.scale.set(guiScale);
+      r.updateGuiScale();
+    });
+  }
+});
