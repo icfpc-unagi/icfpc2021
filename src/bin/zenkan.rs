@@ -50,9 +50,11 @@ fn can_place(data: &Data, out: &Vec<Point>, used: &Vec<bool>, u: usize, p: Point
 	true
 }
 
+const ZENKAN: bool = true;
+
 fn rec(data: &Data, i: usize, out: &mut Vec<Point>, used: &mut Vec<bool>, cand: &Vec<Option<Vec<Point>>>, min: &Vec<i64>, best: &mut Vec<Point>, best_score: &mut i64, until: f64) {
 	let n = out.len();
-	if n - i < min.iter().filter(|&&v| v > 0).count() {
+	if ZENKAN && n - i < min.iter().filter(|&&v| v > 0).count() {
 		return;
 	}
 	if i == n {
@@ -67,21 +69,23 @@ fn rec(data: &Data, i: usize, out: &mut Vec<Point>, used: &mut Vec<bool>, cand: 
 	}
 	let mut next = vec![];
 	let mut min_size = 1 << 30;
-	for i in 0..data.input.hole.len() {
-		if min[i] == 0 {
-			continue;
-		}
-		let mut vs = vec![];
-		for v in 0..n {
-			if !used[v] && can_place(data, out, used, v, data.input.hole[i]) {
-				vs.push((v, data.input.hole[i]));
+	if ZENKAN {
+		for i in 0..data.input.hole.len() {
+			if min[i] == 0 {
+				continue;
 			}
-		}
-		if vs.len() == 0 {
-			return;
-		}
-		if min_size.setmin(vs.len()) {
-			next = vs;
+			let mut vs = vec![];
+			for v in 0..n {
+				if !used[v] && can_place(data, out, used, v, data.input.hole[i]) {
+					vs.push((v, data.input.hole[i]));
+				}
+			}
+			if vs.len() == 0 {
+				return;
+			}
+			if min_size.setmin(vs.len()) {
+				next = vs;
+			}
 		}
 	}
 	for u in 0..n {
@@ -94,19 +98,26 @@ fn rec(data: &Data, i: usize, out: &mut Vec<Point>, used: &mut Vec<bool>, cand: 
 			}
 		}
 	}
+	let mut list = vec![];
 	for (v, p) in next {
+		let mut min = min.clone();
+		for h in 0..data.input.hole.len() {
+			min[h].setmin((p - data.input.hole[h]).abs2());
+		}
+		list.push((min, v, p));
+	}
+	if !ZENKAN {
+		list.sort_by_key(|(min, _, _)| min.iter().sum::<i64>());
+	}
+	for (min, v, p) in list {
 		out[v] = p;
 		used[v] = true;
 		let mut cand = cand.clone();
 		for &u in &data.g[v] {
 			if !used[u] {
-				let list = cand[u].clone().unwrap_or(data.cand[u][v].iter().map(|&d| out[v] + d).collect());
+				let list = cand[u].clone().unwrap_or(data.cand[u][v].iter().map(|&d| p + d).collect());
 				cand[u] = Some(list.into_iter().filter(|&p| can_place(data, &out, &used, u, p)).collect());
 			}
-		}
-		let mut min = min.clone();
-		for h in 0..data.input.hole.len() {
-			min[h].setmin((out[v] - data.input.hole[h]).abs2());
 		}
 		rec(data, i + 1, out, used, &cand, &min, best, best_score, until);
 		used[v] = false;
@@ -186,12 +197,12 @@ fn main() {
 				}
 				cand[v] = Some(list);
 			}
-			rec(&data, 1, &mut out, &mut used, &cand, &min, &mut best, &mut best_score, stime + 100.0);
+			rec(&data, 1, &mut out, &mut used, &cand, &min, &mut best, &mut best_score, stime + 600.0);
 		}
 		if data.input.epsilon == 0 {
 			break;
 		}
-		data.input.epsilon /= 2;
+		data.input.epsilon /= 4;
 	}
 	eprintln!("Score = {}", best_score);
 	write_output(&Output { vertices: best });

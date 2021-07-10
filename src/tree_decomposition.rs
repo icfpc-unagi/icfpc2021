@@ -2,8 +2,8 @@ use std::io::BufRead;
 
 #[derive(Debug)]
 pub struct TreeDecomposition {
-    bag_vs: Vec<Vec<usize>>,
-    es: Vec<(usize, usize)>,
+    pub bag_vs: Vec<Vec<usize>>,
+    pub es: Vec<(usize, usize)>,
 }
 
 

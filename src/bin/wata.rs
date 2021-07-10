@@ -212,7 +212,7 @@ fn main() {
 						min[i] = (P(x, y) - data.input.hole[i]).abs2();
 					}
 					used[order[0]] = true;
-					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 0.005);
+					rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 0.001);
 				}
 			}
 		}
@@ -228,6 +228,9 @@ fn main() {
 			}
 			used[order[0]] = true;
 			rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
+			if stime + 10.0 > get_time() {
+				break;
+			}
 		}
 		if data.input.epsilon == 0 {
 			break;
