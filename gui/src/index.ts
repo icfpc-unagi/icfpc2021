@@ -77,7 +77,7 @@ class EdgeObject {
       .clear()
       .lineStyle({
         color,
-        width: 3 / guiScale,
+        width: 1,
         cap: "round" as any,
       })
       .moveTo(...p0)
@@ -110,10 +110,9 @@ class ProblemRenderer {
 
     const vertices: Graphics[] = [];
     for (const [x, y] of fig.vertices) {
-      const g = new Graphics()
-        .beginFill(0x008000)
-        .drawCircle(0, 0, 6 / guiScale);
+      const g = new Graphics().beginFill(0x008000).drawCircle(0, 0, 6);
       g.position.set(x, y);
+      g.scale.set(1 / guiScale);
       dragHandler.register(g);
       vertices.push(g);
     }
@@ -163,6 +162,12 @@ class ProblemRenderer {
     c.removeChildren();
     c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.vertices);
   }
+
+  updateGuiScale(): void {
+    for (const v of this.vertices) {
+      v.scale.set(1 / guiScale);
+    }
+  }
 }
 
 let r = new ProblemRenderer(sampleInput);
@@ -206,5 +211,6 @@ r.loadSolution(sampleOutput);
   elem.addEventListener("change", () => {
     guiScale = parseInt(elem.value);
     mainContainer.scale.set(guiScale);
+    r.updateGuiScale();
   });
 }
