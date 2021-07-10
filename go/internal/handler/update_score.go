@@ -121,8 +121,14 @@ func handleUpdateScore(w http.ResponseWriter, r *http.Request) {
 		glog.Infof("Update score: score=%d, uuid=%s",
 			score, uuid.SubmissionUUID)
 		db.Execute(ctx,
-			"UPDATE submissions SET submission_score = ? "+
-			"WHERE submission_id = ?",
-			score, uuid.SubmissionID)
+			`
+UPDATE submissions
+SET submission_estimated_score = ?,
+	submission_score = ?
+WHERE submission_id = ?
+`,
+			score,
+			score,
+			uuid.SubmissionID)
 	}
 }
