@@ -5,15 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/golang/glog"
-	"github.com/imos/icfpc2021/pkg/db"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"math"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/golang/glog"
+	"github.com/imos/icfpc2021/pkg/db"
+	"github.com/pkg/errors"
 )
 
 func init() {
@@ -95,7 +96,7 @@ SELECT problem_id, MIN(submission_score) AS submission_score FROM (
 
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "<h1>Problems</h1>\n")
-	fmt.Fprintf(buf, "<table class=table><tr><td>Problem ID</td><td>Score (my/global [remaining])</td><td colspan=1>Dislikes</td></tr>")
+	fmt.Fprintf(buf, "<table class=table><tr><td>Problem ID</td><td>Score (my/global [remaining])</td><td colspan=1>Dislikes (best / current / global)</td></tr>")
 	for _, problem := range problems {
 		fmt.Fprintf(buf, "<tr><td>%d</td><td align=right><code>%5.0f / %5.0f [%+6.0f]</code></td><td>(%d / %d / %d)</td></tr>",
 			problem.ProblemID,
