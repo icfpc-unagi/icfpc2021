@@ -25,7 +25,7 @@ COPY --from=rust-builder /work/target/release/calculate_score /usr/local/bin/cal
 COPY --from=go-builder /usr/local/bin/server /usr/local/bin/server
 COPY ./problems /problems
 COPY ./problems /static/problems
-COPY ./web/dist /static/show_problem
+COPY ./web/dist /static/show
 COPY ./scripts/server.sh /usr/local/bin/server.sh
 RUN chmod +x /usr/local/bin/server.sh
 ENTRYPOINT server.sh

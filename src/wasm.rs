@@ -60,3 +60,19 @@ pub fn render_problem(s: &str) -> Result<(), JsValue> {
 
 	Ok(())
 }
+
+#[wasm_bindgen]
+pub fn render_pose(problem: &str, pose: &str) -> Result<(), JsValue> {
+	let prob = read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
+
+	let mut buf = Vec::new();
+	paths::render_pose_svg(&prob, &pose, &mut buf).map_err(|e| JsValue::from(e.to_string()))?;
+
+	let window = web_sys::window().unwrap();
+	let document = window.document().unwrap();
+	let container = document.get_element_by_id("_container").unwrap();
+	container.set_inner_html(&String::from_utf8(buf).unwrap());
+
+	Ok(())
+}

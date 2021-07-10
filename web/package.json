@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "wasm-pack build && webpack --config webpack.config.js",
     "start": "webpack-dev-server"
   },
   "dependencies": {
