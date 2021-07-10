@@ -6,4 +6,4 @@ run:
 	npm run start
 
 build:
-	npm install && npm run build
+	npm install && npm run build:prod
