@@ -34,6 +34,13 @@ pub struct Output {
 
 pub fn read_input() -> Input {
 	let mut input: Input = serde_json::from_reader(std::io::stdin()).unwrap();
+	for i in 0..input.figure.edges.len() {
+		if input.figure.edges[i].0 > input.figure.edges[i].1 {
+			let t = input.figure.edges[i].0;
+			input.figure.edges[i].0 = input.figure.edges[i].1;
+			input.figure.edges[i].1 = t;
+		}
+	}
 	input.figure.edges.sort();
 	input.figure.edges.dedup();
 	let mut area = 0;
@@ -49,6 +56,13 @@ pub fn read_input() -> Input {
 
 pub fn read_input_from_file(f: &std::path::PathBuf) -> Input {
 	let mut input: Input = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
+	for i in 0..input.figure.edges.len() {
+		if input.figure.edges[i].0 > input.figure.edges[i].1 {
+			let t = input.figure.edges[i].0;
+			input.figure.edges[i].0 = input.figure.edges[i].1;
+			input.figure.edges[i].1 = t;
+		}
+	}
 	input.figure.edges.sort();
 	input.figure.edges.dedup();
 	let mut area = 0;

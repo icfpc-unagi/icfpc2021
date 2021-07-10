@@ -117,6 +117,7 @@ fn rec(data: &Data, i: usize, out: &mut Vec<Point>, used: &mut Vec<bool>, cand: 
 fn main() {
 	let input = read_input();
 	let n = input.figure.vertices.len();
+	eprintln!("n = {}, m = {}", n, input.figure.edges.len());
 	let mut g = vec![vec![]; n];
 	let mut dist = mat![1e20; n; n];
 	for &(i, j) in &input.figure.edges {
