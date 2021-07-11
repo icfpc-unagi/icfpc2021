@@ -2,8 +2,7 @@
 use icfpc2021::*;
 
 struct Config {
-    /// 3, 5, 7, ...
-    neighbor_size: i64,
+    glucose_path: String,
 }
 
 fn edge_penalty(input: &Input, v1: usize, v2: usize, p1: Point, p2: Point) -> i64 {
@@ -163,12 +162,11 @@ fn read_solution() -> Vec<bool> {
     sol
 }
 
-fn solve_by_glucose(clauses: &Vec<Vec<i64>>) -> Vec<bool> {
-    let glucose_path = "/home/takiba/Desktop/glucose-syrup-4.1/simp/glucose";
+fn solve_by_glucose(config: &Config, clauses: &Vec<Vec<i64>>) -> Vec<bool> {
     write_clauses(clauses);
 
     // TODO: stdoutの最後の行見てSATかUNSATかあれしたほうがいいかもしれない
-    std::process::Command::new(glucose_path)
+    std::process::Command::new(&config.glucose_path)
         .args(vec!["sat_in.txt", "sat_out.txt"])
         .status()
         .unwrap()
@@ -181,9 +179,9 @@ fn solve_by_glucose(clauses: &Vec<Vec<i64>>) -> Vec<bool> {
 // main
 //
 
-fn step(input: &Input, positions: Vec<Point>, penalty_limit: i64) -> Vec<Point> {
+fn step(config: &Config, input: &Input, positions: Vec<Point>, penalty_limit: i64) -> Vec<Point> {
     let clauses = generate_clauses(&input, &positions, penalty_limit);
-    let solution = solve_by_glucose(&clauses);
+    let solution = solve_by_glucose(config, &clauses);
     reconstruct_positions(&input, &positions, &solution)
 }
 
@@ -216,14 +214,18 @@ fn main() {
 
         #[structopt(long)]
         output_path: String,
-        // #[structopt(long)]
-        // glucose_path: String,
+
+        #[structopt(long)]
+        glucose_path: String,
     }
     let args = Args::from_args();
     dbg!(&args);
 
     let input = read_input_from_file(&args.input_path);
     let output = read_output_from_file(&args.output_path);
+    let config = Config {
+        glucose_path: args.glucose_path.clone(),
+    };
 
     let mut positions = output.vertices.clone();
 
@@ -231,7 +233,7 @@ fn main() {
 
     if false {
         let penalty_limit = find_largest_penalty(&input, &positions).0 * 3; // TODO: ハイパラ
-        positions = step(&input, positions, penalty_limit);
+        positions = step(&config, &input, positions, penalty_limit);
     }
 
     let mut i_iter: i64 = 1;
@@ -244,7 +246,7 @@ fn main() {
             break;
         }
 
-        positions = step(&input, positions, largest_penalty);
+        positions = step(&config, &input, positions, largest_penalty);
 
         i_iter += 1;
     }
