@@ -99,7 +99,7 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 				.set("cy", bonus.position.1)
 				.set("r", 5)
 				.set("fill", if got { "#ff666666" } else { "#ffff0066" })
-				.set("title", format!("{:?}", bonus.bonus)),
+				.add(element::Title::new().add(node::Text::new(format!("{:?}@{}", bonus.bonus, bonus.problem)))),
 		);
 	}
 	svg = svg.add(
