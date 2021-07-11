@@ -20,6 +20,7 @@ struct SatCalibrator {
     input: Input,
     config: Config,
     neighbor: i64,
+    is_fixed: Vec<bool>,
 
     contains_p_cache: std::collections::HashMap<Point, i32>,
     contains_s_cache: std::collections::HashMap<(Point, Point), bool>,
@@ -33,6 +34,7 @@ impl SatCalibrator {
             config,
             contains_p_cache: Default::default(),
             contains_s_cache: Default::default(),
+            is_fixed: vec![],
         }
     }
 
@@ -125,8 +127,9 @@ impl SatCalibrator {
 
         // 角を構成してるやつは真ん中に固定
         for v in 0..n_vs {
-            let p = vertices[v];
-            if self.input.hole.contains(&p) {
+            //let p = vertices[v];
+            //if self.input.hole.contains(&p) {
+            if self.is_fixed[v] {
                 // dbg!(&v);
                 clauses.push(vec![self.lit(v, self.d_center())]);
             }
@@ -278,6 +281,11 @@ impl SatCalibrator {
     }
 
     fn solve(&mut self, mut positions: Vec<Point>) {
+        self.is_fixed = positions
+            .iter()
+            .map(|p| self.input.hole.contains(&p))
+            .collect();
+
         self.dump(&positions, 0);
 
         // 最初にゆるめる？
@@ -353,7 +361,7 @@ fn main() {
     let config = Config {
         glucose_path: args.glucose_path.clone(),
         min_neighbor: args.neighbor,
-        max_neighbor: 11,
+        max_neighbor: 15,
         initial_relax: args.initial_relax,
     };
 
