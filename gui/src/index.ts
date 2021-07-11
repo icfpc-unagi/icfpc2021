@@ -161,7 +161,7 @@ class ProblemRenderer {
   edges: EdgeObject[];
   epsilon: number;
   lastDrag?: VertexObject;
-  hintContainer?: Container;
+  hintContainer: Container;
   abs2UpperBound?: Uint32Array;
   holePairContainer: Container;
 
@@ -237,28 +237,19 @@ class ProblemRenderer {
     this.edges = edges;
     this.vertices = vertices;
     this.holePairContainer = new Container();
+    this.hintContainer = new Container();
 
     for (const [k, v] of vertices.entries()) {
       dragHandler.register(v.g);
       v.g
         .on("dragstart", () => {
-          let c = this.hintContainer;
-          if (c == null) {
-            c = new Container();
-            mainContainer.addChild(c);
-            this.hintContainer = c;
-          }
-          c.addChild(...v.edges.map((e) => e.hintFor(v)));
+          this.hintContainer.addChild(...v.edges.map((e) => e.hintFor(v)));
         })
         .on("drag", () => {
           v.update();
         })
         .on("dragend", () => {
-          let c = this.hintContainer;
-          if (c != null) {
-            mainContainer.removeChild(c);
-            delete this.hintContainer;
-          }
+          this.hintContainer.removeChildren();
           this.update();
           this.lastDrag = v;
         });
@@ -361,7 +352,8 @@ class ProblemRenderer {
       edgesContainer,
       ...this.holeCorners,
       ...this.vertices.map(({ g }) => g),
-      this.holePairContainer
+      this.holePairContainer,
+      this.hintContainer
     );
   }
 
