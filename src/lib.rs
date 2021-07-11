@@ -80,7 +80,7 @@ const SHIFT_X: i64 = 2;
 const SHIFT_Y: i64 = 0;
 
 impl Input {
-	fn to_internal(&mut self) {
+	pub fn to_internal(&mut self) {
 		for i in 0..self.hole.len() {
 			self.hole[i] += P(SHIFT_X, SHIFT_Y);
 			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
@@ -106,16 +106,25 @@ impl Input {
 			self.hole.reverse();
 		}
 	}
+
+	pub fn to_external(&mut self) {
+		for i in 0..self.hole.len() {
+			self.hole[i] -= P(SHIFT_X, SHIFT_Y);
+		}
+		for bonus in &mut self.bonuses {
+			bonus.position -= P(SHIFT_X, SHIFT_Y);
+		}
+	}
 }
 
 impl Output {
-	fn to_internal(&mut self) {
+	pub fn to_internal(&mut self) {
 		for i in 0..self.vertices.len() {
 			self.vertices[i] += P(SHIFT_X, SHIFT_Y);
 		}
 	}
 
-	fn to_external(&mut self) {
+	pub fn to_external(&mut self) {
 		for i in 0..self.vertices.len() {
 			self.vertices[i] -= P(SHIFT_X, SHIFT_Y);
 		}
