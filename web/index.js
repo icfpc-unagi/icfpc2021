@@ -59,7 +59,7 @@ import * as wasm from "icfpc2021";
   }
 
   addEventListener('hashchange', () => render_for_hash(location.href), false)
-  el_problem_id.addEventListener('change', () => {
+  el_problem_id.addEventListener('change', e => {
     let newhash = `#problem_url=%2Fstatic%2Fproblems%2F${e.target.value}.json`
     history.replaceState(null, '', newhash)
     render_for_hash(newhash)
