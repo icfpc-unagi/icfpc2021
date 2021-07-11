@@ -135,6 +135,18 @@ class EdgeObject {
       .moveTo(...p0)
       .lineTo(...p1).tint = color;
   }
+
+  hintFor(vertex: VertexObject): Graphics {
+    const rInner = Math.sqrt(this.d2Orig * (1 - this.epsilon / 1_000_000));
+    const rOuter = Math.sqrt(this.d2Orig * (1 + this.epsilon / 1_000_000));
+    const [x, y] = [this.vertex0, this.vertex1].find((v) => v !== vertex)!.pos;
+    console.log(x, y, rInner, rOuter);
+    return new Graphics()
+      .beginFill(0x0000ff, 0.2)
+      .drawCircle(x, y, rOuter)
+      .beginHole()
+      .drawCircle(x, y, rInner);
+  }
 }
 
 class ProblemRenderer {
@@ -145,6 +157,7 @@ class ProblemRenderer {
   edges: EdgeObject[];
   epsilon: number;
   lastDrag?: VertexObject;
+  hintContainer?: Container;
 
   constructor(problem: string) {
     console.log(problem);
@@ -217,10 +230,24 @@ class ProblemRenderer {
     for (const [k, v] of vertices.entries()) {
       dragHandler.register(v.g);
       v.g
+        .on("dragstart", () => {
+          let c = this.hintContainer;
+          if (c == null) {
+            c = new Container();
+            mainContainer.addChild(c);
+            this.hintContainer = c;
+          }
+          c.addChild(...v.edges.map((e) => e.hintFor(v)));
+        })
         .on("drag", () => {
           v.update();
         })
         .on("dragend", () => {
+          let c = this.hintContainer;
+          if (c != null) {
+            mainContainer.removeChild(c);
+            delete this.hintContainer;
+          }
           this.update();
           this.lastDrag = v;
         });
