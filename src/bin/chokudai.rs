@@ -5,6 +5,15 @@ use rand::prelude::*;
 use std::env;
 
 fn main() {
+	let timeout: f64 = match std::env::var("TIMEOUT") {
+		Ok(value) => match value.parse::<f64>() {
+			Ok(value) => value,
+			Err(_) => -1.0,
+		},
+		Err(_) => -1.0,
+	};
+	let timeout = if timeout < -1.0 { 600.0 } else { timeout };
+
     let args: Vec<String> = env::args().collect();
 
 	let (input_path, output_path) = if args.len() == 2 {
@@ -202,7 +211,7 @@ fn main() {
 		let mut now_temp =first_now.clone();
 
 		let nowtime = get_time() - starttime;
-		if nowtime >= 600.0 { break; }
+		if nowtime >= timeout { break; }
 		
 		for i in 0..n {
 

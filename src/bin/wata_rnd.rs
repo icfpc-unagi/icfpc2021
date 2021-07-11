@@ -8,7 +8,7 @@ pub fn get_time() -> f64 {
 		if STIME < 0.0 {
 			STIME = ms;
 		}
-		ms - STIME
+		(ms - STIME) / 5.0
 	}
 }
 

@@ -6,7 +6,7 @@ cd
 if [ ! -e ./problems ]; then
 	gsutil -m cp -r gs://icfpc2021/problems ./
 fi
-mkdir -p ./bin && gsutil -m cp -r gs://icfpc2021/artifacts/f372a48/* ./bin/ && chmod +x ./bin/*
+mkdir -p ./bin && gsutil -m cp -r gs://icfpc2021/artifacts/67d60fc/* ./bin/ && chmod +x ./bin/*
 
 : ${PROBLEM_ID:=4}
 
@@ -15,8 +15,8 @@ run() {
 	export TMPDIR="/tmp/runs/$PROBLEM_ID/$RUN_ID"
 	mkdir -p ${TMPDIR}
 	{
-		./bin/wata < ./problems/$PROBLEM_ID.json > $TMPDIR/wata.json
-		./bin/chokudai ./problems/$PROBLEM_ID.json $TMPDIR/wata.json >$TMPDIR/chokudai.json
+		timeout 900s ./bin/wata_rnd < ./problems/$PROBLEM_ID.json > $TMPDIR/wata.json
+		timeout 900s ./bin/chokudai ./problems/$PROBLEM_ID.json $TMPDIR/wata.json >$TMPDIR/chokudai.json
 		curl -X POST -d @$TMPDIR/chokudai.json "https://icfpc.sx9.jp/api/submit?problem_id=$PROBLEM_ID"
 	} 2>&1 | while read line; do
 		echo "$PROBLEM_ID-$RUN_ID: $line"
@@ -24,7 +24,7 @@ run() {
 }
 
 : ${NPROC:=$(nproc)}
-: ${JOBS:=$(( NPROC * 5 / 4 ))}
+: ${JOBS:=$(( NPROC * 2 ))}
 
 for i in $(seq $JOBS); do
     run &
