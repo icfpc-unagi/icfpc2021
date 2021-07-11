@@ -46,6 +46,8 @@ pub enum BonusType {
 	Globalist,
 	#[serde(rename = "BREAK_A_LEG")]
 	BreakALeg,
+	#[serde(rename = "WALLHACK")]
+	WallHack,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
