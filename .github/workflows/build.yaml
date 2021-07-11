@@ -28,3 +28,4 @@ jobs:
           cargo build --release
           gsutil -m cp -r ./target/release/{wata,wata_rnd,chokudai,chokudai_v1,dp,calculate_score} \
               gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/
+          echo "Commit ID: $(git rev-parse --short HEAD)"
