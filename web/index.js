@@ -33,33 +33,40 @@ import * as wasm from "icfpc2021";
       el_container.innerHTML = wasm.render_pose(problem, pose)
       el_message.textContent = `score: ${wasm.calculate_score(problem, pose)}`
       el_pose.value = pose
+      el_pose.style.boxShadow = ''
     } else if (problem) {
       el_container.innerHTML = wasm.render_problem(problem)
       el_message.textContent = ''
       el_pose.value = ''
+      el_pose.style.boxShadow = ''
     } else {
       throw arguments
     }
-    document.querySelectorAll('circle[i]').forEach(el => {
-      function f(dx, dy) {
-        let i = parseInt(el.getAttribute('i'))
-        let json = JSON.parse(state.pose)
-        json.vertices[i][0] += dx
-        json.vertices[i][1] += dy
-        state.pose = JSON.stringify(json)
-        render(state.problem, state.pose)
-        document.querySelector(`circle[i="${i}"]`).focus()
+    let handleKeyDown = ev => {
+      let i = parseInt(ev.target.getAttribute('i'))
+      let a = (ev.shiftKey ? 10 : 1)
+      switch (ev.key) {
+        case 'ArrowUp': apply(i, v => [v[0], v[1] - a], false); return false;
+        case 'ArrowDown': apply(i, v => [v[0], v[1] + a], false); return false;
+        case 'ArrowLeft': apply(i, v => [v[0] - a, v[1]], false); return false;
+        case 'ArrowRight': apply(i, v => [v[0] + a, v[1]], false); return false;
+        case 'h': apply(i, (v, p) => [2 * p[0] - v[0], v[1]], true); return false;
+        case 'v': apply(i, (v, p) => [v[0], 2 * p[1] - v[1]], true); return false;
+        case '-': apply(i, (v, p) => [Math.round((v[0] - p[0]) * .9 + p[0]), Math.round((v[1] - p[1]) * .9 + p[1])], true); return false;
+        case '+': apply(i, (v, p) => [Math.round((v[0] - p[0]) / .9 + p[0]), Math.round((v[1] - p[1]) / .9 + p[1])], true); return false;
       }
-      el.addEventListener('keydown', ev => {
-        let a = (ev.shiftKey ? 10 : 1)
-        switch (ev.key) {
-          case 'ArrowUp': f(0, -a); return false;
-          case 'ArrowDown': f(0, a); return false;
-          case 'ArrowLeft': f(-a, 0); return false;
-          case 'ArrowRight': f(a, 0); return false;
-        }
-      })
-    })
+    }
+    document.querySelectorAll('circle[i]').forEach(el => el.addEventListener('keydown', handleKeyDown))
+  }
+
+  function apply(i, f, all) {
+    let json = JSON.parse(state.pose)
+    for (let j of all ? json.vertices.keys() : [i]) {
+      json.vertices[j] = f(json.vertices[j], json.vertices[i])
+    }
+    state.pose = JSON.stringify(json)
+    render(state.problem, state.pose)
+    document.querySelector(`circle[i="${i}"]`).focus()
   }
 
   addEventListener('hashchange', () => render_for_hash(location.href), false)
