@@ -329,6 +329,21 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
       r.moveLastVertex(vec as any);
     });
 
+    document.addEventListener("keydown", (e) => {
+      const vec = {
+        a: [-1, 0],
+        w: [0, -1],
+        d: [1, 0],
+        s: [0, 1],
+      }[e.key.toLowerCase()];
+      if (vec == null) return;
+      const flip = (document.getElementById("flip-wasd") as any).checked;
+      const scale = flip ? -100 : 100;
+      const [x, y] = vec as any;
+      mainContainer.x += scale * x;
+      mainContainer.y += scale * y;
+    });
+
     // load problem
     {
       const fileElem: any = document.getElementById("input-json")!;
