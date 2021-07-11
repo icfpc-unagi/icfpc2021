@@ -102,6 +102,9 @@ impl Input {
 			self.hole[i] += P(SHIFT_X, SHIFT_Y);
 			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
 		}
+		for i in 0..self.figure.vertices.len() {
+			self.figure.vertices[i] += P(SHIFT_X, SHIFT_Y);
+		}
 		for bonus in &mut self.bonuses {
 			bonus.position += P(SHIFT_X, SHIFT_Y);
 		}
@@ -135,6 +138,9 @@ impl Input {
 			.expect("This `Input` is already external");
 		for i in 0..self.hole.len() {
 			self.hole[i] -= P(SHIFT_X, SHIFT_Y);
+		}
+		for i in 0..self.figure.vertices.len() {
+			self.figure.vertices[i] -= P(SHIFT_X, SHIFT_Y);
 		}
 		for bonus in &mut self.bonuses {
 			bonus.position -= P(SHIFT_X, SHIFT_Y);
