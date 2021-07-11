@@ -1,43 +1,56 @@
-<svg height="500" viewBox="-2 -2 62 44" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M2 4L58 4L30 0M-2 -2L60 -2L60 42L-2 42" style="fill:#00000066;fill-rule:evenodd;"/>
-<circle cx="44" cy="2" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
-<circle cx="17" cy="3" r="5" style="fill:#ffff0066;" title="WallHack"/>
+<svg height="500" viewBox="0 -2 60 44" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 4L58 4L30 0M0 -2L60 -2L60 42L0 42" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="44" cy="2" fill="#ffff0066" r="5">
+<title>
+BreakALeg@67
+</title>
+</circle>
+<circle cx="17" cy="3" fill="#ffff0066" r="5">
+<title>
+WallHack@69
+</title>
+</circle>
+<circle cx="50" cy="3" fill="#ffff0066" r="5">
+<title>
+SuperFlex@30
+</title>
+</circle>
 <path class="ok" d="" style="stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M0 20L20 0M0 20L20 40M20 0L40 20M20 40L40 20" style="stroke:#ff0000;stroke-linecap:round"/>
+<path class="out" d="M2 20L22 0M2 20L22 40M22 0L42 20M22 40L42 20" style="stroke:#ff0000;stroke-linecap:round"/>
 <g fill="#333333">
-<circle cx="2" cy="4" r="0.5" tabindex="0">
+<circle cx="2" cy="4" r="0.5">
 <title>
 hole:0
 </title>
 </circle>
-<circle cx="58" cy="4" r="0.5" tabindex="1">
+<circle cx="58" cy="4" r="0.5">
 <title>
 hole:1
 </title>
 </circle>
-<circle cx="30" cy="0" r="0.5" tabindex="2">
+<circle cx="30" cy="0" r="0.5">
 <title>
 hole:2
 </title>
 </circle>
 </g>
 <g fill="#999999">
-<circle cx="0" cy="20" r="0.5" tabindex="3">
+<circle cx="2" cy="20" i="0" r="0.5" tabindex="0">
 <title>
 v:0
 </title>
 </circle>
-<circle cx="20" cy="0" r="0.5" tabindex="4">
+<circle cx="22" cy="0" i="1" r="0.5" tabindex="1">
 <title>
 v:1
 </title>
 </circle>
-<circle cx="20" cy="40" r="0.5" tabindex="5">
+<circle cx="22" cy="40" i="2" r="0.5" tabindex="2">
 <title>
 v:2
 </title>
 </circle>
-<circle cx="40" cy="20" r="0.5" tabindex="6">
+<circle cx="42" cy="20" i="3" r="0.5" tabindex="3">
 <title>
 v:3
 </title>

@@ -1,112 +1,126 @@
-<svg height="500" viewBox="-2 -2 85 92" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M2 28L9 34L18 44L38 33L43 36L81 21L71 0L42 17L38 19L8 14M-2 -2L83 -2L83 90L-2 90" style="fill:#00000066;fill-rule:evenodd;"/>
-<circle cx="61" cy="26" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
+<svg height="500" viewBox="0 -2 83 92" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 28L9 34L18 44L38 33L43 36L81 21L71 0L42 17L38 19L8 14M0 -2L83 -2L83 90L0 90" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="61" cy="26" fill="#ffff0066" r="5">
+<title>
+BreakALeg@43
+</title>
+</circle>
+<circle cx="56" cy="9" fill="#ffff0066" r="5">
+<title>
+SuperFlex@58
+</title>
+</circle>
+<circle cx="23" cy="18" fill="#ffff0066" r="5">
+<title>
+SuperFlex@27
+</title>
+</circle>
 <path class="ok" d="" style="stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M0 11L11 0M0 11L14 45M1 85L14 59M1 85L14 88M8 56L14 45M8 56L14 59M11 0L30 37M14 45L14 59M14 45L30 37M14 59L30 56M14 88L30 56M30 37L30 56M30 37L67 64M30 56L56 85M56 85L67 64" style="stroke:#ff0000;stroke-linecap:round"/>
+<path class="out" d="M2 11L13 0M2 11L16 45M3 85L16 59M3 85L16 88M10 56L16 45M10 56L16 59M13 0L32 37M16 45L16 59M16 45L32 37M16 59L32 56M16 88L32 56M32 37L32 56M32 37L69 64M32 56L58 85M58 85L69 64" style="stroke:#ff0000;stroke-linecap:round"/>
 <g fill="#333333">
-<circle cx="2" cy="28" r="0.5" tabindex="0">
+<circle cx="2" cy="28" r="0.5">
 <title>
 hole:0
 </title>
 </circle>
-<circle cx="9" cy="34" r="0.5" tabindex="1">
+<circle cx="9" cy="34" r="0.5">
 <title>
 hole:1
 </title>
 </circle>
-<circle cx="18" cy="44" r="0.5" tabindex="2">
+<circle cx="18" cy="44" r="0.5">
 <title>
 hole:2
 </title>
 </circle>
-<circle cx="38" cy="33" r="0.5" tabindex="3">
+<circle cx="38" cy="33" r="0.5">
 <title>
 hole:3
 </title>
 </circle>
-<circle cx="43" cy="36" r="0.5" tabindex="4">
+<circle cx="43" cy="36" r="0.5">
 <title>
 hole:4
 </title>
 </circle>
-<circle cx="81" cy="21" r="0.5" tabindex="5">
+<circle cx="81" cy="21" r="0.5">
 <title>
 hole:5
 </title>
 </circle>
-<circle cx="71" cy="0" r="0.5" tabindex="6">
+<circle cx="71" cy="0" r="0.5">
 <title>
 hole:6
 </title>
 </circle>
-<circle cx="42" cy="17" r="0.5" tabindex="7">
+<circle cx="42" cy="17" r="0.5">
 <title>
 hole:7
 </title>
 </circle>
-<circle cx="38" cy="19" r="0.5" tabindex="8">
+<circle cx="38" cy="19" r="0.5">
 <title>
 hole:8
 </title>
 </circle>
-<circle cx="8" cy="14" r="0.5" tabindex="9">
+<circle cx="8" cy="14" r="0.5">
 <title>
 hole:9
 </title>
 </circle>
 </g>
 <g fill="#999999">
-<circle cx="0" cy="11" r="0.5" tabindex="10">
+<circle cx="2" cy="11" i="0" r="0.5" tabindex="0">
 <title>
 v:0
 </title>
 </circle>
-<circle cx="1" cy="85" r="0.5" tabindex="11">
+<circle cx="3" cy="85" i="1" r="0.5" tabindex="1">
 <title>
 v:1
 </title>
 </circle>
-<circle cx="8" cy="56" r="0.5" tabindex="12">
+<circle cx="10" cy="56" i="2" r="0.5" tabindex="2">
 <title>
 v:2
 </title>
 </circle>
-<circle cx="11" cy="0" r="0.5" tabindex="13">
+<circle cx="13" cy="0" i="3" r="0.5" tabindex="3">
 <title>
 v:3
 </title>
 </circle>
-<circle cx="14" cy="45" r="0.5" tabindex="14">
+<circle cx="16" cy="45" i="4" r="0.5" tabindex="4">
 <title>
 v:4
 </title>
 </circle>
-<circle cx="14" cy="59" r="0.5" tabindex="15">
+<circle cx="16" cy="59" i="5" r="0.5" tabindex="5">
 <title>
 v:5
 </title>
 </circle>
-<circle cx="14" cy="88" r="0.5" tabindex="16">
+<circle cx="16" cy="88" i="6" r="0.5" tabindex="6">
 <title>
 v:6
 </title>
 </circle>
-<circle cx="30" cy="37" r="0.5" tabindex="17">
+<circle cx="32" cy="37" i="7" r="0.5" tabindex="7">
 <title>
 v:7
 </title>
 </circle>
-<circle cx="30" cy="56" r="0.5" tabindex="18">
+<circle cx="32" cy="56" i="8" r="0.5" tabindex="8">
 <title>
 v:8
 </title>
 </circle>
-<circle cx="56" cy="85" r="0.5" tabindex="19">
+<circle cx="58" cy="85" i="9" r="0.5" tabindex="9">
 <title>
 v:9
 </title>
 </circle>
-<circle cx="67" cy="64" r="0.5" tabindex="20">
+<circle cx="69" cy="64" i="10" r="0.5" tabindex="10">
 <title>
 v:10
 </title>

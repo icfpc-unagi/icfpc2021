@@ -1,68 +1,81 @@
-<svg height="500" viewBox="-2 -2 20 14" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M2 0L12 10L12 5L14 4L14 9L16 4L16 2L13 2L15 0M-2 -2L18 -2L18 12L-2 12" style="fill:#00000066;fill-rule:evenodd;"/>
-<circle cx="7" cy="5" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
-<circle cx="8" cy="0" r="5" style="fill:#ffff0066;" title="Globalist"/>
+<svg height="500" viewBox="0 -2 18 14" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 0L12 10L12 5L14 4L14 9L16 4L16 2L13 2L15 0M0 -2L18 -2L18 12L0 12" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="7" cy="5" fill="#ffff0066" r="5">
+<title>
+BreakALeg@57
+</title>
+</circle>
+<circle cx="8" cy="0" fill="#ff666666" r="5">
+<title>
+Globalist@53
+</title>
+</circle>
+<circle cx="5" cy="0" fill="#ffff0066" r="5">
+<title>
+Globalist@118
+</title>
+</circle>
 <path class="ok" d="" style="stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M0 8L6 0M0 8L14 6M6 0L14 6" style="stroke:#ff0000;stroke-linecap:round"/>
+<path class="out" d="M2 8L8 0M2 8L16 6M8 0L16 6" style="stroke:#ff0000;stroke-linecap:round"/>
 <g fill="#333333">
-<circle cx="2" cy="0" r="0.5" tabindex="0">
+<circle cx="2" cy="0" r="0.5">
 <title>
 hole:0
 </title>
 </circle>
-<circle cx="12" cy="10" r="0.5" tabindex="1">
+<circle cx="12" cy="10" r="0.5">
 <title>
 hole:1
 </title>
 </circle>
-<circle cx="12" cy="5" r="0.5" tabindex="2">
+<circle cx="12" cy="5" r="0.5">
 <title>
 hole:2
 </title>
 </circle>
-<circle cx="14" cy="4" r="0.5" tabindex="3">
+<circle cx="14" cy="4" r="0.5">
 <title>
 hole:3
 </title>
 </circle>
-<circle cx="14" cy="9" r="0.5" tabindex="4">
+<circle cx="14" cy="9" r="0.5">
 <title>
 hole:4
 </title>
 </circle>
-<circle cx="16" cy="4" r="0.5" tabindex="5">
+<circle cx="16" cy="4" r="0.5">
 <title>
 hole:5
 </title>
 </circle>
-<circle cx="16" cy="2" r="0.5" tabindex="6">
+<circle cx="16" cy="2" r="0.5">
 <title>
 hole:6
 </title>
 </circle>
-<circle cx="13" cy="2" r="0.5" tabindex="7">
+<circle cx="13" cy="2" r="0.5">
 <title>
 hole:7
 </title>
 </circle>
-<circle cx="15" cy="0" r="0.5" tabindex="8">
+<circle cx="15" cy="0" r="0.5">
 <title>
 hole:8
 </title>
 </circle>
 </g>
 <g fill="#999999">
-<circle cx="0" cy="8" r="0.5" tabindex="9">
+<circle cx="2" cy="8" i="0" r="0.5" tabindex="0">
 <title>
 v:0
 </title>
 </circle>
-<circle cx="6" cy="0" r="0.5" tabindex="10">
+<circle cx="8" cy="0" i="1" r="0.5" tabindex="1">
 <title>
 v:1
 </title>
 </circle>
-<circle cx="14" cy="6" r="0.5" tabindex="11">
+<circle cx="16" cy="6" i="2" r="0.5" tabindex="2">
 <title>
 v:2
 </title>

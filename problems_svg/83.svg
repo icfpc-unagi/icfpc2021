@@ -1,397 +1,411 @@
 <svg height="500" viewBox="0 -2 221 218" width="500" xmlns="http://www.w3.org/2000/svg">
 <path class="hole" d="M2 51L34 70L4 93L25 133L4 157L2 214L44 214L39 183L74 138L116 135L116 174L106 214L155 208L201 192L152 146L194 121L217 86L181 64L219 49L179 8L137 0L146 44L138 87L107 90L65 97L67 63L102 6L65 0L30 0M0 -2L221 -2L221 216L0 216" style="fill:#00000066;fill-rule:evenodd;"/>
-<circle cx="77" cy="2" r="5" style="fill:#ffff0066;" title="Globalist"/>
-<path class="ok" d="M21 90L22 81M21 90L28 87M21 90L44 126M22 81L30 81M28 87L30 81M28 87L72 118M30 81L66 104M41 108L43 99M41 108L51 109M43 99L55 101M51 109L55 101M51 109L87 137M55 101L83 120M60 139L62 151M60 139L69 136M66 104L107 101M72 118L129 103M83 120L124 118M87 137L146 123M124 118L158 82M129 103L156 73M131 154L169 124M145 114L162 74M146 123L167 81M148 128L171 89M151 71L157 50M156 73L164 53M157 50L164 53M157 50L169 37M158 82L164 53M162 74L172 56M164 53L172 56M167 81L172 56M169 37L178 41M169 124L180 84M171 89L172 56M172 56L178 41M172 56L178 58M178 41L185 45M178 58L180 84M178 58L184 57M184 57L185 45M188 84L196 113" style="stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M41 108L85 157M44 126L105 136M62 151L72 144M62 151L110 180M69 136L72 144M69 136L112 143M72 144L131 154M85 157L157 146M105 136L145 114M107 101L151 71M110 180L173 160M112 143L148 128M157 146L180 105M173 160L196 113M180 105L184 57M184 57L188 84" style="stroke:#ff0000;stroke-linecap:round"/>
+<circle cx="77" cy="2" fill="#ffff0066" r="5">
+<title>
+Globalist@44
+</title>
+</circle>
+<circle cx="47" cy="33" fill="#ffff0066" r="5">
+<title>
+SuperFlex@63
+</title>
+</circle>
+<circle cx="170" cy="177" fill="#ffff0066" r="5">
+<title>
+SuperFlex@101
+</title>
+</circle>
+<path class="ok" d="M23 90L24 81M23 90L30 87M23 90L46 126M24 81L32 81M30 87L32 81M30 87L74 118M32 81L68 104M43 108L45 99M43 108L53 109M45 99L57 101M53 109L57 101M57 101L85 120M62 139L71 136M68 104L109 101M74 118L131 103M85 120L126 118M126 118L160 82M131 103L158 73M133 154L171 124M147 114L164 74M148 123L169 81M150 128L173 89M153 71L159 50M158 73L166 53M159 50L166 53M159 50L171 37M160 82L166 53M164 74L174 56M166 53L174 56M169 81L174 56M171 37L180 41M171 124L182 84M173 89L174 56M174 56L180 41M174 56L180 58M180 41L187 45M180 58L182 84M180 58L186 57M186 57L187 45M190 84L198 113" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M43 108L87 157M46 126L107 136M53 109L89 137M62 139L64 151M64 151L74 144M64 151L112 180M71 136L74 144M71 136L114 143M74 144L133 154M87 157L159 146M89 137L148 123M107 136L147 114M109 101L153 71M112 180L175 160M114 143L150 128M159 146L182 105M175 160L198 113M182 105L186 57M186 57L190 84" style="stroke:#ff0000;stroke-linecap:round"/>
 <g fill="#333333">
-<circle cx="2" cy="51" r="0.5" tabindex="0">
+<circle cx="2" cy="51" r="0.5">
 <title>
 hole:0
 </title>
 </circle>
-<circle cx="34" cy="70" r="0.5" tabindex="1">
+<circle cx="34" cy="70" r="0.5">
 <title>
 hole:1
 </title>
 </circle>
-<circle cx="4" cy="93" r="0.5" tabindex="2">
+<circle cx="4" cy="93" r="0.5">
 <title>
 hole:2
 </title>
 </circle>
-<circle cx="25" cy="133" r="0.5" tabindex="3">
+<circle cx="25" cy="133" r="0.5">
 <title>
 hole:3
 </title>
 </circle>
-<circle cx="4" cy="157" r="0.5" tabindex="4">
+<circle cx="4" cy="157" r="0.5">
 <title>
 hole:4
 </title>
 </circle>
-<circle cx="2" cy="214" r="0.5" tabindex="5">
+<circle cx="2" cy="214" r="0.5">
 <title>
 hole:5
 </title>
 </circle>
-<circle cx="44" cy="214" r="0.5" tabindex="6">
+<circle cx="44" cy="214" r="0.5">
 <title>
 hole:6
 </title>
 </circle>
-<circle cx="39" cy="183" r="0.5" tabindex="7">
+<circle cx="39" cy="183" r="0.5">
 <title>
 hole:7
 </title>
 </circle>
-<circle cx="74" cy="138" r="0.5" tabindex="8">
+<circle cx="74" cy="138" r="0.5">
 <title>
 hole:8
 </title>
 </circle>
-<circle cx="116" cy="135" r="0.5" tabindex="9">
+<circle cx="116" cy="135" r="0.5">
 <title>
 hole:9
 </title>
 </circle>
-<circle cx="116" cy="174" r="0.5" tabindex="10">
+<circle cx="116" cy="174" r="0.5">
 <title>
 hole:10
 </title>
 </circle>
-<circle cx="106" cy="214" r="0.5" tabindex="11">
+<circle cx="106" cy="214" r="0.5">
 <title>
 hole:11
 </title>
 </circle>
-<circle cx="155" cy="208" r="0.5" tabindex="12">
+<circle cx="155" cy="208" r="0.5">
 <title>
 hole:12
 </title>
 </circle>
-<circle cx="201" cy="192" r="0.5" tabindex="13">
+<circle cx="201" cy="192" r="0.5">
 <title>
 hole:13
 </title>
 </circle>
-<circle cx="152" cy="146" r="0.5" tabindex="14">
+<circle cx="152" cy="146" r="0.5">
 <title>
 hole:14
 </title>
 </circle>
-<circle cx="194" cy="121" r="0.5" tabindex="15">
+<circle cx="194" cy="121" r="0.5">
 <title>
 hole:15
 </title>
 </circle>
-<circle cx="217" cy="86" r="0.5" tabindex="16">
+<circle cx="217" cy="86" r="0.5">
 <title>
 hole:16
 </title>
 </circle>
-<circle cx="181" cy="64" r="0.5" tabindex="17">
+<circle cx="181" cy="64" r="0.5">
 <title>
 hole:17
 </title>
 </circle>
-<circle cx="219" cy="49" r="0.5" tabindex="18">
+<circle cx="219" cy="49" r="0.5">
 <title>
 hole:18
 </title>
 </circle>
-<circle cx="179" cy="8" r="0.5" tabindex="19">
+<circle cx="179" cy="8" r="0.5">
 <title>
 hole:19
 </title>
 </circle>
-<circle cx="137" cy="0" r="0.5" tabindex="20">
+<circle cx="137" cy="0" r="0.5">
 <title>
 hole:20
 </title>
 </circle>
-<circle cx="146" cy="44" r="0.5" tabindex="21">
+<circle cx="146" cy="44" r="0.5">
 <title>
 hole:21
 </title>
 </circle>
-<circle cx="138" cy="87" r="0.5" tabindex="22">
+<circle cx="138" cy="87" r="0.5">
 <title>
 hole:22
 </title>
 </circle>
-<circle cx="107" cy="90" r="0.5" tabindex="23">
+<circle cx="107" cy="90" r="0.5">
 <title>
 hole:23
 </title>
 </circle>
-<circle cx="65" cy="97" r="0.5" tabindex="24">
+<circle cx="65" cy="97" r="0.5">
 <title>
 hole:24
 </title>
 </circle>
-<circle cx="67" cy="63" r="0.5" tabindex="25">
+<circle cx="67" cy="63" r="0.5">
 <title>
 hole:25
 </title>
 </circle>
-<circle cx="102" cy="6" r="0.5" tabindex="26">
+<circle cx="102" cy="6" r="0.5">
 <title>
 hole:26
 </title>
 </circle>
-<circle cx="65" cy="0" r="0.5" tabindex="27">
+<circle cx="65" cy="0" r="0.5">
 <title>
 hole:27
 </title>
 </circle>
-<circle cx="30" cy="0" r="0.5" tabindex="28">
+<circle cx="30" cy="0" r="0.5">
 <title>
 hole:28
 </title>
 </circle>
 </g>
 <g fill="#999999">
-<circle cx="21" cy="90" r="0.5" tabindex="29">
+<circle cx="23" cy="90" i="0" r="0.5" tabindex="0">
 <title>
 v:0
 </title>
 </circle>
-<circle cx="22" cy="81" r="0.5" tabindex="30">
+<circle cx="24" cy="81" i="1" r="0.5" tabindex="1">
 <title>
 v:1
 </title>
 </circle>
-<circle cx="28" cy="87" r="0.5" tabindex="31">
+<circle cx="30" cy="87" i="2" r="0.5" tabindex="2">
 <title>
 v:2
 </title>
 </circle>
-<circle cx="30" cy="81" r="0.5" tabindex="32">
+<circle cx="32" cy="81" i="3" r="0.5" tabindex="3">
 <title>
 v:3
 </title>
 </circle>
-<circle cx="41" cy="108" r="0.5" tabindex="33">
+<circle cx="43" cy="108" i="4" r="0.5" tabindex="4">
 <title>
 v:4
 </title>
 </circle>
-<circle cx="43" cy="99" r="0.5" tabindex="34">
+<circle cx="45" cy="99" i="5" r="0.5" tabindex="5">
 <title>
 v:5
 </title>
 </circle>
-<circle cx="44" cy="126" r="0.5" tabindex="35">
+<circle cx="46" cy="126" i="6" r="0.5" tabindex="6">
 <title>
 v:6
 </title>
 </circle>
-<circle cx="51" cy="109" r="0.5" tabindex="36">
+<circle cx="53" cy="109" i="7" r="0.5" tabindex="7">
 <title>
 v:7
 </title>
 </circle>
-<circle cx="55" cy="101" r="0.5" tabindex="37">
+<circle cx="57" cy="101" i="8" r="0.5" tabindex="8">
 <title>
 v:8
 </title>
 </circle>
-<circle cx="60" cy="139" r="0.5" tabindex="38">
+<circle cx="62" cy="139" i="9" r="0.5" tabindex="9">
 <title>
 v:9
 </title>
 </circle>
-<circle cx="62" cy="151" r="0.5" tabindex="39">
+<circle cx="64" cy="151" i="10" r="0.5" tabindex="10">
 <title>
 v:10
 </title>
 </circle>
-<circle cx="66" cy="104" r="0.5" tabindex="40">
+<circle cx="68" cy="104" i="11" r="0.5" tabindex="11">
 <title>
 v:11
 </title>
 </circle>
-<circle cx="69" cy="136" r="0.5" tabindex="41">
+<circle cx="71" cy="136" i="12" r="0.5" tabindex="12">
 <title>
 v:12
 </title>
 </circle>
-<circle cx="72" cy="118" r="0.5" tabindex="42">
+<circle cx="74" cy="118" i="13" r="0.5" tabindex="13">
 <title>
 v:13
 </title>
 </circle>
-<circle cx="72" cy="144" r="0.5" tabindex="43">
+<circle cx="74" cy="144" i="14" r="0.5" tabindex="14">
 <title>
 v:14
 </title>
 </circle>
-<circle cx="83" cy="120" r="0.5" tabindex="44">
+<circle cx="85" cy="120" i="15" r="0.5" tabindex="15">
 <title>
 v:15
 </title>
 </circle>
-<circle cx="85" cy="157" r="0.5" tabindex="45">
+<circle cx="87" cy="157" i="16" r="0.5" tabindex="16">
 <title>
 v:16
 </title>
 </circle>
-<circle cx="87" cy="137" r="0.5" tabindex="46">
+<circle cx="89" cy="137" i="17" r="0.5" tabindex="17">
 <title>
 v:17
 </title>
 </circle>
-<circle cx="105" cy="136" r="0.5" tabindex="47">
+<circle cx="107" cy="136" i="18" r="0.5" tabindex="18">
 <title>
 v:18
 </title>
 </circle>
-<circle cx="107" cy="101" r="0.5" tabindex="48">
+<circle cx="109" cy="101" i="19" r="0.5" tabindex="19">
 <title>
 v:19
 </title>
 </circle>
-<circle cx="110" cy="180" r="0.5" tabindex="49">
+<circle cx="112" cy="180" i="20" r="0.5" tabindex="20">
 <title>
 v:20
 </title>
 </circle>
-<circle cx="112" cy="143" r="0.5" tabindex="50">
+<circle cx="114" cy="143" i="21" r="0.5" tabindex="21">
 <title>
 v:21
 </title>
 </circle>
-<circle cx="124" cy="118" r="0.5" tabindex="51">
+<circle cx="126" cy="118" i="22" r="0.5" tabindex="22">
 <title>
 v:22
 </title>
 </circle>
-<circle cx="129" cy="103" r="0.5" tabindex="52">
+<circle cx="131" cy="103" i="23" r="0.5" tabindex="23">
 <title>
 v:23
 </title>
 </circle>
-<circle cx="131" cy="154" r="0.5" tabindex="53">
+<circle cx="133" cy="154" i="24" r="0.5" tabindex="24">
 <title>
 v:24
 </title>
 </circle>
-<circle cx="145" cy="114" r="0.5" tabindex="54">
+<circle cx="147" cy="114" i="25" r="0.5" tabindex="25">
 <title>
 v:25
 </title>
 </circle>
-<circle cx="146" cy="123" r="0.5" tabindex="55">
+<circle cx="148" cy="123" i="26" r="0.5" tabindex="26">
 <title>
 v:26
 </title>
 </circle>
-<circle cx="148" cy="128" r="0.5" tabindex="56">
+<circle cx="150" cy="128" i="27" r="0.5" tabindex="27">
 <title>
 v:27
 </title>
 </circle>
-<circle cx="151" cy="71" r="0.5" tabindex="57">
+<circle cx="153" cy="71" i="28" r="0.5" tabindex="28">
 <title>
 v:28
 </title>
 </circle>
-<circle cx="156" cy="73" r="0.5" tabindex="58">
+<circle cx="158" cy="73" i="29" r="0.5" tabindex="29">
 <title>
 v:29
 </title>
 </circle>
-<circle cx="157" cy="50" r="0.5" tabindex="59">
+<circle cx="159" cy="50" i="30" r="0.5" tabindex="30">
 <title>
 v:30
 </title>
 </circle>
-<circle cx="157" cy="146" r="0.5" tabindex="60">
+<circle cx="159" cy="146" i="31" r="0.5" tabindex="31">
 <title>
 v:31
 </title>
 </circle>
-<circle cx="158" cy="82" r="0.5" tabindex="61">
+<circle cx="160" cy="82" i="32" r="0.5" tabindex="32">
 <title>
 v:32
 </title>
 </circle>
-<circle cx="162" cy="74" r="0.5" tabindex="62">
+<circle cx="164" cy="74" i="33" r="0.5" tabindex="33">
 <title>
 v:33
 </title>
 </circle>
-<circle cx="164" cy="53" r="0.5" tabindex="63">
+<circle cx="166" cy="53" i="34" r="0.5" tabindex="34">
 <title>
 v:34
 </title>
 </circle>
-<circle cx="167" cy="81" r="0.5" tabindex="64">
+<circle cx="169" cy="81" i="35" r="0.5" tabindex="35">
 <title>
 v:35
 </title>
 </circle>
-<circle cx="169" cy="37" r="0.5" tabindex="65">
+<circle cx="171" cy="37" i="36" r="0.5" tabindex="36">
 <title>
 v:36
 </title>
 </circle>
-<circle cx="169" cy="124" r="0.5" tabindex="66">
+<circle cx="171" cy="124" i="37" r="0.5" tabindex="37">
 <title>
 v:37
 </title>
 </circle>
-<circle cx="171" cy="89" r="0.5" tabindex="67">
+<circle cx="173" cy="89" i="38" r="0.5" tabindex="38">
 <title>
 v:38
 </title>
 </circle>
-<circle cx="172" cy="56" r="0.5" tabindex="68">
+<circle cx="174" cy="56" i="39" r="0.5" tabindex="39">
 <title>
 v:39
 </title>
 </circle>
-<circle cx="173" cy="160" r="0.5" tabindex="69">
+<circle cx="175" cy="160" i="40" r="0.5" tabindex="40">
 <title>
 v:40
 </title>
 </circle>
-<circle cx="178" cy="41" r="0.5" tabindex="70">
+<circle cx="180" cy="41" i="41" r="0.5" tabindex="41">
 <title>
 v:41
 </title>
 </circle>
-<circle cx="178" cy="58" r="0.5" tabindex="71">
+<circle cx="180" cy="58" i="42" r="0.5" tabindex="42">
 <title>
 v:42
 </title>
 </circle>
-<circle cx="180" cy="84" r="0.5" tabindex="72">
+<circle cx="182" cy="84" i="43" r="0.5" tabindex="43">
 <title>
 v:43
 </title>
 </circle>
-<circle cx="180" cy="105" r="0.5" tabindex="73">
+<circle cx="182" cy="105" i="44" r="0.5" tabindex="44">
 <title>
 v:44
 </title>
 </circle>
-<circle cx="184" cy="57" r="0.5" tabindex="74">
+<circle cx="186" cy="57" i="45" r="0.5" tabindex="45">
 <title>
 v:45
 </title>
 </circle>
-<circle cx="185" cy="45" r="0.5" tabindex="75">
+<circle cx="187" cy="45" i="46" r="0.5" tabindex="46">
 <title>
 v:46
 </title>
 </circle>
-<circle cx="188" cy="84" r="0.5" tabindex="76">
+<circle cx="190" cy="84" i="47" r="0.5" tabindex="47">
 <title>
 v:47
 </title>
 </circle>
-<circle cx="196" cy="113" r="0.5" tabindex="77">
+<circle cx="198" cy="113" i="48" r="0.5" tabindex="48">
 <title>
 v:48
 </title>

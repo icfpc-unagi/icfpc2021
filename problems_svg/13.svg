@@ -1,48 +1,61 @@
-<svg height="500" viewBox="-2 -2 46 49" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M2 20L22 40L42 20L22 0M-2 -2L44 -2L44 47L-2 47" style="fill:#00000066;fill-rule:evenodd;"/>
-<circle cx="22" cy="20" r="5" style="fill:#ffff0066;" title="Globalist"/>
-<circle cx="32" cy="30" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
+<svg height="500" viewBox="0 -2 44 49" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 20L22 40L42 20L22 0M0 -2L44 -2L44 47L0 47" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="22" cy="20" fill="#ffff0066" r="5">
+<title>
+Globalist@46
+</title>
+</circle>
+<circle cx="32" cy="30" fill="#ffff0066" r="5">
+<title>
+BreakALeg@88
+</title>
+</circle>
+<circle cx="32" cy="12" fill="#ffff0066" r="5">
+<title>
+Globalist@20
+</title>
+</circle>
 <path class="ok" d="" style="stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M15 21L34 0M15 21L0 45M34 0L19 24M0 45L19 24" style="stroke:#ff0000;stroke-linecap:round"/>
+<path class="out" d="M17 21L36 0M17 21L2 45M36 0L21 24M2 45L21 24" style="stroke:#ff0000;stroke-linecap:round"/>
 <g fill="#333333">
-<circle cx="2" cy="20" r="0.5" tabindex="0">
+<circle cx="2" cy="20" r="0.5">
 <title>
 hole:0
 </title>
 </circle>
-<circle cx="22" cy="40" r="0.5" tabindex="1">
+<circle cx="22" cy="40" r="0.5">
 <title>
 hole:1
 </title>
 </circle>
-<circle cx="42" cy="20" r="0.5" tabindex="2">
+<circle cx="42" cy="20" r="0.5">
 <title>
 hole:2
 </title>
 </circle>
-<circle cx="22" cy="0" r="0.5" tabindex="3">
+<circle cx="22" cy="0" r="0.5">
 <title>
 hole:3
 </title>
 </circle>
 </g>
 <g fill="#999999">
-<circle cx="15" cy="21" r="0.5" tabindex="4">
+<circle cx="17" cy="21" i="0" r="0.5" tabindex="0">
 <title>
 v:0
 </title>
 </circle>
-<circle cx="34" cy="0" r="0.5" tabindex="5">
+<circle cx="36" cy="0" i="1" r="0.5" tabindex="1">
 <title>
 v:1
 </title>
 </circle>
-<circle cx="0" cy="45" r="0.5" tabindex="6">
+<circle cx="2" cy="45" i="2" r="0.5" tabindex="2">
 <title>
 v:2
 </title>
 </circle>
-<circle cx="19" cy="24" r="0.5" tabindex="7">
+<circle cx="21" cy="24" i="3" r="0.5" tabindex="3">
 <title>
 v:3
 </title>
