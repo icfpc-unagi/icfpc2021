@@ -6,6 +6,8 @@ import { DragHandler } from "./dragdrop";
 import wasm_ from "icfpc2021";
 let wasm: undefined | typeof wasm_;
 
+const urlParams = new URL(document.location.href).searchParams;
+
 const WHITE: number = 0xffffff;
 
 type XY = [number, number];
@@ -22,8 +24,8 @@ function xyFromPoint({ x, y }: { x: number; y: number }): XY {
 
 PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
 const app = new PIXI.Application({
-  width: 800,
-  height: 600,
+  width: parseInt(urlParams.get("w") ?? "800"),
+  height: parseInt(urlParams.get("h") ?? "600"),
   autoDensity: true,
 });
 document.body.appendChild(app.view);
