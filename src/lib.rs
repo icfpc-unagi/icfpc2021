@@ -61,6 +61,8 @@ pub enum BonusType {
 	BreakALeg,
 	#[serde(rename = "WALLHACK")]
 	WallHack,
+	#[serde(rename = "SUPERFLEX")]
+	SuperFlex,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
