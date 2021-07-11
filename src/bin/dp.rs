@@ -130,6 +130,7 @@ fn partial_score(input: &Input, out: &Vec<Point>, s: usize, m: usize) -> i64 {
 }
 
 const M: i64 = 20;
+const UB: i64 = 500;
 
 fn hash(p: Point) -> Point {
 	P(p.0 / M, p.1 / M)
@@ -151,7 +152,9 @@ fn dp(data: &Data, node: Node) -> BTreeMap<(Vec<Point>, usize, usize), (i64, Vec
 								for i in 0..m {
 									score += (data.input.hole[(s + i) % data.input.hole.len()] - p).abs2();
 								}
-								ret.insert((vec![hash(p)], s, m), (score, out.clone()));
+								if score <= UB {
+									ret.insert((vec![hash(p)], s, m), (score, out.clone()));
+								}
 							}
 						}
 					}
@@ -185,11 +188,17 @@ fn dp(data: &Data, node: Node) -> BTreeMap<(Vec<Point>, usize, usize), (i64, Vec
 							out[u] = p;
 							for s2 in 0..=*s {
 								if s + m - s2 <= data.input.hole.len() {
-									ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s2, s + m - s2), out.clone()));
+									let score = partial_score(&data.input, &out, s2, s + m - s2);
+									if score <= UB {
+										ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((score, out.clone()));
+									}
 								}
 							}
 							for m2 in *m..=data.input.hole.len() {
-								ret.entry((ps.clone(), *s, m2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, *s, m2), out.clone()));
+								let score = partial_score(&data.input, &out, *s, m2);
+								if score <= UB {
+									ret.entry((ps.clone(), *s, m2)).or_insert((i64::max_value(), vec![])).setmin((score, out.clone()));
+								}
 							}
 						}
 					}
@@ -208,11 +217,17 @@ fn dp(data: &Data, node: Node) -> BTreeMap<(Vec<Point>, usize, usize), (i64, Vec
 									out[u] = p;
 									for s2 in 0..=*s {
 										if s + m - s2 <= data.input.hole.len() {
-											ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s2, s + m - s2), out.clone()));
+											let score = partial_score(&data.input, &out, s2, s + m - s2);
+											if score <= UB {
+												ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((score, out.clone()));
+											}
 										}
 									}
 									for m2 in *m..=data.input.hole.len() {
-										ret.entry((ps.clone(), *s, m2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, *s, m2), out.clone()));
+										let score = partial_score(&data.input, &out, *s, m2);
+										if score <= UB {
+											ret.entry((ps.clone(), *s, m2)).or_insert((i64::max_value(), vec![])).setmin((score, out.clone()));
+										}
 									}
 								}
 							}
@@ -236,7 +251,10 @@ fn dp(data: &Data, node: Node) -> BTreeMap<(Vec<Point>, usize, usize), (i64, Vec
 									out[i] = out2[i];
 								}
 							}
-							ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s2, s + m - s2), out.clone()));
+							let score = partial_score(&data.input, &out, s2, s + m - s2);
+							if score <= UB {
+								ret.entry((ps.clone(), s2, s + m - s2)).or_insert((i64::max_value(), vec![])).setmin((score, out.clone()));
+							}
 						}
 					}
 				}
@@ -248,7 +266,10 @@ fn dp(data: &Data, node: Node) -> BTreeMap<(Vec<Point>, usize, usize), (i64, Vec
 								out[i] = out2[i];
 							}
 						}
-						ret.entry((ps.clone(), s, m2)).or_insert((i64::max_value(), vec![])).setmin((partial_score(&data.input, &out, s, m2), out.clone()));
+						let score = partial_score(&data.input, &out, s, m2);
+						if score <= UB {
+							ret.entry((ps.clone(), s, m2)).or_insert((i64::max_value(), vec![])).setmin((score, out.clone()));
+						}
 					}
 				}
 			}
@@ -291,6 +312,7 @@ fn main() {
 	let max_x = input.hole.iter().map(|p| p.0).max().unwrap();
 	let min_y = input.hole.iter().map(|p| p.1).min().unwrap();
 	let max_y = input.hole.iter().map(|p| p.1).max().unwrap();
+	eprintln!("X = {}, Y = {}", max_x, max_y);
 	let mut inside = mat![false; max_x as usize + 1; max_y as usize + 1];
 	for x in min_x ..= max_x {
 		for y in min_y ..= max_y {
