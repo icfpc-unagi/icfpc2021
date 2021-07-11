@@ -1,7 +1,8 @@
 use crate::*;
 use std::fmt::*;
 use std::io;
-use svg::node::element::*;
+use svg::node;
+use svg::node::element;
 
 pub fn polygon<T: std::fmt::Display>(points: &[P<T>]) -> String {
 	let mut s = String::new();
@@ -85,50 +86,80 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 		.set("width", 500)
 		.set("viewBox", (left, top, right - left, bottom - top))
 		.add(
-			Path::new()
+			element::Path::new()
 				.set("class", "hole")
-				.set("style", "fill:#00000066;fill-rule:evenodd;stroke:none;")
+				.set("style", "fill:#00000066;fill-rule:evenodd;")
 				.set("d", hole_polygon),
 		);
 	for bonus in &prob.bonuses {
 		svg = svg.add(
-			Circle::new()
+			element::Circle::new()
 				.set("cx", bonus.position.0)
 				.set("cy", bonus.position.1)
 				.set("r", 5)
-				.set("style", "fill:#ffff0066;stroke:none;"),
+				.set("style", "fill:#ffff0066;")
+				.set("title", format!("{:?}", bonus.bonus)),
 		);
 	}
 	svg = svg.add(
-		Path::new()
+		element::Path::new()
 			.set("class", "ok")
-			.set("style", "fill:none;stroke:#0000ff;stroke-linecap:round")
+			.set("style", "stroke:#0000ff;stroke-linecap:round")
 			.set("d", figure_ok_path),
 	);
 	if !figure_short_path.is_empty() {
 		svg = svg.add(
-			Path::new()
+			element::Path::new()
 				.set("class", "short")
-				.set("style", "fill:none;stroke:#00ff99;stroke-linecap:round")
+				.set("style", "stroke:#00ff99;stroke-linecap:round")
 				.set("d", figure_short_path),
 		);
 	}
 	if !figure_long_path.is_empty() {
 		svg = svg.add(
-			Path::new()
+			element::Path::new()
 				.set("class", "long")
-				.set("style", "fill:none;stroke:#ff0099;stroke-linecap:round")
+				.set("style", "stroke:#ff0099;stroke-linecap:round")
 				.set("d", figure_long_path),
 		);
 	}
 	if !figure_out_path.is_empty() {
 		svg = svg.add(
-			Path::new()
+			element::Path::new()
 				.set("class", "out")
-				.set("style", "fill:none;stroke:#ff0000;stroke-linecap:round")
+				.set("style", "stroke:#ff0000;stroke-linecap:round")
 				.set("d", figure_out_path),
 		);
 	}
+
+	let mut tabindex = 0;
+	let mut g = element::Group::new().set("fill", "#333333");
+	for (i, p) in prob.hole.iter().enumerate() {
+		g = g.add(
+			element::Circle::new()
+				.set("cx", p.0)
+				.set("cy", p.1)
+				.set("r", 0.5)
+				.set("tabindex", tabindex)
+				.add(element::Title::new().add(node::Text::new(format!("hole:{}", i)))),
+		);
+		tabindex += 1;
+	}
+	svg = svg.add(g);
+
+	let mut g = element::Group::new().set("fill", "#999999");
+	for (i, p) in vertices.iter().enumerate() {
+		g = g.add(
+			element::Circle::new()
+				.set("cx", p.0)
+				.set("cy", p.1)
+				.set("r", 0.5)
+				.set("tabindex", tabindex)
+				.add(element::Title::new().add(node::Text::new(format!("v:{}", i)))),
+		);
+		tabindex += 1;
+	}
+	svg = svg.add(g);
 
 	svg::write(w, &svg)
 }
