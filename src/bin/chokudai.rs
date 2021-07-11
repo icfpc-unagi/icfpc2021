@@ -7,10 +7,14 @@ use std::env;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-	let input_path = format!("{}{}{}", "./problems/", args[1], ".json");
-	let output_path = format!("{}{}{}", "./best/", args[1], ".json");
-	//let output_path = format!("{}{}{}", "./chokudai_test/", args[1], ".json");
-	//let output_path= format!("{}{}{}", "../../Users/choku/Dropbox/ICFPC2021/best/", args[1], ".json");
+	let (input_path, output_path) = if args.len() == 2 {
+		(format!("{}{}{}", "./problems/", args[1], ".json"), format!("{}{}{}", "./best/", args[1], ".json"))
+	} else if args.len() == 3 {
+		(args[1].to_owned(), args[2].to_owned())
+	} else {
+		eprintln!("{} <problem.json> <pose.json>", args[0]);
+		std::process::exit(1);
+	};
 
 	let filesize = std::fs::File::open(&output_path).unwrap().metadata().unwrap().len();
 	//eprintln!("{}", input_path);
