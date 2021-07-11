@@ -41,6 +41,16 @@ pub fn write_pose(j: JsValue) -> Result<String, JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn score_or_message(prob: JsValue, pose: JsValue) -> String {
+	let prob: Input = prob.into_serde().unwrap();
+	let pose: Output = pose.into_serde().unwrap();
+	match compute_score_or_err(&prob, &pose) {
+		Ok(score) => format!("score: {}", score),
+		Err(msg) => format!("message: {}", msg),
+	}
+}
+
+#[wasm_bindgen]
 pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 	let input: Input = input.into_serde().unwrap();
 	let out: Output = out.into_serde().unwrap();
@@ -161,7 +171,7 @@ pub fn calculate_score(problem: &str, pose: &str) -> f64 {
 }
 
 #[wasm_bindgen]
-pub fn morph(problem: &str, pose: &str, n: usize) -> String {
+pub fn morph(problem: &str, pose: &str, n: i32) -> String {
 	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
 	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
 
@@ -170,5 +180,17 @@ pub fn morph(problem: &str, pose: &str, n: usize) -> String {
 
 	let mut buf = Vec::new();
 	write_output_to_writer(&pose, &mut buf);
+	String::from_utf8(buf).unwrap()
+}
+
+#[wasm_bindgen]
+pub fn chokudai(problem: &str, pose: &str, timeout: f64, dontmove: bool, fitting: bool) -> String {
+	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
+	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
+
+	let output = lib_chokudai::main(&prob, &pose, timeout, dontmove, fitting);
+
+	let mut buf = Vec::new();
+	write_output_to_writer(&output, &mut buf);
 	String::from_utf8(buf).unwrap()
 }

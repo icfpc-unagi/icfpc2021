@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Container, DisplayObject, Graphics } from "pixi.js";
+import { Container, DisplayObject, Graphics, Text } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
 // lazy import
@@ -38,6 +38,16 @@ const mainContainer = new Container();
 let guiScale = 4;
 mainContainer.scale.set(guiScale); // wip
 app.stage.addChild(mainContainer);
+
+const scoreText = new Text("", {
+  fontSize: 12,
+  fill: 0xffffff,
+  stroke: 0x000000,
+  strokeThickness: 2,
+});
+scoreText.position.set(appWidth - 2, appHeight - 2);
+scoreText.anchor.set(1);
+app.stage.addChild(scoreText);
 
 type Problem = {
   hole: XY[];
@@ -206,7 +216,7 @@ class ProblemRenderer {
     }
     for (const [i, [x, y]] of origHole.entries()) {
       // TODO: maybe reversed
-      const text = new PIXI.Text(`${i}`, {
+      const text = new Text(`${i}`, {
         fontSize: 12,
         fill: 0xffffff,
         stroke: 0x000000,
@@ -227,7 +237,7 @@ class ProblemRenderer {
     );
 
     // for (const [i, v] of vertices.entries()) {
-    //   const text = new PIXI.Text(`${i}`, {
+    //   const text = new Text(`${i}`, {
     //     fontSize: 12,
     //     fill: 0xffffff,
     //     stroke: 0x000000,
@@ -308,6 +318,10 @@ class ProblemRenderer {
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
     )(solutionJson);
+    if (wasm != null) {
+      console.log(wasm.score_or_message(this.inputJson, solutionJson));
+      scoreText.text = wasm.score_or_message(this.inputJson, solutionJson);
+    }
   }
 
   runCheckSolution1(input: Problem, output: Solution): void {
@@ -397,7 +411,7 @@ class ProblemRenderer {
   }
 }
 
-mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
+mainContainer.addChild(new Text("loading wasm", { fill: "red" }));
 
 (wasm_ as any)
   .then((wasm__: any) => {

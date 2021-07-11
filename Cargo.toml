@@ -34,6 +34,8 @@ web-sys = { version = "*", features = [
   'Element',
   'HtmlElement',
   'Node',
+  'Performance',
+  'PerformanceTiming',
   'Window',
   "console",
 ] }

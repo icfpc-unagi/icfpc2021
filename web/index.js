@@ -6,6 +6,7 @@ import * as wasm from "icfpc2021";
   let el_pose = document.getElementById('_pose')
   let el_message = document.getElementById('_message')
   let el_morph = document.getElementById('_morph')
+  let el_chokudai = document.getElementById('_chokudai')
 
   // TODO: class
   var state = {
@@ -16,12 +17,15 @@ import * as wasm from "icfpc2021";
   async function render_for_hash(hash) {
     if (!hash.startsWith('#')) return
     let params = Object.fromEntries(hash.substr(1).split('&').map(e => e.split('=', 2).map(e => decodeURIComponent(e))))
+    if (params['problem_id']) {
+      el_problem_id = params['problem_id']
+      params['problem_url'] = `/static/problems/${params['problem_id']}.json`
+    }
     let p_problem = params['problem_url'] && fetch(params['problem_url']).then(resp => resp.ok && resp.text())
     let p_pose = params['pose_url'] && fetch(params['pose_url']).then(resp => resp.ok && resp.text())
     state.problem = p_problem && await p_problem
     state.pose = p_pose && await p_pose || state.problem && JSON.stringify({ vertices: JSON.parse(state.problem).figure.vertices })
     render(state.problem, state.pose)
-    el_morph.disabled = !state.pose
   }
 
   function render(problem, pose) {
@@ -49,17 +53,17 @@ import * as wasm from "icfpc2021";
       el.addEventListener('keydown', ev => {
         let a = (ev.shiftKey ? 10 : 1)
         switch (ev.key) {
-          case 'ArrowUp': f(0, -a); break;
-          case 'ArrowDown': f(0, a); break;
-          case 'ArrowLeft': f(-a, 0); break;
-          case 'ArrowRight': f(a, 0); break;
+          case 'ArrowUp': f(0, -a); return false;
+          case 'ArrowDown': f(0, a); return false;
+          case 'ArrowLeft': f(-a, 0); return false;
+          case 'ArrowRight': f(a, 0); return false;
         }
       })
     })
   }
 
   addEventListener('hashchange', () => render_for_hash(location.href), false)
-  el_problem_id.addEventListener('change', () => {
+  el_problem_id.addEventListener('change', e => {
     let newhash = `#problem_url=%2Fstatic%2Fproblems%2F${e.target.value}.json`
     history.replaceState(null, '', newhash)
     render_for_hash(newhash)
@@ -78,18 +82,6 @@ import * as wasm from "icfpc2021";
     }
   })
 
-  el_morph.addEventListener('click', async function () {
-    if (state.problem && state.pose && !this.disabled) {
-      this.disabled = true
-      for (let i = 0; i < 10 && this.disabled; i++) {
-        state.pose = wasm.morph(state.problem, state.pose, 1000)
-        render(state.problem, state.pose)
-        await new Promise(resolve => setTimeout(resolve, 10))
-      }
-      this.disabled = false
-    }
-  })
-
   el_container.addEventListener('click', e => {
     let closest = Infinity
     let closest_target = null
@@ -104,5 +96,26 @@ import * as wasm from "icfpc2021";
       }
     })
     if (closest_target) closest_target.focus()
+  })
+
+  el_morph.addEventListener('click', async function () {
+    if (state.problem && state.pose && !this.disabled) {
+      this.disabled = true
+      for (let i = 0; i < 10 && this.disabled; i++) {
+        state.pose = wasm.morph(state.problem, state.pose, 1000)
+        render(state.problem, state.pose)
+        await new Promise(resolve => setTimeout(resolve, 10))
+      }
+      this.disabled = false
+    }
+  })
+
+  el_chokudai.addEventListener('click', async function () {
+    if (state.problem && state.pose && !this.disabled) {
+      this.disabled = true
+      state.pose = wasm.chokudai(state.problem, state.pose, 1.0, true, true)
+      render(state.problem, state.pose)
+      this.disabled = false
+    }
   })
 })()

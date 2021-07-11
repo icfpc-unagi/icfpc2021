@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "wasm-pack build --dev && webpack",
+    "build": "wasm-pack build --debug && webpack",
     "build:prod": "wasm-pack build --release && webpack --mode production",
     "start": "webpack-dev-server"
   },
