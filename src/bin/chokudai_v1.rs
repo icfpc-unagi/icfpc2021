@@ -15,7 +15,7 @@ fn main() {
 	//eprintln!("{}", output_path);
 
 	let input = read_input_from_file(input_path);
-	let mut output = Output { vertices: input.figure.vertices.clone()};
+	let mut output = Output { vertices: input.figure.vertices.clone(), bonuses: Default::default() };
 	if filesize > 0 {
 		output = read_output_from_file(output_path);
 	}
@@ -267,7 +267,7 @@ fn main() {
 			
 				if allbest < next_score.0 && next_score.1 == 0.0 {
 					eprintln!(" OK! : {} {}", cnt, next_score.0);
-					eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: now.clone() }));
+					eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: now.clone(), bonuses: Default::default() }));
 					allbest = next_score.0;
 					best_ans = now.clone();
 					//write_output(&Output { vertices: best_ans.clone() })
@@ -285,9 +285,9 @@ fn main() {
 	}
 	
 	eprintln!("ans : {}", 100000.0 - allbest);
-	eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone() }));
+	eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone(), bonuses: Default::default() }));
 
-	write_output(&Output { vertices: best_ans.clone() })
+	write_output(&Output { vertices: best_ans.clone(), bonuses: Default::default() })
 }
 
 

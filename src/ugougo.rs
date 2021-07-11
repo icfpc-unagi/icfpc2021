@@ -19,8 +19,15 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
 		epsilon,
 		..
 	} = problem;
-	let Output { vertices, .. } = pose;
-	let mut vertices = vertices.clone();
+	let Output {
+		mut vertices,
+		bonuses,
+	} = pose.clone();
+
+	let globalist = bonuses
+		.iter()
+		.find(|&b| b.bonus == BonusType::Globalist)
+		.is_some();
 
 	let n = original_vertices.len();
 	assert_eq!(n, vertices.len());
@@ -47,7 +54,7 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
 		adj[b].push((a, i));
 	}
 
-	let mut score = compute_score(problem, pose);
+	let mut score = compute_score(problem, &pose);
 
 	let mut rng = rand::thread_rng();
 	let mut k = 0;
@@ -55,18 +62,14 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
 		let a = rng.gen_range(0..n);
 		let d = DIRS[rng.gen_range(0..4)];
 		vertices[a] += d; // destructive
-		if !P::contains_p(hole, vertices[a]).is_negative()
-			&& adj[a]
-				.iter()
-				.map(|&(b, i)| (i, (vertices[a], vertices[b])))
-				.all(|(i, d)| {
-					P::contains_s(hole, d)
-						&& stretch_within((d.0 - d.1).abs2(), dist2[i], *epsilon) == Ordering::Equal
-				}) {
+		if check_constraints_around_vertex(
+			hole, edges, &vertices, &dist2, a, &adj[a], *epsilon, globalist,
+		) {
 			let new_score = compute_score(
 				problem,
 				&Output {
 					vertices: vertices.clone(),
+					bonuses: Vec::new(),
 				},
 			);
 			if new_score <= score {
@@ -78,5 +81,37 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
 		vertices[a] -= d; // revert
 	}
 
-	(Output { vertices }, k)
+	(Output { vertices, bonuses }, k)
+}
+
+fn check_constraints_around_vertex(
+	hole: &Vec<Point>,
+	edges: &Vec<(usize, usize)>,
+	vertices: &Vec<Point>,
+	dist2: &Vec<i64>,
+	a: usize,
+	adj: &[(usize, usize)],
+	epsilon: i64,
+	globalist: bool,
+) -> bool {
+	!P::contains_p(hole, vertices[a]).is_negative()
+		&& if globalist {
+			let prod: i64 = dist2.iter().product();
+			assert!(prod > 0);
+			let prod_sum: i64 = edges
+				.iter()
+				.enumerate()
+				.map(|(i, &(a, b))| {
+					prod / dist2[i] * ((vertices[a] - vertices[b]).abs2() - dist2[i])
+				})
+				.sum();
+			1000000 * prod_sum <= prod * edges.len() as i64 * epsilon
+		} else {
+			adj.iter()
+				.map(|&(b, i)| (i, (vertices[a], vertices[b])))
+				.all(|(i, d)| {
+					P::contains_s(hole, d)
+						&& stretch_within((d.0 - d.1).abs2(), dist2[i], epsilon) == Ordering::Equal
+				})
+		}
 }

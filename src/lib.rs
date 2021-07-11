@@ -1,20 +1,20 @@
-pub mod util;
 pub mod paths;
+pub mod util;
 
 #[cfg(test)]
 mod test_contains_s;
 
-#[cfg(target_arch = "wasm32")]
-pub mod wasm;
 pub mod tree_decomposition;
 pub mod ugougo;
+#[cfg(target_arch = "wasm32")]
+pub mod wasm;
 
-use std::{io, ops::*};
-use std::cmp::Ordering;
 use num::{Signed, Zero};
-use serde::{Serialize, Deserialize};
-use util::*;
+use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
 use std::fmt::Debug;
+use std::{io, ops::*};
+use util::*;
 
 pub type Point = P<i64>;
 
@@ -23,8 +23,19 @@ pub struct Input {
 	pub hole: Vec<Point>,
 	pub figure: Figure,
 	pub epsilon: i64,
-	#[serde(default)]
+	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
 	pub bonuses: Vec<Bonus>,
+
+	// None: shiftしていない。
+	// Some(flag): shiftした。flag: hole逆順にした。
+	#[serde(skip_serializing_if = "Option::is_none")]
+	#[serde(default)]
+	pub internal: Option<InputInternal>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize, Default)]
+pub struct InputInternal {
+	pub reversed_hole: bool,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -38,6 +49,8 @@ pub struct Bonus {
 	pub bonus: BonusType,
 	pub problem: u32,
 	pub position: Point,
+	#[serde(default, skip_serializing_if = "serde_skip::is_default")]
+	pub edge: (usize, usize),
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -48,17 +61,30 @@ pub enum BonusType {
 	BreakALeg,
 	#[serde(rename = "WALLHACK")]
 	WallHack,
+	#[serde(rename = "SUPERFLEX")]
+	SuperFlex,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Output {
-	pub vertices: Vec<Point>
+	pub vertices: Vec<Point>,
+	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
+	pub bonuses: Vec<Bonus>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Evaluation {
+	// スコア。不正なときにはこれは -1 が入るので気をつけて！！！
+	pub dislikes: i64,
+	// 実際に問題で使ったボーナス（ソート済み）
+	pub bonuses: Vec<Bonus>,
+	// この問題で獲得できたボーナス（ソート済み）
+	pub obtained_bonuses: Vec<Bonus>,
 }
 
 pub fn read_input() -> Input {
 	read_input_from_reader(std::io::stdin()).unwrap()
 }
-
 
 pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
 	read_input_from_reader(std::fs::File::open(f).unwrap()).unwrap()
@@ -67,49 +93,118 @@ pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
 const SHIFT_X: i64 = 2;
 const SHIFT_Y: i64 = 0;
 
-pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
-	let mut input: Input = serde_json::from_reader(r)?;
-	for i in 0..input.hole.len() {
-		input.hole[i] += P(SHIFT_X, SHIFT_Y);
-		assert!(input.hole[i].0 >= 0 && input.hole[i].1 >= 0);
+impl Input {
+	pub fn to_internal(&mut self) {
+		assert!(self.internal.is_none());
+		let mut internal: InputInternal = Default::default();
+		for i in 0..self.hole.len() {
+			self.hole[i] += P(SHIFT_X, SHIFT_Y);
+			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
+		}
+		for bonus in &mut self.bonuses {
+			bonus.position += P(SHIFT_X, SHIFT_Y);
+		}
+
+		// edgeの重複消すのは元に戻す方法が今のところないので注意。
+		for i in 0..self.figure.edges.len() {
+			if self.figure.edges[i].0 > self.figure.edges[i].1 {
+				let t = self.figure.edges[i].0;
+				self.figure.edges[i].0 = self.figure.edges[i].1;
+				self.figure.edges[i].1 = t;
+			}
+		}
+
+		self.figure.edges.sort();
+		self.figure.edges.dedup();
+
+		let mut area = 0;
+		for i in 0..self.hole.len() {
+			area += self.hole[i].det(self.hole[(i + 1) % self.hole.len()]);
+		}
+		if area > 0 {
+			// 時計回りにする
+			internal.reversed_hole = true;
+			self.hole.reverse();
+		}
+		self.internal = Some(internal);
 	}
-	for bonus in &mut input.bonuses {
-		bonus.position += P(SHIFT_X, SHIFT_Y);
-	}
-	for i in 0..input.figure.edges.len() {
-		if input.figure.edges[i].0 > input.figure.edges[i].1 {
-			let t = input.figure.edges[i].0;
-			input.figure.edges[i].0 = input.figure.edges[i].1;
-			input.figure.edges[i].1 = t;
+
+	pub fn to_external(&mut self) {
+		let internal = self.internal.take()
+			.expect("This `Input` is already external");
+		for i in 0..self.hole.len() {
+			self.hole[i] -= P(SHIFT_X, SHIFT_Y);
+		}
+		for bonus in &mut self.bonuses {
+			bonus.position -= P(SHIFT_X, SHIFT_Y);
+		}
+		if internal.reversed_hole {
+			self.hole.reverse();
 		}
 	}
-	
-	input.figure.edges.sort();
-	input.figure.edges.dedup();
-	let mut area = 0;
-	for i in 0..input.hole.len() {
-		area += input.hole[i].det(input.hole[(i + 1) % input.hole.len()]);
+}
+
+impl Output {
+	pub fn to_internal(&mut self) {
+		for i in 0..self.vertices.len() {
+			self.vertices[i] += P(SHIFT_X, SHIFT_Y);
+		}
 	}
-	if area > 0 { // 時計回りにする
-		input.hole.reverse();
+
+	pub fn to_external(&mut self) {
+		for i in 0..self.vertices.len() {
+			self.vertices[i] -= P(SHIFT_X, SHIFT_Y);
+		}
 	}
+}
+
+pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
+	let mut input: Input = serde_json::from_reader(r)?;
+	input.to_internal();
 	Ok(input)
 }
 
 pub fn write_output(out: &Output) {
+	write_output_to_writer(out, io::stdout());
+}
+
+pub fn write_output_to_writer<W: io::Write>(out: &Output, w: W) {
 	let mut out = out.clone();
-	for i in 0..out.vertices.len() {
-		out.vertices[i] -= P(SHIFT_X, SHIFT_Y);
-	}
-	println!("{}", serde_json::to_string(&out).unwrap());
+	out.to_external();
+	serde_json::to_writer(w, &out).unwrap();
 }
 
 pub fn read_output_from_file(f: impl AsRef<std::path::Path>) -> Output {
-	let mut out: Output = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
-	for i in 0..out.vertices.len() {
-		out.vertices[i] += P(SHIFT_X, SHIFT_Y);
+	read_output_from_reader(std::fs::File::open(f).unwrap()).unwrap()
+}
+
+pub fn read_output_from_reader<R: io::Read>(r: R) -> io::Result<Output> {
+	let mut out: Output = serde_json::from_reader(r)?;
+	out.to_internal();
+	Ok(out)
+}
+
+pub fn evaluate(input: &Input, output: &Output) -> Evaluation {
+	let dislikes = compute_score(input, output);
+
+	let mut obtained_bonuses: Vec<_> = Vec::new();
+	for bonus in &input.bonuses {
+		for p in &output.vertices {
+			if bonus.position == *p {
+				obtained_bonuses.push(bonus.clone());
+			}
+		}
 	}
-	out
+	obtained_bonuses.sort();
+
+	let mut bonuses = output.bonuses.clone();
+	bonuses.sort();
+
+	Evaluation {
+		dislikes: if dislikes < 1000000000 { dislikes } else { -1 },
+		bonuses: bonuses,
+		obtained_bonuses: obtained_bonuses,
+	}
 }
 
 pub fn compute_score(input: &Input, out: &Output) -> i64 {
@@ -145,10 +240,15 @@ pub fn compute_score(input: &Input, out: &Output) -> i64 {
 	score
 }
 
-#[derive(Clone, Copy, Default, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+#[derive(
+	Clone, Copy, Default, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize,
+)]
 pub struct P<T>(pub T, pub T);
 
-impl<T> Add for P<T> where T: Copy + Add<Output = T> {
+impl<T> Add for P<T>
+where
+	T: Copy + Add<Output = T>,
+{
 	type Output = P<T>;
 	#[inline]
 	fn add(self, a: P<T>) -> P<T> {
@@ -156,7 +256,10 @@ impl<T> Add for P<T> where T: Copy + Add<Output = T> {
 	}
 }
 
-impl<T> AddAssign for P<T> where T: Copy + AddAssign {
+impl<T> AddAssign for P<T>
+where
+	T: Copy + AddAssign,
+{
 	#[inline]
 	fn add_assign(&mut self, a: P<T>) {
 		self.0 += a.0;
@@ -164,7 +267,10 @@ impl<T> AddAssign for P<T> where T: Copy + AddAssign {
 	}
 }
 
-impl<T> Sub for P<T> where T: Copy + Sub<Output = T> {
+impl<T> Sub for P<T>
+where
+	T: Copy + Sub<Output = T>,
+{
 	type Output = P<T>;
 	#[inline]
 	fn sub(self, a: P<T>) -> P<T> {
@@ -172,7 +278,10 @@ impl<T> Sub for P<T> where T: Copy + Sub<Output = T> {
 	}
 }
 
-impl<T> SubAssign for P<T> where T: Copy + SubAssign {
+impl<T> SubAssign for P<T>
+where
+	T: Copy + SubAssign,
+{
 	#[inline]
 	fn sub_assign(&mut self, a: P<T>) {
 		self.0 -= a.0;
@@ -180,7 +289,10 @@ impl<T> SubAssign for P<T> where T: Copy + SubAssign {
 	}
 }
 
-impl<T> Mul<T> for P<T> where T: Copy + Mul<Output = T> {
+impl<T> Mul<T> for P<T>
+where
+	T: Copy + Mul<Output = T>,
+{
 	type Output = P<T>;
 	#[inline]
 	fn mul(self, a: T) -> P<T> {
@@ -188,7 +300,10 @@ impl<T> Mul<T> for P<T> where T: Copy + Mul<Output = T> {
 	}
 }
 
-impl<T> MulAssign<T> for P<T> where T: Copy + MulAssign {
+impl<T> MulAssign<T> for P<T>
+where
+	T: Copy + MulAssign,
+{
 	#[inline]
 	fn mul_assign(&mut self, a: T) {
 		self.0 *= a;
@@ -196,7 +311,10 @@ impl<T> MulAssign<T> for P<T> where T: Copy + MulAssign {
 	}
 }
 
-impl<T> P<T> where T: Copy + Signed {
+impl<T> P<T>
+where
+	T: Copy + Signed,
+{
 	#[inline]
 	pub fn dot(self, a: P<T>) -> T {
 		(self.0 * a.0) + (self.1 * a.1)
@@ -214,7 +332,6 @@ impl<T> P<T> where T: Copy + Signed {
 		P(-self.1, self.0)
 	}
 }
-
 
 macro_rules! impl_cmp {
 	($name:ident $(<$($t:ident),*>)*; |$x:ident, $y:ident| $e:expr; $($w:tt)*) => {
@@ -252,22 +369,40 @@ impl_cmp!(R<T>; |a, b| {
 		}
 	}; where T: Copy + Zero + Ord + Mul<Output = T>);
 
-impl<T> From<T> for R<T> where T: From<u8> {
+impl<T> From<T> for R<T>
+where
+	T: From<u8>,
+{
 	#[inline]
-	fn from(x: T) -> R<T> { R(x, T::from(1)) }
+	fn from(x: T) -> R<T> {
+		R(x, T::from(1))
+	}
 }
 
-impl<T> From<P<T>> for P<R<T>> where R<T>: From<T> {
+impl<T> From<P<T>> for P<R<T>>
+where
+	R<T>: From<T>,
+{
 	#[inline]
-	fn from(p: P<T>) -> P<R<T>> { P(p.0.into(), p.1.into()) }
+	fn from(p: P<T>) -> P<R<T>> {
+		P(p.0.into(), p.1.into())
+	}
 }
 
-impl<T> R<T> where T: Div<Output = T> {
+impl<T> R<T>
+where
+	T: Div<Output = T>,
+{
 	#[inline]
-	pub fn val(self) -> T { self.0 / self.1 }
+	pub fn val(self) -> T {
+		self.0 / self.1
+	}
 }
 
-impl<T> From<P<R<T>>> for P<T> where T: Div<Output = T> {
+impl<T> From<P<R<T>>> for P<T>
+where
+	T: Div<Output = T>,
+{
 	#[inline]
 	fn from(x: P<R<T>>) -> P<T> {
 		P(x.0.val(), x.1.val())
@@ -275,21 +410,31 @@ impl<T> From<P<R<T>>> for P<T> where T: Div<Output = T> {
 }
 
 #[inline]
-fn sig<T>(x: T) -> i32 where T: Zero + Ord {
+fn sig<T>(x: T) -> i32
+where
+	T: Zero + Ord,
+{
 	match x.cmp(&T::zero()) {
 		Ordering::Greater => 1,
 		Ordering::Less => -1,
-		_ => 0
+		_ => 0,
 	}
 }
 
 /// 直線に関する演算. 分数を用いて計算誤差なしで行う.
-impl<T> P<T> where T: Copy + From<u8> + Ord + Signed {
+impl<T> P<T>
+where
+	T: Copy + From<u8> + Ord + Signed,
+{
 	/// Square distance between segment and point. (D^4,D^2).
 	pub fn dist2_sp((p1, p2): (P<T>, P<T>), q: P<T>) -> R<T> {
-		if (p2 - p1).dot(q - p1) <= T::zero() { (q - p1).abs2().into() }
-		else if (p1 - p2).dot(q - p2) <= T::zero() { (q - p2).abs2().into() }
-		else { P::dist2_lp((p1, p2), q) }
+		if (p2 - p1).dot(q - p1) <= T::zero() {
+			(q - p1).abs2().into()
+		} else if (p1 - p2).dot(q - p2) <= T::zero() {
+			(q - p2).abs2().into()
+		} else {
+			P::dist2_lp((p1, p2), q)
+		}
 	}
 	/// Square distance between line and point. (D^4,D^2).
 	pub fn dist2_lp((p1, p2): (P<T>, P<T>), q: P<T>) -> R<T> {
@@ -306,14 +451,22 @@ impl<T> P<T> where T: Copy + From<u8> + Ord + Signed {
 	}
 	/// D^2.
 	pub fn crs_ss((p1, p2): (P<T>, P<T>), (q1, q2): (P<T>, P<T>)) -> bool {
-		let sort = |a, b| { if a < b { (a, b) } else { (b, a) }};
+		let sort = |a, b| {
+			if a < b {
+				(a, b)
+			} else {
+				(b, a)
+			}
+		};
 		let (lp0, up0) = sort(p1.0, p2.0);
 		let (lq0, uq0) = sort(q1.0, q2.0);
 		let (lp1, up1) = sort(p1.1, p2.1);
 		let (lq1, uq1) = sort(q1.1, q2.1);
-		if up0 < lq0 || uq0 < lp0 || up1 < lq1 || uq1 < lp1 { return false }
+		if up0 < lq0 || uq0 < lp0 || up1 < lq1 || uq1 < lp1 {
+			return false;
+		}
 		return sig((p2 - p1).det(q1 - p1)) * sig((p2 - p1).det(q2 - p1)) <= 0
-			&& sig((q2 - q1).det(p1 - q1)) * sig((q2 - q1).det(p2 - q1)) <= 0
+			&& sig((q2 - q1).det(p1 - q1)) * sig((q2 - q1).det(p2 - q1)) <= 0;
 	}
 	/// (D^3,D^2).
 	pub fn proj((p1, p2): (P<T>, P<T>), q: P<T>) -> P<R<T>> {
@@ -324,7 +477,9 @@ impl<T> P<T> where T: Copy + From<u8> + Ord + Signed {
 	/// (D^3,D^2).
 	pub fn pi_ll((p1, p2): (P<T>, P<T>), (q1, q2): (P<T>, P<T>)) -> Option<P<R<T>>> {
 		let d = (q2 - q1).det(p2 - p1);
-		if d == T::zero() { return None }
+		if d == T::zero() {
+			return None;
+		}
 		let r = p1 * d + (p2 - p1) * (q2 - q1).det(q1 - p1);
 		Some(P(R(r.0, d), R(r.1, d)))
 	}
@@ -397,7 +552,11 @@ impl<T> P<T> where T: Copy + From<u8> + Ord + Signed {
 }
 
 // epsilon 以内の伸び縮み判別
-fn stretch_within<T: num::traits::Signed + From<i32> + Copy>(d2: T, base_d2: T, epsilon: T) -> Ordering {
+fn stretch_within<T: num::traits::Signed + From<i32> + Copy>(
+	d2: T,
+	base_d2: T,
+	epsilon: T,
+) -> Ordering {
 	let diff = d2 - base_d2;
 	if !(diff.abs() * 1000000.into() - epsilon * base_d2).is_positive() {
 		Ordering::Equal

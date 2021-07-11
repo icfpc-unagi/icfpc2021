@@ -349,5 +349,5 @@ fn main() {
 		}
 	}
 	eprintln!("Score = {}", min);
-	write_output(&Output { vertices: best });
+	write_output(&Output { vertices: best, bonuses: Default::default() });
 }

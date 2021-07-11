@@ -1,6 +1,91 @@
-<svg height="500" viewBox="-2 -2 93 77" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M0 69L28 73L69 40L89 20L69 0L21 27L0 41M-2 -2L91 -2L91 75L-2 75" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<circle cx="20" cy="52" r="5" style="fill:#ffff0066;stroke:none;"/>
-<path class="ok" d="M34 40L57 24M34 40L10 55M57 24L35 42M10 55L35 42" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M10 0L8 28M10 0L33 11M8 28L0 55M33 11L9 27M33 11L34 40M0 55L9 27M9 27L34 40M9 27L10 55" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 95 77" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 69L30 73L71 40L91 20L71 0L23 27L2 41M-2 -2L93 -2L93 75L-2 75" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="22" cy="52" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
+<circle cx="71" cy="21" r="5" style="fill:#ffff0066;" title="Globalist"/>
+<path class="ok" d="M34 40L57 24M34 40L10 55M57 24L35 42M10 55L35 42" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M10 0L8 28M10 0L33 11M8 28L0 55M33 11L9 27M33 11L34 40M0 55L9 27M9 27L34 40M9 27L10 55" style="stroke:#ff0000;stroke-linecap:round"/>
+<g fill="#333333">
+<circle cx="2" cy="69" r="0.5" tabindex="0">
+<title>
+hole:0
+</title>
+</circle>
+<circle cx="30" cy="73" r="0.5" tabindex="1">
+<title>
+hole:1
+</title>
+</circle>
+<circle cx="71" cy="40" r="0.5" tabindex="2">
+<title>
+hole:2
+</title>
+</circle>
+<circle cx="91" cy="20" r="0.5" tabindex="3">
+<title>
+hole:3
+</title>
+</circle>
+<circle cx="71" cy="0" r="0.5" tabindex="4">
+<title>
+hole:4
+</title>
+</circle>
+<circle cx="23" cy="27" r="0.5" tabindex="5">
+<title>
+hole:5
+</title>
+</circle>
+<circle cx="2" cy="41" r="0.5" tabindex="6">
+<title>
+hole:6
+</title>
+</circle>
+</g>
+<g fill="#999999">
+<circle cx="10" cy="0" r="0.5" tabindex="7">
+<title>
+v:0
+</title>
+</circle>
+<circle cx="8" cy="28" r="0.5" tabindex="8">
+<title>
+v:1
+</title>
+</circle>
+<circle cx="33" cy="11" r="0.5" tabindex="9">
+<title>
+v:2
+</title>
+</circle>
+<circle cx="0" cy="55" r="0.5" tabindex="10">
+<title>
+v:3
+</title>
+</circle>
+<circle cx="9" cy="27" r="0.5" tabindex="11">
+<title>
+v:4
+</title>
+</circle>
+<circle cx="34" cy="40" r="0.5" tabindex="12">
+<title>
+v:5
+</title>
+</circle>
+<circle cx="57" cy="24" r="0.5" tabindex="13">
+<title>
+v:6
+</title>
+</circle>
+<circle cx="10" cy="55" r="0.5" tabindex="14">
+<title>
+v:7
+</title>
+</circle>
+<circle cx="35" cy="42" r="0.5" tabindex="15">
+<title>
+v:8
+</title>
+</circle>
+</g>
 </svg>

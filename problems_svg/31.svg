@@ -1,6 +1,136 @@
-<svg height="500" viewBox="-2 -2 61 73" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M20 4L9 6L0 6L0 18L8 28L2 37L2 47L0 57L17 54L28 46L35 58L26 69L44 69L57 66L56 50L57 39L46 37L51 27L57 20L32 0M-2 -2L59 -2L59 71L-2 71" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<circle cx="57" cy="66" r="5" style="fill:#ffff0066;stroke:none;"/>
-<path class="ok" d="" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M0 0L0 34M0 0L30 17M0 34L0 69M0 34L27 51M0 34L30 17M0 69L27 51M27 51L30 17" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 63 73" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M22 4L11 6L2 6L2 18L10 28L4 37L4 47L2 57L19 54L30 46L37 58L28 69L46 69L59 66L58 50L59 39L48 37L53 27L59 20L34 0M-2 -2L61 -2L61 71L-2 71" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="59" cy="66" r="5" style="fill:#ffff0066;" title="Globalist"/>
+<circle cx="38" cy="18" r="5" style="fill:#ffff0066;" title="WallHack"/>
+<path class="ok" d="" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M0 0L0 34M0 0L30 17M0 34L0 69M0 34L27 51M0 34L30 17M0 69L27 51M27 51L30 17" style="stroke:#ff0000;stroke-linecap:round"/>
+<g fill="#333333">
+<circle cx="22" cy="4" r="0.5" tabindex="0">
+<title>
+hole:0
+</title>
+</circle>
+<circle cx="11" cy="6" r="0.5" tabindex="1">
+<title>
+hole:1
+</title>
+</circle>
+<circle cx="2" cy="6" r="0.5" tabindex="2">
+<title>
+hole:2
+</title>
+</circle>
+<circle cx="2" cy="18" r="0.5" tabindex="3">
+<title>
+hole:3
+</title>
+</circle>
+<circle cx="10" cy="28" r="0.5" tabindex="4">
+<title>
+hole:4
+</title>
+</circle>
+<circle cx="4" cy="37" r="0.5" tabindex="5">
+<title>
+hole:5
+</title>
+</circle>
+<circle cx="4" cy="47" r="0.5" tabindex="6">
+<title>
+hole:6
+</title>
+</circle>
+<circle cx="2" cy="57" r="0.5" tabindex="7">
+<title>
+hole:7
+</title>
+</circle>
+<circle cx="19" cy="54" r="0.5" tabindex="8">
+<title>
+hole:8
+</title>
+</circle>
+<circle cx="30" cy="46" r="0.5" tabindex="9">
+<title>
+hole:9
+</title>
+</circle>
+<circle cx="37" cy="58" r="0.5" tabindex="10">
+<title>
+hole:10
+</title>
+</circle>
+<circle cx="28" cy="69" r="0.5" tabindex="11">
+<title>
+hole:11
+</title>
+</circle>
+<circle cx="46" cy="69" r="0.5" tabindex="12">
+<title>
+hole:12
+</title>
+</circle>
+<circle cx="59" cy="66" r="0.5" tabindex="13">
+<title>
+hole:13
+</title>
+</circle>
+<circle cx="58" cy="50" r="0.5" tabindex="14">
+<title>
+hole:14
+</title>
+</circle>
+<circle cx="59" cy="39" r="0.5" tabindex="15">
+<title>
+hole:15
+</title>
+</circle>
+<circle cx="48" cy="37" r="0.5" tabindex="16">
+<title>
+hole:16
+</title>
+</circle>
+<circle cx="53" cy="27" r="0.5" tabindex="17">
+<title>
+hole:17
+</title>
+</circle>
+<circle cx="59" cy="20" r="0.5" tabindex="18">
+<title>
+hole:18
+</title>
+</circle>
+<circle cx="34" cy="0" r="0.5" tabindex="19">
+<title>
+hole:19
+</title>
+</circle>
+</g>
+<g fill="#999999">
+<circle cx="0" cy="0" r="0.5" tabindex="20">
+<title>
+v:0
+</title>
+</circle>
+<circle cx="0" cy="34" r="0.5" tabindex="21">
+<title>
+v:1
+</title>
+</circle>
+<circle cx="0" cy="69" r="0.5" tabindex="22">
+<title>
+v:2
+</title>
+</circle>
+<circle cx="27" cy="51" r="0.5" tabindex="23">
+<title>
+v:3
+</title>
+</circle>
+<circle cx="30" cy="17" r="0.5" tabindex="24">
+<title>
+v:4
+</title>
+</circle>
+</g>
 </svg>

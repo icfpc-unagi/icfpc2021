@@ -202,9 +202,8 @@ form { margin: 0; }
 <a href="/">Unagi ICFPC2021 Standings</a>
 </div>
 
-<a href="/"><s>Standings</s>🚧</a>
-- <a href="/problems">Problems</a>
-- <a href="/programs"><s>Programs</s>🚧</a>
+<a href="/problems">Problems</a>
+- <a href="/bonuses">Bonuses</a>
 
 </div>
 </header>
