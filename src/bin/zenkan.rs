@@ -160,7 +160,7 @@ fn main() {
 	let mut data = Data { input, dist, inside, g, cand: vec![] };
 	let mut best = vec![];
 	let mut best_score = i64::max_value();
-	for _ in 0..3 {
+	for _ in 0..1 {
 		eprintln!("eps = {}", data.input.epsilon);
 		let mut cand = mat![vec![]; n; n];
 		for i in 0..n {
@@ -176,8 +176,8 @@ fn main() {
 			}
 		}
 		data.cand = cand;
-		let stime = get_time();
 		for u in 0..n {
+			let stime = get_time();
 			let mut out = vec![P(-1, -1); n]; // 極小エラーを許す場合はここも他の候補試す必要あり
 			let mut used = vec![false; n];
 			out[u] = data.input.hole[0];
@@ -197,7 +197,7 @@ fn main() {
 				}
 				cand[v] = Some(list);
 			}
-			rec(&data, 1, &mut out, &mut used, &cand, &min, &mut best, &mut best_score, stime + 600.0);
+			rec(&data, 1, &mut out, &mut used, &cand, &min, &mut best, &mut best_score, stime + 300.0);
 		}
 		if data.input.epsilon == 0 {
 			break;

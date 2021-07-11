@@ -92,12 +92,13 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 				.set("d", hole_polygon),
 		);
 	for bonus in &prob.bonuses {
+		let got = vertices.iter().find(|&p| p == &bonus.position).is_some();
 		svg = svg.add(
 			element::Circle::new()
 				.set("cx", bonus.position.0)
 				.set("cy", bonus.position.1)
 				.set("r", 5)
-				.set("style", "fill:#ffff0066;")
+				.set("fill", if got { "#ff666666" } else { "#ffff0066" })
 				.set("title", format!("{:?}", bonus.bonus)),
 		);
 	}
