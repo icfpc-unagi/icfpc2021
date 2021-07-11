@@ -49,10 +49,10 @@ import * as wasm from "icfpc2021";
       el.addEventListener('keydown', ev => {
         let a = (ev.shiftKey ? 10 : 1)
         switch (ev.key) {
-          case 'ArrowUp': f(0, -a); break;
-          case 'ArrowDown': f(0, a); break;
-          case 'ArrowLeft': f(-a, 0); break;
-          case 'ArrowRight': f(a, 0); break;
+          case 'ArrowUp': f(0, -a); return false;
+          case 'ArrowDown': f(0, a); return false;
+          case 'ArrowLeft': f(-a, 0); return false;
+          case 'ArrowRight': f(a, 0); return false;
         }
       })
     })
