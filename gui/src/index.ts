@@ -142,7 +142,6 @@ class EdgeObject {
     const rInner = Math.sqrt(this.d2Orig * (1 - this.epsilon / 1_000_000));
     const rOuter = Math.sqrt(this.d2Orig * (1 + this.epsilon / 1_000_000));
     const [x, y] = [this.vertex0, this.vertex1].find((v) => v !== vertex)!.pos;
-    console.log(x, y, rInner, rOuter);
     return new Graphics()
       .beginFill(0x0000ff, 0.2)
       .drawCircle(x, y, rOuter)
@@ -308,15 +307,17 @@ class ProblemRenderer {
 
     const c = this.holePairContainer;
     c.removeChildren();
-    const isHole = this.vertices.map(({g}) => g.tint == 0x00ff00); // TODO
+    const isHole = this.vertices.map(({ g }) => g.tint == 0x00ff00); // TODO
     const badPairs = a.test_pose(pose);
     for (const k of Array(badPairs.length / 2).keys()) {
       const [i, j] = badPairs.slice(2 * k, 2 * (k + 1));
       if (isHole[i] && isHole[j]) {
-        c.addChild(new Graphics()
-        .lineStyle({color: 0xff0000, width: 2, alpha: 0.5})
-        .moveTo(...this.vertices[i].pos)
-        .lineTo(...this.vertices[j].pos))
+        c.addChild(
+          new Graphics()
+            .lineStyle({ color: 0xff0000, width: 2, alpha: 0.5 })
+            .moveTo(...this.vertices[i].pos)
+            .lineTo(...this.vertices[j].pos)
+        );
       }
     }
   }
@@ -352,7 +353,7 @@ class ProblemRenderer {
       edgesContainer,
       ...this.holeCorners,
       ...this.vertices.map(({ g }) => g),
-      this.holePairContainer,
+      this.holePairContainer
     );
   }
 
@@ -364,9 +365,6 @@ class ProblemRenderer {
 }
 
 mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
-// console.log(wasm);
-// console.log(wasm.check_solution1);
-// console.log(wasm.check_solution1(sampleInput, sampleOutput));
 
 (wasm_ as any)
   .then((wasm__: any) => {
