@@ -1,12 +1,14 @@
 import * as wasm from "icfpc2021";
 
 (async function () {
-  let el_problem_id = document.getElementById('_problem_id')
-  let el_container = document.getElementById('_container')
-  let el_pose = document.getElementById('_pose')
-  let el_message = document.getElementById('_message')
-  let el_morph = document.getElementById('_morph')
-  let el_chokudai = document.getElementById('_chokudai')
+  var el_problem_id = document.getElementById('_problem_id')
+  var el_load_init = document.getElementById('_load_init')
+  var el_load_best = document.getElementById('_load_best')
+  var el_container = document.getElementById('_container')
+  var el_pose = document.getElementById('_pose')
+  var el_message = document.getElementById('_message')
+  var el_morph = document.getElementById('_morph')
+  var el_chokudai = document.getElementById('_chokudai')
 
   // TODO: class
   var state = {
@@ -24,7 +26,7 @@ import * as wasm from "icfpc2021";
     let p_problem = params['problem_url'] && fetch(params['problem_url']).then(resp => resp.ok && resp.text())
     let p_pose = params['pose_url'] && fetch(params['pose_url']).then(resp => resp.ok && resp.text())
     state.problem = p_problem && await p_problem
-    state.pose = p_pose && await p_pose || state.problem && JSON.stringify({ vertices: JSON.parse(state.problem).figure.vertices })
+    state.pose = params['pose'] || p_pose && await p_pose || ''
     render(state.problem, state.pose)
   }
 
@@ -40,7 +42,12 @@ import * as wasm from "icfpc2021";
       el_pose.value = ''
       el_pose.style.boxShadow = ''
     } else {
-      throw arguments
+      el_container.innerHTML = ''
+      el_message.textContent = ''
+      el_pose.value = ''
+      el_pose.style.boxShadow = ''
+      console.debug(arguments)
+      return
     }
     let handleKeyDown = ev => {
       let i = parseInt(ev.target.getAttribute('i'))
@@ -60,6 +67,7 @@ import * as wasm from "icfpc2021";
   }
 
   function apply(i, f, all) {
+    if (!state.pose) return
     let json = JSON.parse(state.pose)
     for (let j of all ? json.vertices.keys() : [i]) {
       json.vertices[j] = f(json.vertices[j], json.vertices[i])
@@ -70,12 +78,26 @@ import * as wasm from "icfpc2021";
   }
 
   addEventListener('hashchange', () => render_for_hash(location.href), false)
+
   el_problem_id.addEventListener('change', e => {
-    let newhash = `#problem_url=%2Fstatic%2Fproblems%2F${e.target.value}.json`
+    let newhash = `#problem_id=${e.target.value}`
     history.replaceState(null, '', newhash)
     render_for_hash(newhash)
   })
   await render_for_hash(location.hash)
+
+  el_load_init.addEventListener('click', () => {
+    state.pose = state.problem && JSON.stringify({ vertices: JSON.parse(state.problem).figure.vertices })
+    render(state.problem, state.pose)
+  })
+
+  el_load_best.addEventListener('click', () => {
+    let problem_id = el_problem_id.value
+    if (!problem_id) return
+    let newhash = `#problem_id=${problem_id}&pose_url=%2Fbest_solution%3Fproblem_id%3D${problem_id}`
+    history.replaceState(null, '', newhash)
+    render_for_hash(newhash)
+  })
 
   el_pose.addEventListener('change', el => {
     try {
