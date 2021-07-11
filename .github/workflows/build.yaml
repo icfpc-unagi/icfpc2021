@@ -20,6 +20,9 @@ jobs:
         project_id: icfpc-primary
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
+    - name: Commit ID
+      run: |
+          echo "Commit ID: $(git rev-parse --short HEAD)"
     - name: Build
       run: |
           rustup target add x86_64-unknown-linux-musl
@@ -28,4 +31,3 @@ jobs:
           cargo build --release
           gsutil -m cp -r ./target/release/{wata,wata_rnd,chokudai,chokudai_v1,dp,calculate_score} \
               gs://icfpc2021/artifacts/$(git rev-parse --short HEAD)/
-          echo "Commit ID: $(git rev-parse --short HEAD)"
