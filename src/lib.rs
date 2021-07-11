@@ -208,8 +208,15 @@ pub fn evaluate(input: &Input, output: &Output) -> Evaluation {
 }
 
 pub fn compute_score(input: &Input, out: &Output) -> i64 {
+	compute_score_or_err(input, out).unwrap_or_else(|e| {
+		eprintln!("{}", e);
+		1000000000
+	})
+}
+
+fn compute_score_or_err(input: &Input, out: &Output) -> Result<i64, &'static str> {
 	if out.vertices.len() != input.figure.vertices.len() {
-		return 1000000000;
+		return Err("vertices len");
 	}
 	let mut score = 0;
 	for &p in &input.hole {
@@ -221,23 +228,20 @@ pub fn compute_score(input: &Input, out: &Output) -> i64 {
 	}
 	for &p in &out.vertices {
 		if P::contains_p(&input.hole, p) < 0 {
-			eprintln!("outside point");
-			return 1000000000;
+			return Err("outside point");
 		}
 	}
 	for &(i, j) in &input.figure.edges {
 		if !P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])) {
-			eprintln!("cross edge");
-			return 1000000000;
+			return Err("cross edge");
 		}
 		let before = (input.figure.vertices[i] - input.figure.vertices[j]).abs2();
 		let after = (out.vertices[i] - out.vertices[j]).abs2();
 		if (after * 1000000 - before * 1000000).abs() > input.epsilon * before {
-			eprintln!("illegal length");
-			return 1000000000;
+			return Err("illegal length");
 		}
 	}
-	score
+	Ok(score)
 }
 
 #[derive(

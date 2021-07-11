@@ -41,6 +41,16 @@ pub fn write_pose(j: JsValue) -> Result<String, JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn score_or_message(prob: JsValue, pose: JsValue) -> String {
+	let prob: Input = prob.into_serde().unwrap();
+	let pose: Output = pose.into_serde().unwrap();
+	match compute_score_or_err(&prob, &pose) {
+		Ok(score) => format!("score: {}", score),
+		Err(msg) => format!("message: {}", msg),
+	}
+}
+
+#[wasm_bindgen]
 pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 	let input: Input = input.into_serde().unwrap();
 	let out: Output = out.into_serde().unwrap();
