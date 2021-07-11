@@ -45,7 +45,7 @@ type Problem = {
   };
   internal?: {
     reversed_hole: boolean;
-  }
+  };
 };
 
 type Solution = {
@@ -65,10 +65,7 @@ class VertexObject {
   g: Graphics;
   edges: EdgeObject[];
 
-  constructor(
-    [x, y]: XY,
-    public hole: XY[],
-  ) {
+  constructor([x, y]: XY, public hole: XY[]) {
     const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
     g.position.set(x, y);
     g.scale.set(1 / guiScale);
@@ -191,7 +188,9 @@ class ProblemRenderer {
 
     const fig = inputJson.figure;
 
-    const vertices: VertexObject[] = fig.vertices.map((xy) => new VertexObject(xy, origHole));
+    const vertices: VertexObject[] = fig.vertices.map(
+      (xy) => new VertexObject(xy, origHole)
+    );
 
     // for (const [i, v] of vertices.entries()) {
     //   const text = new PIXI.Text(`${i}`, {
@@ -217,12 +216,14 @@ class ProblemRenderer {
     this.vertices = vertices;
     for (const [k, v] of vertices.entries()) {
       dragHandler.register(v.g);
-      v.g.on("drag", () => {
-        v.update();
-      }).on("dragend", () => {
-        this.update();
-        this.lastDrag = v;
-      });
+      v.g
+        .on("drag", () => {
+          v.update();
+        })
+        .on("dragend", () => {
+          this.update();
+          this.lastDrag = v;
+        });
     }
 
     this.update();
@@ -244,7 +245,7 @@ class ProblemRenderer {
     this.runCheckSolution1(this.inputJson, solutionJson);
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
-    )(solutionJson);   
+    )(solutionJson);
   }
 
   runCheckSolution1(input: Problem, output: Solution): void {
@@ -285,7 +286,12 @@ class ProblemRenderer {
 
   render(c: Container): void {
     c.removeChildren();
-    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.holeCorners, ...this.vertices.map(({ g }) => g));
+    c.addChild(
+      this.hole,
+      ...this.edges.map(({ g }) => g),
+      ...this.holeCorners,
+      ...this.vertices.map(({ g }) => g)
+    );
   }
 
   updateGuiScale(): void {
@@ -312,7 +318,7 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
     r.render(mainContainer);
     r.loadSolution(sampleOutput);
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
       const vec = {
         ArrowLeft: [-1, 0],
         ArrowUp: [0, -1],
