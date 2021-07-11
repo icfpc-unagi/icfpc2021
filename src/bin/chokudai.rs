@@ -38,6 +38,7 @@ fn main() {
 	//bg!(&input);
 	//dbg!(&output);
 
+	let starttime = get_time();
 
 	let n = output.vertices.len();
 	let v = input.hole.len();
@@ -129,8 +130,6 @@ fn main() {
 			}
 		}
 	}
-
-	let starttime = get_time();
 
 	for i in 0..300 {
 		let mut flag = true;
