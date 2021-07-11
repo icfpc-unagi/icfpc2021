@@ -3,6 +3,20 @@ use icfpc2021::*;
 
 struct Config {
     glucose_path: String,
+    /// 3, 5, 7, ...
+    neighbor: i64,
+}
+
+impl Config {
+    /// 9
+    fn n_cands(&self) -> i64 {
+        self.neighbor * self.neighbor
+    }
+
+    /// 4
+    fn d_center(&self) -> i64 {
+        (self.n_cands() - 1) / 2
+    }
 }
 
 fn edge_penalty(input: &Input, v1: usize, v2: usize, p1: Point, p2: Point) -> i64 {
@@ -27,26 +41,33 @@ fn find_largest_penalty(input: &Input, vertices: &Vec<Point>) -> (i64, Option<us
     most
 }
 
-fn lit(v: usize, d: i64) -> i64 {
-    1 + (v as i64) * 9 + d
+fn lit(config: &Config, v: usize, d: i64) -> i64 {
+    1 + (v as i64) * config.n_cands() + d
 }
 
-fn dv(d: i64) -> Point {
-    P(d % 3 - 1, d / 3 - 1)
+fn dv(config: &Config, d: i64) -> Point {
+    let x = d % config.neighbor - (config.neighbor - 1) / 2;
+    let y = d / config.neighbor - (config.neighbor - 1) / 2;
+    P(x, y)
 }
 
 // fn generate_clauses(input: &Input, vertices: &Vec<Point>, target_edge: usize) -> Vec<Vec<i64>> {
-fn generate_clauses(input: &Input, vertices: &Vec<Point>, penalty_limit: i64) -> Vec<Vec<i64>> {
+fn generate_clauses(
+    config: &Config,
+    input: &Input,
+    vertices: &Vec<Point>,
+    penalty_limit: i64,
+) -> Vec<Vec<i64>> {
     let mut clauses = vec![];
     let n_vs = vertices.len();
 
     // 9つのリテラルを用意し、1つだけtrueになるように
     for v in 0..n_vs {
-        clauses.push((0..9).map(|i| lit(v, i)).collect());
+        clauses.push((0..config.n_cands()).map(|i| lit(config, v, i)).collect());
 
-        for i in 0..9 {
+        for i in 0..config.n_cands() {
             for j in 0..i {
-                clauses.push(vec![-lit(v, j), -lit(v, i)])
+                clauses.push(vec![-lit(config, v, j), -lit(config, v, i)])
             }
         }
     }
@@ -56,31 +77,30 @@ fn generate_clauses(input: &Input, vertices: &Vec<Point>, penalty_limit: i64) ->
         let p = vertices[v];
         if input.hole.contains(&p) {
             // dbg!(&v);
-            clauses.push(vec![lit(v, 4)]);
+            clauses.push(vec![lit(config, v, config.d_center())]);
         }
     }
 
     // はみ出す場所には移動しない
     for v in 0..n_vs {
-        for d in 0..9 {
-            let tp = vertices[v] + dv(d);
+        for d in 0..config.n_cands() {
+            let tp = vertices[v] + dv(config, d);
             if P::contains_p(&input.hole, tp) == -1 {
-                clauses.push(vec![-lit(v, d)]);
+                clauses.push(vec![-lit(config, v, d)]);
             }
         }
     }
 
     // 辺の制約
-
     for (ei, &(v1, v2)) in input.figure.edges.iter().enumerate() {
         let p1 = vertices[v1];
         let p2 = vertices[v2];
         let current_penalty = edge_penalty(&input, v1, v2, p1, p2);
 
-        for d1 in 0..9 {
-            let tp1 = p1 + dv(d1);
-            for d2 in 0..9 {
-                let tp2 = p2 + dv(d2);
+        for d1 in 0..config.n_cands() {
+            let tp1 = p1 + dv(config, d1);
+            for d2 in 0..config.n_cands() {
+                let tp2 = p2 + dv(config, d2);
                 let new_penalty = edge_penalty(&input, v1, v2, tp1, tp2);
 
                 let ok;
@@ -95,7 +115,7 @@ fn generate_clauses(input: &Input, vertices: &Vec<Point>, penalty_limit: i64) ->
                 }
 
                 if !ok {
-                    clauses.push(vec![-lit(v1, d1), -lit(v2, d2)]);
+                    clauses.push(vec![-lit(config, v1, d1), -lit(config, v2, d2)]);
                 }
             }
         }
@@ -105,15 +125,16 @@ fn generate_clauses(input: &Input, vertices: &Vec<Point>, penalty_limit: i64) ->
 }
 
 fn reconstruct_positions(
+    config: &Config,
     input: &Input,
     positions: &Vec<Point>,
     solution: &Vec<bool>,
 ) -> Vec<Point> {
     let mut new_positions = positions.clone();
     for (v, p) in positions.iter().enumerate() {
-        for d in 0..9 {
-            if solution[lit(v, d) as usize] {
-                new_positions[v] = *p + dv(d);
+        for d in 0..config.n_cands() {
+            if solution[lit(config, v, d) as usize] {
+                new_positions[v] = *p + dv(config, d);
             }
         }
     }
@@ -180,9 +201,9 @@ fn solve_by_glucose(config: &Config, clauses: &Vec<Vec<i64>>) -> Vec<bool> {
 //
 
 fn step(config: &Config, input: &Input, positions: Vec<Point>, penalty_limit: i64) -> Vec<Point> {
-    let clauses = generate_clauses(&input, &positions, penalty_limit);
+    let clauses = generate_clauses(config, &input, &positions, penalty_limit);
     let solution = solve_by_glucose(config, &clauses);
-    reconstruct_positions(&input, &positions, &solution)
+    reconstruct_positions(config, &input, &positions, &solution)
 }
 
 fn dump(input: &Input, positions: &Vec<Point>, i_iter: i64) {
@@ -220,6 +241,9 @@ fn main() {
 
         #[structopt(long)]
         initial_relax: Option<f64>,
+
+        #[structopt(short, long, default_value = "3")]
+        neighbor: i64,
     }
     let args = Args::from_args();
     dbg!(&args);
@@ -228,18 +252,19 @@ fn main() {
     let output = read_output_from_file(&args.output_path);
     let config = Config {
         glucose_path: args.glucose_path.clone(),
+        neighbor: args.neighbor,
     };
-
     let mut positions = output.vertices.clone();
-
     dump(&input, &positions, 0);
 
+    // 最初にゆるめる？
     if let Some(initial_relax_ratio) = args.initial_relax {
         let penalty_limit =
             (find_largest_penalty(&input, &positions).0 as f64 * initial_relax_ratio) as i64;
         positions = step(&config, &input, positions, penalty_limit);
     }
 
+    // 締めていく
     let mut i_iter: i64 = 1;
     loop {
         dump(&input, &positions, i_iter);
