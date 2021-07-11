@@ -26,7 +26,7 @@ import * as wasm from "icfpc2021";
       el_message.textContent = `score: ${wasm.calculate_score(problem, pose)}`
       el_pose.value = pose
     } else if (problem) {
-      el_container.innerHTML = wasm.render(problem)
+      el_container.innerHTML = wasm.render_problem(problem)
       el_message.textContent = ''
       el_pose.value = ''
     } else {
@@ -57,15 +57,16 @@ import * as wasm from "icfpc2021";
   addEventListener('hashchange', _ => render_for_hash(location.href), false)
   await render_for_hash(location.hash)
 
-  el_pose.addEventListener('change', e => {
+  el_pose.addEventListener('change', el => {
     try {
-      let validated = JSON.stringify(JSON.parse(e.target.value))
+      let validated = JSON.stringify(JSON.parse(el.target.value))
       pose = validated
       render(problem, pose)
-      e.target.style.boxShadow = ''
+      el.target.style.boxShadow = ''
     } catch (e) {
       console.error(e)
-      e.target.style.boxShadow = '0 0 2px 2px red'
+      el_message.textContent = e.toString()
+      el.target.style.boxShadow = '0 0 2px 2px red'
     }
   })
 
