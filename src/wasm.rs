@@ -81,16 +81,16 @@ pub fn render_pose(problem: &str, pose: &str) -> String {
 
 #[wasm_bindgen]
 pub fn calculate_score(problem: &str, pose: &str) -> f64 {
-	let prob = serde_json::from_str(problem).unwrap();
-	let pose = serde_json::from_str(pose).unwrap();
+	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
+	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
 
 	compute_score(&prob, &pose) as f64
 }
 
 #[wasm_bindgen]
 pub fn morph(problem: &str, pose: &str, n: usize) -> String {
-	let prob = serde_json::from_str(problem).unwrap();
-	let pose = serde_json::from_str(pose).unwrap();
+	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
+	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
 
 	let (pose, k) = ugougo::ugougo(&prob, &pose, n);
 	console::log_1(&format!("success rate {}/{}", k, n).into());
