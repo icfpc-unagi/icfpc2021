@@ -60,6 +60,30 @@ pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 
 // zenkan
 #[wasm_bindgen]
+pub fn all_pair_abs2_ub(prob: JsValue) -> js_sys::Uint32Array {
+	let prob: Input = prob.into_serde().unwrap();
+	let dist = all_pair_dist_ub(&prob);
+	let abs2_ub_flat: Vec<_> = dist.into_iter().flatten()
+		.map(|d| (d * d + 0.1) as u32)
+		.collect();
+	abs2_ub_flat[..].into()
+}
+
+#[wasm_bindgen]
+pub fn all_pair_abs2(pose: JsValue) -> js_sys::Uint32Array {
+	let pose: Output = pose.into_serde().unwrap();
+	let vs = pose.vertices;
+	let mut ret = vec![];
+	for &v0 in &vs {
+		for &v1 in &vs {
+			let d = (v0 - v1).abs2();
+			ret.push(d as u32);
+		}
+	}
+	ret[..].into()
+}
+
+#[wasm_bindgen]
 pub struct AllPairDist {
 	n: usize,
 	dist_flat: js_sys::Float64Array,
@@ -73,8 +97,9 @@ pub struct AllPairDist {
 // 	}
 // }
 
-#[wasm_bindgen]
+// #[wasm_bindgen]
 impl AllPairDist {
+	#[deprecated]
 	pub fn from_problem(prob: JsValue) -> Self {
 		let prob: Input = prob.into_serde().unwrap();
 		let dist = all_pair_dist_ub(&prob);
@@ -86,6 +111,7 @@ impl AllPairDist {
 		}
 	}
 
+	#[deprecated]
 	pub fn test_pose(&self, pose: JsValue) -> js_sys::Int16Array {
 		let pose: Output = pose.into_serde().unwrap();
 		let vs = pose.vertices;

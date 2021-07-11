@@ -3,7 +3,7 @@ import { Container, DisplayObject, Graphics } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
 // lazy import
-import wasm_, { AllPairDist } from "icfpc2021";
+import wasm_ from "icfpc2021";
 let wasm: undefined | typeof wasm_;
 
 const urlParams = new URL(document.location.href).searchParams;
@@ -162,7 +162,7 @@ class ProblemRenderer {
   epsilon: number;
   lastDrag?: VertexObject;
   hintContainer?: Container;
-  allPairDist?: AllPairDist;
+  abs2UpperBound?: Uint32Array;
   holePairContainer: Container;
 
   constructor(problem: string) {
@@ -171,7 +171,7 @@ class ProblemRenderer {
     console.log(inputJson);
     this.inputJson = inputJson;
     if (wasm != null) {
-      this.allPairDist = wasm.AllPairDist.from_problem(inputJson);
+      this.abs2UpperBound = wasm.all_pair_abs2_ub(inputJson);
     }
     const dropArea = new Container(); // unused...
     const dragHandler = new DragHandler(
@@ -305,22 +305,27 @@ class ProblemRenderer {
   }
 
   runTestPairDist(pose: Solution): void {
-    const a = this.allPairDist;
-    if (a == null) return;
+    if (wasm == null) return;
+    const ub = this.abs2UpperBound!;
+    const abs2 = wasm.all_pair_abs2(pose);
 
     const c = this.holePairContainer;
     c.removeChildren();
     const isHole = this.vertices.map(({ g }) => g.tint == 0x00ff00); // TODO
-    const badPairs = a.test_pose(pose);
-    for (const k of Array(badPairs.length / 2).keys()) {
-      const [i, j] = badPairs.slice(2 * k, 2 * (k + 1));
-      if (isHole[i] && isHole[j]) {
-        c.addChild(
-          new Graphics()
-            .lineStyle({ color: 0xff0000, width: 2, alpha: 0.5 })
-            .moveTo(...this.vertices[i].pos)
-            .lineTo(...this.vertices[j].pos)
-        );
+
+    let k = 0;
+    const vs = pose.vertices;
+    for (const [i, v0] of vs.entries()) {
+      for (const [j, v1] of vs.entries()) {
+        if (isHole[i] && isHole[j] && abs2[k] > ub[k]) {
+          c.addChild(
+            new Graphics()
+              .lineStyle({ color: 0xff0000, width: 2, alpha: 0.5 })
+              .moveTo(...v0)
+              .lineTo(...v1)
+          );
+        }
+        k++;
       }
     }
   }
