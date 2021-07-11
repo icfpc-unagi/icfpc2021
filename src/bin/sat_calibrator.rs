@@ -207,9 +207,23 @@ fn dump(input: &Input, positions: &Vec<Point>, i_iter: i64) {
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let input = read_input_from_file(&args[1]);
-    let output = read_output_from_file(&args[2]);
+    use structopt::StructOpt;
+
+    #[derive(StructOpt, Debug)]
+    struct Args {
+        #[structopt(long)]
+        input_path: String,
+
+        #[structopt(long)]
+        output_path: String,
+        // #[structopt(long)]
+        // glucose_path: String,
+    }
+    let args = Args::from_args();
+    dbg!(&args);
+
+    let input = read_input_from_file(&args.input_path);
+    let output = read_output_from_file(&args.output_path);
 
     let mut positions = output.vertices.clone();
 
