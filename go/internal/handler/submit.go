@@ -83,11 +83,11 @@ func handleAPISubmit(w http.ResponseWriter, r *http.Request) {
 }
 
 func Submit(ctx context.Context, problemID int64, solution string, force bool) (int64, error) {
-	estimatedScore, err := EstimateScore(ctx, problemID, solution)
+	evaluation, err := EstimateScore(ctx, problemID, solution)
 	if err != nil {
 		return 0, err
 	}
-	if estimatedScore < 0 {
+	if evaluation.Dislikes < 0 {
 		return 0, errors.New("solution is invalid")
 	}
 
@@ -102,8 +102,8 @@ WHERE problem_id = ? AND submission_score >= 0
 	}
 
 	if !force {
-		if officialBestScore != -1 && officialBestScore <= estimatedScore {
-			glog.Infof("Official best score is better: %d vs %d", estimatedScore, officialBestScore)
+		if officialBestScore != -1 && officialBestScore <= evaluation.Dislikes {
+			glog.Infof("Official best score is better: %d vs %d", evaluation.Dislikes, officialBestScore)
 			return 0, nil
 		}
 	}
@@ -119,20 +119,20 @@ WHERE problem_id = ? AND submission_estimated_score >= 0
 	}
 
 	var poseID string
-	if bestScore == -1 || estimatedScore < bestScore || force {
+	if bestScore == -1 || evaluation.Dislikes < bestScore || force {
 		poseID, err = submitToOfficial(problemID, solution)
 		if err != nil {
 			return 0, err
 		}
 	} else {
-		glog.Infof("Skipping submission: %d vs %d", estimatedScore, bestScore)
+		glog.Infof("Skipping submission: %d vs %d", evaluation.Dislikes, bestScore)
 	}
 
 	result, err := db.Execute(ctx,
 		"INSERT INTO submissions" +
 		"(problem_id, submission_data, submission_estimated_score, submission_uuid, submission_submitted) " +
 		"VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP())",
-		problemID, solution, estimatedScore, poseID)
+		problemID, solution, evaluation.Dislikes, poseID)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to insert a submission")
 	}
