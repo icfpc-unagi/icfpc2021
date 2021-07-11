@@ -23,7 +23,7 @@ pub struct Input {
 	pub hole: Vec<Point>,
 	pub figure: Figure,
 	pub epsilon: i64,
-	#[serde(default)]
+	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
 	pub bonuses: Vec<Bonus>,
 }
 
@@ -53,7 +53,7 @@ pub enum BonusType {
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Output {
 	pub vertices: Vec<Point>,
-	#[serde(default)]
+	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
 	pub bonuses: Vec<Bonus>,
 }
 
