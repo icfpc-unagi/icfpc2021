@@ -61,17 +61,59 @@ const sampleInput: string = '{"hole":[[45,80],[35,95],[5,95],[35,50],[5,5],[35,5
 const sampleOutput: string = '{"vertices":[[35,51],[40,60],[83,93],[34,25],[48,40],[59,70],[73,92],[29,15],[44,29],[40,18],[49,76],[36,7],[34,27],[30,17],[32,38],[40,69],[27,94],[17,93],[11,13],[18,21]]}';
 // const sampleOutput: Solution = {"vertices": [[21, 28], [31, 28], [31, 87], [29, 41], [44, 43], [58, 70],[38, 79], [32, 31], [36, 50], [39, 40], [66, 77], [42, 29],[46, 49], [49, 38], [39, 57], [69, 66], [41, 70], [39, 60],[42, 25], [40, 35]]};
 
+class VertexObject {
+  g: Graphics;
+  edges: EdgeObject[];
+
+  constructor(
+    [x, y]: XY,
+    public hole: XY[],
+  ) {
+    const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
+    g.position.set(x, y);
+    g.scale.set(1 / guiScale);
+    this.g = g;
+    this.edges = [];
+    this.update();
+  }
+
+  get pos(): XY {
+    return xyFromPoint(this.g.position);
+  }
+
+  set pos([x, y]: XY) {
+    this.g.position.set(x, y);
+  }
+
+  update(updateEdges: boolean = true): void {
+    const g = this.g;
+    let [x, y] = this.pos;
+    x = Math.round(x);
+    y = Math.round(y);
+    g.position.set(x, y);
+    const atCorner = this.hole.some(([hx, hy]) => hx === x && hy === y);
+    g.tint = atCorner ? 0x00ff00 : 0x008000;
+    if (updateEdges) {
+      for (const edge of this.edges) {
+        edge.update();
+      }
+    }
+  }
+}
+
 class EdgeObject {
   g: Graphics;
   d2Orig: number;
 
   constructor(
-    public vertex0: Graphics,
-    public vertex1: Graphics,
+    public vertex0: VertexObject,
+    public vertex1: VertexObject,
     public epsilon: number
   ) {
-    const p0 = xyFromPoint(this.vertex0.position);
-    const p1 = xyFromPoint(this.vertex1.position);
+    vertex0.edges.push(this);
+    vertex1.edges.push(this);
+    const p0 = this.vertex0.pos;
+    const p1 = this.vertex1.pos;
     this.g = new Graphics();
     this.d2Orig = abs2(p0, p1);
     this.update();
@@ -79,8 +121,8 @@ class EdgeObject {
 
   update(): void {
     const d2Orig = this.d2Orig;
-    const p0 = xyFromPoint(this.vertex0.position);
-    const p1 = xyFromPoint(this.vertex1.position);
+    const p0 = this.vertex0.pos;
+    const p1 = this.vertex1.pos;
     const d2Now = abs2(p0, p1);
     const atol = d2Orig * this.epsilon;
     const target = 1_000_000 * d2Orig;
@@ -102,10 +144,10 @@ class ProblemRenderer {
   inputJson: Problem;
   hole: Graphics;
   holeCorners: DisplayObject[];
+  vertices: VertexObject[];
   edges: EdgeObject[];
-  vertices: Graphics[];
   epsilon: number;
-  lastDrag?: Graphics;
+  lastDrag?: VertexObject;
 
   constructor(problem: string) {
     console.log(problem);
@@ -149,15 +191,7 @@ class ProblemRenderer {
 
     const fig = inputJson.figure;
 
-    const vertices: Graphics[] = [];
-    for (const [x, y] of fig.vertices) {
-      const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
-      // g.tint = 0x008000;
-      g.position.set(x, y);
-      g.scale.set(1 / guiScale);
-      dragHandler.register(g);
-      vertices.push(g);
-    }
+    const vertices: VertexObject[] = fig.vertices.map((xy) => new VertexObject(xy, origHole));
 
     // for (const [i, v] of vertices.entries()) {
     //   const text = new PIXI.Text(`${i}`, {
@@ -175,8 +209,6 @@ class ProblemRenderer {
     const edges: EdgeObject[] = [];
     for (const [i, j] of fig.edges) {
       const edge = new EdgeObject(vertices[i], vertices[j], this.epsilon);
-      vertices[i].on("myupdate", () => edge.update());
-      vertices[j].on("myupdate", () => edge.update());
       edges.push(edge);
     }
 
@@ -184,56 +216,43 @@ class ProblemRenderer {
     this.edges = edges;
     this.vertices = vertices;
     for (const [k, v] of vertices.entries()) {
-      {
-        const { x, y } = v.position;
-        const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-        v.tint = atCorner ? 0x00ff00 : 0x008000;
-      }
-      v.on("drag", () => {
-        let { x, y } = v.position;
-        x = Math.round(x);
-        y = Math.round(y);
-        v.position.set(x, y);
-        const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-        v.tint = atCorner ? 0x00ff00 : 0x008000;
-        v.emit("myupdate");
+      dragHandler.register(v.g);
+      v.g.on("drag", () => {
+        v.update();
       }).on("dragend", () => {
-        const solutionJson = this.pose;
-        this.runCheckSolution1(inputJson, solutionJson);
-        (document.getElementById("output-json") as any).value = (
-          wasm?.write_pose ?? JSON.stringify
-        )(solutionJson);
+        this.update();
         this.lastDrag = v;
       });
     }
 
-    this.runCheckSolution1(inputJson, inputJson.figure);
+    this.update();
   }
 
-  moveLastVertex([dx, dy]: XY) {
+  moveLastVertex([dx, dy]: XY): void {
     const v = this.lastDrag;
     if (v == null) return;
-    let { x, y } = v.position;
+    let [x, y] = v.pos;
     x = Math.round(x + dx);
     y = Math.round(y + dy);
-    v.position.set(x, y);
-    const inputJson = this.inputJson;
-    const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-    v.tint = atCorner ? 0x00ff00 : 0x008000;
-    v.emit("myupdate");
+    v.pos = [x, y];
+    v.update();
+    this.update();
+  }
+
+  update(): void {
     const solutionJson = this.pose;
-    this.runCheckSolution1(inputJson, solutionJson);
+    this.runCheckSolution1(this.inputJson, solutionJson);
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
-    )(solutionJson);
-}
+    )(solutionJson);   
+  }
 
   runCheckSolution1(input: Problem, output: Solution): void {
     if (wasm == null) return;
     const [ok_v, ok_e] = wasm.check_solution1(input, output);
     for (const [i, ok] of ok_v.entries()) {
       if (!ok) {
-        this.vertices[i].tint = 0x800080;
+        this.vertices[i].g.tint = 0x800080;
       }
     }
     for (const [i, ok] of ok_e.entries()) {
@@ -250,32 +269,27 @@ class ProblemRenderer {
       return;
     }
     for (const [i, v] of solutionJson.vertices.entries()) {
-      this.vertices[i].position.set(...v);
-      {
-        let v = this.vertices[i];
-        const { x, y } = v.position;
-        const atCorner = this.inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-        v.tint = atCorner ? 0x00ff00 : 0x008000;
-      }
+      this.vertices[i].pos = v;
+      this.vertices[i].update(false);
     }
     for (const edge of this.edges) {
       edge.update();
     }
 
-    this.runCheckSolution1(this.inputJson, solutionJson);
+    this.update();
   }
 
   get pose(): Solution {
-    return { vertices: this.vertices.map((v) => xyFromPoint(v)) };
+    return { vertices: this.vertices.map((v) => v.pos) };
   }
 
   render(c: Container): void {
     c.removeChildren();
-    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.holeCorners, ...this.vertices);
+    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.holeCorners, ...this.vertices.map(({ g }) => g));
   }
 
   updateGuiScale(): void {
-    for (const v of [...this.vertices, ...this.holeCorners]) {
+    for (const v of [...this.vertices.map(({ g }) => g), ...this.holeCorners]) {
       v.scale.set(1 / guiScale);
     }
   }
