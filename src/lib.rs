@@ -79,48 +79,64 @@ pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
 const SHIFT_X: i64 = 2;
 const SHIFT_Y: i64 = 0;
 
-pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
-	let mut input: Input = serde_json::from_reader(r)?;
-	for i in 0..input.hole.len() {
-		input.hole[i] += P(SHIFT_X, SHIFT_Y);
-		assert!(input.hole[i].0 >= 0 && input.hole[i].1 >= 0);
-	}
-	for bonus in &mut input.bonuses {
-		bonus.position += P(SHIFT_X, SHIFT_Y);
-	}
-	for i in 0..input.figure.edges.len() {
-		if input.figure.edges[i].0 > input.figure.edges[i].1 {
-			let t = input.figure.edges[i].0;
-			input.figure.edges[i].0 = input.figure.edges[i].1;
-			input.figure.edges[i].1 = t;
+impl Input {
+	fn to_internal(&mut self) {
+		for i in 0..self.hole.len() {
+			self.hole[i] += P(SHIFT_X, SHIFT_Y);
+			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
+		}
+		for bonus in &mut self.bonuses {
+			bonus.position += P(SHIFT_X, SHIFT_Y);
+		}
+		for i in 0..self.figure.edges.len() {
+			if self.figure.edges[i].0 > self.figure.edges[i].1 {
+				let t = self.figure.edges[i].0;
+				self.figure.edges[i].0 = self.figure.edges[i].1;
+				self.figure.edges[i].1 = t;
+			}
+		}
+		
+		self.figure.edges.sort();
+		self.figure.edges.dedup();
+		let mut area = 0;
+		for i in 0..self.hole.len() {
+			area += self.hole[i].det(self.hole[(i + 1) % self.hole.len()]);
+		}
+		if area > 0 { // 時計回りにする
+			self.hole.reverse();
 		}
 	}
-	
-	input.figure.edges.sort();
-	input.figure.edges.dedup();
-	let mut area = 0;
-	for i in 0..input.hole.len() {
-		area += input.hole[i].det(input.hole[(i + 1) % input.hole.len()]);
+}
+
+impl Output {
+	fn to_internal(&mut self) {
+		for i in 0..self.vertices.len() {
+			self.vertices[i] += P(SHIFT_X, SHIFT_Y);
+		}
 	}
-	if area > 0 { // 時計回りにする
-		input.hole.reverse();
+
+	fn to_external(&mut self) {
+		for i in 0..self.vertices.len() {
+			self.vertices[i] -= P(SHIFT_X, SHIFT_Y);
+		}
 	}
+}
+
+pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
+	let mut input: Input = serde_json::from_reader(r)?;
+	input.to_internal();
 	Ok(input)
 }
 
 pub fn write_output(out: &Output) {
 	let mut out = out.clone();
-	for i in 0..out.vertices.len() {
-		out.vertices[i] -= P(SHIFT_X, SHIFT_Y);
-	}
+	out.to_external();
 	println!("{}", serde_json::to_string(&out).unwrap());
 }
 
 pub fn read_output_from_file(f: impl AsRef<std::path::Path>) -> Output {
 	let mut out: Output = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
-	for i in 0..out.vertices.len() {
-		out.vertices[i] += P(SHIFT_X, SHIFT_Y);
-	}
+	out.to_internal();
 	out
 }
 
