@@ -8,7 +8,8 @@ struct Config {
     initial_relax: Option<f64>,
     glucose_path: String,
     /// 3, 5, 7, ...
-    neighbor: i64,
+    min_neighbor: i64,
+    max_neighbor: i64,
 }
 
 //
@@ -18,6 +19,7 @@ struct Config {
 struct SatCalibrator {
     input: Input,
     config: Config,
+    neighbor: i64,
 
     contains_p_cache: std::collections::HashMap<Point, i32>,
     contains_s_cache: std::collections::HashMap<(Point, Point), bool>,
@@ -26,6 +28,7 @@ struct SatCalibrator {
 impl SatCalibrator {
     pub fn new(input: Input, config: Config) -> Self {
         Self {
+            neighbor: config.min_neighbor,
             input,
             config,
             contains_p_cache: Default::default(),
@@ -89,14 +92,14 @@ impl SatCalibrator {
     }
 
     fn dv(&self, d: i64) -> Point {
-        let x = d % self.config.neighbor - (self.config.neighbor - 1) / 2;
-        let y = d / self.config.neighbor - (self.config.neighbor - 1) / 2;
+        let x = d % self.neighbor - (self.neighbor - 1) / 2;
+        let y = d / self.neighbor - (self.neighbor - 1) / 2;
         P(x, y)
     }
 
     /// 9
     fn n_cands(&self) -> i64 {
-        self.config.neighbor * self.config.neighbor
+        self.neighbor * self.neighbor
     }
 
     /// 4
@@ -208,27 +211,31 @@ impl SatCalibrator {
         }
     }
 
-    fn read_solution() -> Vec<bool> {
+    fn read_solution() -> Option<Vec<bool>> {
         use std::io::BufRead;
 
         let mut reader = std::io::BufReader::new(std::fs::File::open("sat_out.txt").unwrap());
         let mut line = String::new();
         reader.read_line(&mut line);
 
-        let lits: Vec<_> = line
-            .split_whitespace()
-            .map(|l| l.parse::<i64>().unwrap())
-            .collect();
-        let n_lits = 1 + lits.iter().map(|l| l.abs()).max().unwrap() as usize;
+        if line.starts_with("UNSAT") {
+            None
+        } else {
+            let lits: Vec<_> = line
+                .split_whitespace()
+                .map(|l| l.parse::<i64>().unwrap())
+                .collect();
+            let n_lits = 1 + lits.iter().map(|l| l.abs()).max().unwrap() as usize;
 
-        let mut sol = vec![false; n_lits];
-        for l in lits {
-            sol[l.abs() as usize] = l >= 0;
+            let mut sol = vec![false; n_lits];
+            for l in lits {
+                sol[l.abs() as usize] = l >= 0;
+            }
+            Some(sol)
         }
-        sol
     }
 
-    fn solve_by_glucose(&self, clauses: &Vec<Vec<i64>>) -> Vec<bool> {
+    fn solve_by_glucose(&self, clauses: &Vec<Vec<i64>>) -> Option<Vec<bool>> {
         Self::write_clauses(clauses);
 
         // TODO: stdoutの最後の行見てSATかUNSATかあれしたほうがいいかもしれない
@@ -245,10 +252,10 @@ impl SatCalibrator {
     // メインループ部分
     //
 
-    fn step(&mut self, positions: Vec<Point>, penalty_limit: i64) -> Vec<Point> {
-        let clauses = self.generate_clauses(&positions, penalty_limit);
-        let solution = self.solve_by_glucose(&clauses);
-        self.reconstruct_positions(&positions, &solution)
+    fn step(&mut self, positions: &Vec<Point>, penalty_limit: i64) -> Option<Vec<Point>> {
+        let clauses = self.generate_clauses(positions, penalty_limit);
+        self.solve_by_glucose(&clauses)
+            .map(|solution| self.reconstruct_positions(positions, &solution))
     }
 
     fn dump(&self, positions: &Vec<Point>, i_iter: i64) {
@@ -277,22 +284,36 @@ impl SatCalibrator {
         if let Some(initial_relax_ratio) = self.config.initial_relax {
             let penalty_limit =
                 (self.find_largest_penalty(&positions).0 as f64 * initial_relax_ratio) as i64;
-            positions = self.step(positions, penalty_limit);
+            positions = self.step(&positions, penalty_limit).unwrap();
         }
 
         // 締めていく
         let mut i_iter: i64 = 1;
         loop {
             self.dump(&positions, i_iter);
-
             let (largest_penalty, largest_edge) = self.find_largest_penalty(&positions);
             dbg!(largest_penalty, largest_edge);
             if largest_penalty == 0 {
+                eprintln!("SOLVED!!");
                 break;
             }
 
-            positions = self.step(positions, largest_penalty);
+            let mut next_positions = None;
+            for neighbor in self.config.min_neighbor..=self.config.max_neighbor {
+                if neighbor % 2 != 1 {
+                    continue;
+                }
+                self.neighbor = neighbor;
 
+                next_positions = self.step(&positions, largest_penalty);
+                if next_positions.is_some() {
+                    break;
+                } else {
+                    eprintln!("\n\n\n===\nFAILED WITH NEIGHBOR={}\n===\n\n\n", neighbor);
+                }
+            }
+
+            positions = next_positions.unwrap();
             i_iter += 1;
         }
 
@@ -331,7 +352,8 @@ fn main() {
     let output = read_output_from_file(&args.output_path);
     let config = Config {
         glucose_path: args.glucose_path.clone(),
-        neighbor: args.neighbor,
+        min_neighbor: args.neighbor,
+        max_neighbor: 11,
         initial_relax: args.initial_relax,
     };
 
