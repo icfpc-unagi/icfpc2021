@@ -12,7 +12,7 @@ fn main() {
 		},
 		Err(_) => -1.0,
 	};
-	let timeout = if timeout < -1.0 { 600.0 } else { timeout };
+	let timeout = if timeout < 0.0 { 600.0 } else { timeout };
 
     let args: Vec<String> = env::args().collect();
 

@@ -22,13 +22,19 @@ struct Data {
 	cand: Vec<Vec<Point>>,
 }
 
-const BEST_SEARCH: bool = true;
+struct Config {
+    random_search: bool,
+    no_search: bool,
+}
 
-fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, min: &Vec<i64>, best: &mut Vec<Point>, best_score: &mut i64, until: f64) {
+fn rec(config: &Config, data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &mut Vec<bool>, min: &Vec<i64>, best: &mut Vec<Point>, best_score: &mut i64, until: f64) {
 	if i == order.len() {
 		if best_score.setmin(min.iter().sum()) {
 			eprintln!("{:.3}: {}", get_time(), best_score);
 			*best = out.clone();
+            if config.no_search {
+                return;
+            }
 		}
 		return;
 	}
@@ -83,7 +89,7 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 			}
 		}
 	}
-	if BEST_SEARCH {
+	if !config.random_search {
 		cand.sort_by_key(|(min, _)| min.iter().sum::<i64>());
 	} else {
 		cand.sort();
@@ -103,13 +109,31 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 		if !ok {
 			break;
 		}
-		rec(data, i + 1, order, out, used, &min, best, best_score, until);
+		rec(config, data, i + 1, order, out, used, &min, best, best_score, until);
+        if config.no_search && best.len() > 0 {
+            return;
+        }
 		mins.push(min);
 	}
 	used[u] = false;
 }
 
+fn parse_bool_flag(key: &str) -> bool {
+    match std::env::var(key) {
+        Ok(value) => match value.parse::<i64>() {
+            Ok(value) => value != 0,
+            Err(_) => false,
+        },
+        Err(_) => false,
+    }
+}
+
 fn main() {
+    let config = &Config {
+        random_search: parse_bool_flag("WATA_RANDOM_SEARCH"),
+        no_search: parse_bool_flag("WATA_NO_SEARCH"),
+    };
+
 	let input = read_input();
 	let n = input.figure.vertices.len();
 	let mut g = vec![vec![]; n];
@@ -220,7 +244,13 @@ fn main() {
 			min[i] = (p - data.input.hole[i]).abs2();
 		}
 		used[order[0]] = true;
-		rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
+		rec(config, &data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
+
+        // もし何かが見つかったら直ちに終了する
+        if config.no_search && best.len() > 0 {
+            break;
+        }
+
 		// if best.len() > 0 {
 		// 	let stime = get_time();
 		// 	let x = best[order[0]].0;
