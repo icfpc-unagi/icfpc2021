@@ -113,7 +113,7 @@ import * as wasm from "icfpc2021";
   el_chokudai.addEventListener('click', async function () {
     if (state.problem && state.pose && !this.disabled) {
       this.disabled = true
-      state.pose = wasm.chokudai(state.problem, state.pose, 1.0, true)
+      state.pose = wasm.chokudai(state.problem, state.pose, 1.0, true, true)
       render(state.problem, state.pose)
       this.disabled = false
     }

@@ -184,11 +184,11 @@ pub fn morph(problem: &str, pose: &str, n: i32) -> String {
 }
 
 #[wasm_bindgen]
-pub fn chokudai(problem: &str, pose: &str, timeout: f64, dontmove: bool) -> String {
+pub fn chokudai(problem: &str, pose: &str, timeout: f64, dontmove: bool, fitting: bool) -> String {
 	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
 	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
 
-	let output = lib_chokudai::main(&prob, &pose, timeout, dontmove);
+	let output = lib_chokudai::main(&prob, &pose, timeout, dontmove, fitting);
 
 	let mut buf = Vec::new();
 	write_output_to_writer(&output, &mut buf);
