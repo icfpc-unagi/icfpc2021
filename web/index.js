@@ -1,9 +1,10 @@
 import * as wasm from "icfpc2021";
 
 (async function () {
+  let el_problem_id = document.getElementById('_problem_id')
   let el_container = document.getElementById('_container')
-  let el_message = document.getElementById('_message')
   let el_pose = document.getElementById('_pose')
+  let el_message = document.getElementById('_message')
   let el_morph = document.getElementById('_morph')
 
   var problem = '';
@@ -12,10 +13,10 @@ import * as wasm from "icfpc2021";
   async function render_for_hash(hash) {
     if (!hash.startsWith('#')) return
     let params = Object.fromEntries(hash.substr(1).split('&').map(e => e.split('=', 2).map(e => decodeURIComponent(e))))
-    let p_problem = params['problem_url'] && fetch(params['problem_url']).then(resp => resp.text())
-    let p_pose = params['pose_url'] && fetch(params['pose_url']).then(resp => resp.text())
+    let p_problem = params['problem_url'] && fetch(params['problem_url']).then(resp => resp.ok && resp.text())
+    let p_pose = params['pose_url'] && fetch(params['pose_url']).then(resp => resp.ok && resp.text())
     problem = p_problem && await p_problem
-    pose = p_pose && await p_pose
+    pose = p_pose && await p_pose || problem && JSON.stringify({ vertices: JSON.parse(problem).figure.vertices })
     render(problem, pose)
     el_morph.disabled = !pose
   }
@@ -54,7 +55,12 @@ import * as wasm from "icfpc2021";
     })
   }
 
-  addEventListener('hashchange', _ => render_for_hash(location.href), false)
+  addEventListener('hashchange', () => render_for_hash(location.href), false)
+  el_problem_id.addEventListener('change', e => {
+    let newhash = `#problem_url=%2Fstatic%2Fproblems%2F${e.target.value}.json`
+    history.replaceState(null, '', newhash)
+    render_for_hash(newhash)
+  })
   await render_for_hash(location.hash)
 
   el_pose.addEventListener('change', el => {
