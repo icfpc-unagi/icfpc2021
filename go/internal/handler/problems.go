@@ -39,7 +39,7 @@ type Problem struct {
 	Current int64
 	GlobalBest int64
 	Scale int64
-	TeamScore float64
+	TeamScore int64
 }
 
 
@@ -89,28 +89,40 @@ SELECT problem_id, MIN(submission_score) AS submission_score FROM (
 		problem.Scale = int64(
 			len(input.Hole) * len(input.Figure.Vertices) * len(input.Figure.Edges))
 		if problem.MyBest >= 0 {
-			problem.TeamScore = 1000 * math.Log2(float64(problem.Scale) / 6) *
-				math.Sqrt(float64(problem.GlobalBest+1)/float64(problem.MyBest+1))
+			problem.TeamScore = int64(math.Ceil(1000 * math.Log2(float64(problem.Scale) / 6) *
+				math.Sqrt(float64(problem.GlobalBest+1)/float64(problem.MyBest+1))))
 		}
 	}
 
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "<h1>Problems</h1>\n")
 	fmt.Fprintf(buf, "<table class=table><tr><td>Problem ID</td><td>Score (my/global [remaining])</td><td colspan=1>Dislikes (best / current / global)</td></tr>")
+	var score_sum int64
 	for _, problem := range problems {
-		fmt.Fprintf(buf, `<tr><td><a href="/static/show#problem_id=%d">%d</a></td><td align=right><code><a href="/static/show/#problem_id=%d&pose_url=%%2Fbest_solution%%3Fproblem_id%%3D%d">%5.0f</a> / %5.0f [%+6.0f]</code></td><td>(%d / %d / %d)</td></tr>`,
+		global := int64(math.Ceil(1000 * math.Log2(float64(problem.Scale) / 6)))
+		span := ""
+		span_end := ""
+		if problem.TeamScore < global {
+			span = `<span style="color:red">`
+			span_end = `</span>`
+		}
+		fmt.Fprintf(buf, `<tr><td><a href="/static/show#problem_id=%d">%d</a></td><td align=right><code><a href="/static/show/#problem_id=%d&pose_url=%%2Fbest_solution%%3Fproblem_id%%3D%d">%5d</a> / %5d [%s%+6d%s]</code></td><td>(%d / %d / %d)</td></tr>`,
 			problem.ProblemID,
 			problem.ProblemID,
 			problem.ProblemID,
 			problem.ProblemID,
 			problem.TeamScore,
-			1000 * math.Log2(float64(problem.Scale) / 6),
-			problem.TeamScore - 1000 * math.Log2(float64(problem.Scale) / 6),
+			global,
+			span,
+			problem.TeamScore - global,
+			span_end,
 			problem.MyBest,
 			problem.Current,
 			problem.GlobalBest)
+			score_sum += problem.TeamScore
 	}
 	fmt.Fprintf(buf, "</table>")
+	fmt.Fprintf(buf, "<code>Team Total Score: %8d</code>", score_sum)
 	Template(w, buf.Bytes())
 	return nil
 }

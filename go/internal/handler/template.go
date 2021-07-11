@@ -114,6 +114,14 @@ code {
 	white-space: nowrap;
 }
 
+.table tr:hover {
+	background-color: #ffd;
+}
+
+.table tr:nth-child(even):hover {
+	background-color: #eec;
+}
+
 .table tr:nth-child(even), .table thead {
 	background-color: #eee;
 }
