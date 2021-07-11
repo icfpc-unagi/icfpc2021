@@ -22,10 +22,13 @@ function xyFromPoint({ x, y }: { x: number; y: number }): XY {
   return [x, y];
 }
 
+const appWidth = parseInt(urlParams.get("w") ?? "800");
+const appHeight = parseInt(urlParams.get("h") ?? "600");
+
 PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
 const app = new PIXI.Application({
-  width: parseInt(urlParams.get("w") ?? "800"),
-  height: parseInt(urlParams.get("h") ?? "600"),
+  width: appWidth,
+  height: appHeight,
   backgroundColor: 0x999999,
   autoDensity: true,
 });
@@ -438,11 +441,20 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
     // gui scale
     {
       const elem: any = document.getElementById("gui-scale")!;
-      elem.addEventListener("change", () => {
+      elem.addEventListener("input", () => {
         const { x, y } = mainContainer;
+        const cx = appWidth / 2;
+        const cy = appHeight / 2;
         const { width, height } = app.renderer;
-        guiScale = parseFloat(elem.value);
+        const rx = (cx - x) / guiScale;
+        const ry = (cy - y) / guiScale;
+
+        const s = parseFloat(elem.value);
+        if (s < 0.1) return;
+        guiScale = s;
+
         mainContainer.scale.set(guiScale);
+        mainContainer.position.set(cx - rx * guiScale, cy - ry * guiScale);
         r.updateGuiScale();
       });
     }
