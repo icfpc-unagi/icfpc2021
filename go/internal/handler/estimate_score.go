@@ -3,6 +3,7 @@ package handler
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"github.com/golang/glog"
@@ -11,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"reflect"
 	"strconv"
 )
 
@@ -55,5 +57,18 @@ func EstimateScore(ctx context.Context, problemID int64, solution string) (*api.
 	if err := json.Unmarshal(output, evaluation); err != nil {
 		return nil, errors.Wrapf(err, "failed to parse output")
 	}
+	evaluation.BonusesStr = EncodeStr(evaluation.Bonuses)
+	evaluation.ObtainedBonusesStr = EncodeStr(evaluation.ObtainedBonuses)
+	evaluation.BonusesHash = fmt.Sprintf("%x", md5.Sum([]byte(
+		evaluation.BonusesStr + "\n" +
+			evaluation.ObtainedBonusesStr)))
 	return evaluation, nil
+}
+
+func EncodeStr(x interface{}) string {
+	if reflect.DeepEqual(x, []interface{}{}) {
+		return ""
+	}
+	buf, _ := json.Marshal(x)
+	return string(buf)
 }

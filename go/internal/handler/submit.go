@@ -95,8 +95,8 @@ func Submit(ctx context.Context, problemID int64, solution string, force bool) (
 	err = db.Cell(ctx, &officialBestScore, `
 SELECT COALESCE(MIN(submission_score), -1)
 FROM submissions
-WHERE problem_id = ? AND submission_score >= 0
-`, problemID)
+WHERE problem_id = ? AND submission_bonuses_hash = ? AND submission_score >= 0
+`, problemID, evaluation.BonusesHash)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to get the best score")
 	}
@@ -112,14 +112,24 @@ WHERE problem_id = ? AND submission_score >= 0
 	err = db.Cell(ctx, &bestScore, `
 SELECT COALESCE(MIN(submission_estimated_score), -1)
 FROM submissions
-WHERE problem_id = ? AND submission_estimated_score >= 0
-`, problemID)
+WHERE problem_id = ? AND submission_bonuses_hash = ? AND submission_estimated_score >= 0
+`, problemID, evaluation.BonusesHash)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to get the best score")
 	}
 
+	var allBestScore int64
+	err = db.Cell(ctx, &allBestScore, `
+SELECT COALESCE(MIN(submission_estimated_score), -1)
+FROM submissions
+WHERE problem_id = ? AND submission_estimated_score >= 0
+`, problemID)
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to get the all best score")
+	}
+
 	var poseID string
-	if bestScore == -1 || evaluation.Dislikes < bestScore || force {
+	if allBestScore == -1 || evaluation.Dislikes < allBestScore || force {
 		poseID, err = submitToOfficial(problemID, solution)
 		if err != nil {
 			return 0, err
@@ -128,11 +138,22 @@ WHERE problem_id = ? AND submission_estimated_score >= 0
 		glog.Infof("Skipping submission: %d vs %d", evaluation.Dislikes, bestScore)
 	}
 
-	result, err := db.Execute(ctx,
-		"INSERT INTO submissions" +
-		"(problem_id, submission_data, submission_estimated_score, submission_uuid, submission_submitted) " +
-		"VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP())",
-		problemID, solution, evaluation.Dislikes, poseID)
+	result, err := db.Execute(ctx, `
+INSERT INTO submissions
+SET
+	problem_id = ?,
+	submission_data = ?,
+	submission_bonuses = ?,
+	submission_obtained_bonuses = ?,
+	submission_estimated_score = ?,
+	submission_uuid = ?,
+	submission_submitted = CURRENT_TIMESTAMP()
+`,
+		problemID, solution,
+		evaluation.BonusesStr,
+		evaluation.ObtainedBonusesStr,
+		evaluation.Dislikes,
+		poseID)
 	if err != nil {
 		return 0, errors.Wrapf(err, "failed to insert a submission")
 	}
