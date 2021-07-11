@@ -4,6 +4,7 @@ pub mod util;
 #[cfg(test)]
 mod test_contains_s;
 
+pub mod lib_chokudai;
 pub mod tree_decomposition;
 pub mod ugougo;
 #[cfg(target_arch = "wasm32")]

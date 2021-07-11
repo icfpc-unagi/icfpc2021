@@ -9,7 +9,7 @@ const DIRS: [Point; 4] = [
 	P::<i64>(0, -1),
 ];
 
-pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
+pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 	let Input {
 		hole,
 		figure: Figure {

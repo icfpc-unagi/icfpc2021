@@ -98,7 +98,7 @@ SELECT problem_id, MIN(submission_score) AS submission_score FROM (
 	fmt.Fprintf(buf, "<h1>Problems</h1>\n")
 	fmt.Fprintf(buf, "<table class=table><tr><td>Problem ID</td><td>Score (my/global [remaining])</td><td colspan=1>Dislikes (best / current / global)</td></tr>")
 	for _, problem := range problems {
-		fmt.Fprintf(buf, `<tr><td><a href="/static/show#problem_url=%%2Fstatic%%2Fproblems%%2F%d.json">%d</a></td><td align=right><code><a href="/static/show/#problem_url=%%2Fstatic%%2Fproblems%%2F%d.json&pose_url=%%2Fbest_solution%%3Fproblem_id%%3D%d">%5.0f</a> / %5.0f [%+6.0f]</code></td><td>(%d / %d / %d)</td></tr>`,
+		fmt.Fprintf(buf, `<tr><td><a href="/static/show#problem_id=%d">%d</a></td><td align=right><code><a href="/static/show/#problem_id=%d&pose_url=%%2Fbest_solution%%3Fproblem_id%%3D%d">%5.0f</a> / %5.0f [%+6.0f]</code></td><td>(%d / %d / %d)</td></tr>`,
 			problem.ProblemID,
 			problem.ProblemID,
 			problem.ProblemID,
