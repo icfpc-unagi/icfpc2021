@@ -161,6 +161,7 @@ class ProblemRenderer {
   lastDrag?: VertexObject;
   hintContainer?: Container;
   allPairDist?: AllPairDist;
+  holePairContainer: Container;
 
   constructor(problem: string) {
     console.log(problem);
@@ -233,6 +234,8 @@ class ProblemRenderer {
     this.hole = hole;
     this.edges = edges;
     this.vertices = vertices;
+    this.holePairContainer = new Container();
+
     for (const [k, v] of vertices.entries()) {
       dragHandler.register(v.g);
       v.g
@@ -276,7 +279,7 @@ class ProblemRenderer {
   update(): void {
     const solutionJson = this.pose;
     this.runCheckSolution1(this.inputJson, solutionJson);
-    console.log(this.allPairDist?.test_pose(solutionJson));
+    this.runTestPairDist(solutionJson);
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
     )(solutionJson);
@@ -295,6 +298,25 @@ class ProblemRenderer {
         const g = this.edges[i].g;
         g.zIndex = 2;
         g.tint = 0x800080;
+      }
+    }
+  }
+
+  runTestPairDist(pose: Solution): void {
+    const a = this.allPairDist;
+    if (a == null) return;
+
+    const c = this.holePairContainer;
+    c.removeChildren();
+    const isHole = this.vertices.map(({g}) => g.tint == 0x00ff00); // TODO
+    const badPairs = a.test_pose(pose);
+    for (const k of Array(badPairs.length / 2).keys()) {
+      const [i, j] = badPairs.slice(2 * k, 2 * (k + 1));
+      if (isHole[i] && isHole[j]) {
+        c.addChild(new Graphics()
+        .lineStyle({color: 0xff0000, width: 2, alpha: 0.5})
+        .moveTo(...this.vertices[i].pos)
+        .lineTo(...this.vertices[j].pos))
       }
     }
   }
@@ -329,7 +351,8 @@ class ProblemRenderer {
       this.hole,
       edgesContainer,
       ...this.holeCorners,
-      ...this.vertices.map(({ g }) => g)
+      ...this.vertices.map(({ g }) => g),
+      this.holePairContainer,
     );
   }
 
