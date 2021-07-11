@@ -91,7 +91,7 @@ import * as wasm from "icfpc2021";
   el_container.addEventListener('click', e => {
     let closest = Infinity
     let closest_target = null
-    el_container.querySelectorAll('circle').forEach(el => {
+    el_container.querySelectorAll('circle[tabindex]').forEach(el => {
       let rect = el.getBoundingClientRect()
       let dx = (rect.left + rect.right) / 2 - e.clientX
       let dy = (rect.top + rect.bottom) / 2 - e.clientY
