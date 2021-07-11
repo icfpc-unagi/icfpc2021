@@ -248,8 +248,8 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
         const reader = new FileReader();
         reader.readAsText(file, "UTF-8");
         reader.onload = (e) => {
-          const inputJson = JSON.parse(e.target!.result as string);
-          r = new ProblemRenderer(inputJson);
+          const problem = e.target!.result as string;
+          r = new ProblemRenderer(problem);
           r.render(mainContainer);
         };
       });
@@ -264,8 +264,8 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
         const reader = new FileReader();
         reader.readAsText(file, "UTF-8");
         reader.onload = (e) => {
-          const solutionJson = JSON.parse(e.target!.result as string);
-          r.loadSolution(solutionJson);
+          const pose = e.target!.result as string;
+          r.loadSolution(pose);
         };
       });
     }
