@@ -144,9 +144,13 @@ pub fn write_output(out: &Output) {
 }
 
 pub fn read_output_from_file(f: impl AsRef<std::path::Path>) -> Output {
-	let mut out: Output = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
+	read_output_from_reader(std::fs::File::open(f).unwrap()).unwrap()
+}
+
+pub fn read_output_from_reader<R: io::Read>(r: R) -> io::Result<Output> {
+	let mut out: Output = serde_json::from_reader(r)?;
 	out.to_internal();
-	out
+	Ok(out)
 }
 
 pub fn evaluate(input: &Input, output: &Output) -> Evaluation {
