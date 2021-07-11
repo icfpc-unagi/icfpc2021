@@ -297,7 +297,7 @@ fn main() {
 					out[i] = P((min_x + max_x) / 2 + rand::thread_rng().gen_range(-10..=10), (min_y + max_y) / 2 + rand::thread_rng().gen_range(-10..=10));
 				}
 			}
-			write_output(&Output { vertices: out, bonuses: Default::default() });
+			// write_output(&Output { vertices: out, bonuses: Default::default() });
 			// let stime = get_time();
 			// let t = 1.0;
 			// let ok = rec(&data, &mut out, &beam[0].1.cand, stime + t);

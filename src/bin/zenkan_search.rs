@@ -54,7 +54,7 @@ fn can_place(data: &Data, out: &Vec<Point>, u: usize, p: Point) -> bool {
 
 const W: usize = 10;
 
-fn rec(state: &State, s: usize, prev: usize, data: &Data, prev_score: i64, next: &mut Vec<(i64, State)>) {
+fn rec(state: &mut State, s: usize, prev: usize, data: &Data, prev_score: i64, next: &mut Vec<(i64, State)>) {
 	let p = data.input.hole[s];
 	if state.orz(&data) {
 		return;
@@ -80,7 +80,7 @@ fn rec(state: &State, s: usize, prev: usize, data: &Data, prev_score: i64, next:
 			if state.out[i].0 < 0 && can_place(data, &state.out, i, p) {
 				let mut state = state.clone();
 				if state.set(data, i, p) {
-					rec(&state, (s + 1) % data.input.hole.len(), i, data, score, next);
+					rec(&mut state, (s + 1) % data.input.hole.len(), i, data, score, next);
 				}
 			}
 		}
@@ -89,13 +89,53 @@ fn rec(state: &State, s: usize, prev: usize, data: &Data, prev_score: i64, next:
 			if state.out[i].0 < 0 && can_place(data, &state.out, i, p) {
 				let mut state = state.clone();
 				if state.set(data, i, p) {
-					rec(&state, (s + 1) % data.input.hole.len(), i, data, score, next);
+					rec(&mut state, (s + 1) % data.input.hole.len(), i, data, score, next);
 				}
 			}
 		}
 	}
 }
 
+fn rec_place(data: &Data, out: &mut Vec<Point>, cand: &Vec<Option<Vec<Point>>>, until: f64) -> bool {
+	let n = out.len();
+	let rem = out.iter().filter(|p| p.0 >= 0).count();
+	if rem == 0 {
+		return true;
+	}
+	if get_time() > until {
+		return false;
+	}
+	let mut next = vec![];
+	let mut min_size = 1 << 30;
+	for u in 0..n {
+		if out[u].0 >= 0 {
+			continue;
+		}
+		if let Some(ps) = &cand[u] {
+			if min_size.setmin(ps.len()) {
+				next = ps.iter().map(|&p| (u, p)).collect();
+			}
+		}
+	}
+	for (v, p) in next {
+		out[v] = p;
+		let mut cand = cand.clone();
+		for &u in &data.g[v] {
+			if out[u].0 < 0 {
+				let list = cand[u].clone().unwrap_or(data.cand[u][v].iter().map(|&d| p + d).collect());
+				cand[u] = Some(list.into_iter().filter(|&p| can_place(data, &out, u, p)).collect());
+			}
+		}
+		if rec_place(data, out, &cand, until) {
+			return true;
+		}
+		out[v] = P(-1, -1);
+		if get_time() > until {
+			break;
+		}
+	}
+	false
+}
 
 fn get_mins(input: &Input, out: &Vec<Point>) -> Vec<i64> {
 	input.hole.iter().map(|&p| {
@@ -241,25 +281,28 @@ impl State {
 		}
 		score
 	}
-	fn orz(&self, data: &Data) -> bool {
+	fn orz(&mut self, data: &Data) -> bool {
 		for i in 0..data.input.hole.len() {
 			if !self.out.contains(&data.input.hole[i]) {
-				let mut ok = false;
+				let mut cand = vec![];
 				for j in 0..self.out.len() {
 					if self.out[j].0 < 0 {
 						if let Some(ref c) = self.cand[j] {
-							if c.contains(&data.input.hole[i]) {
-								ok = true;
-								break;
+							if c.contains(&data.input.hole[i]) && can_place(data, &self.out, j, data.input.hole[i]) {
+								cand.push(j);
 							}
-						} else if can_place(data, &self.out, j, data.input.hole[i]){
-							ok = true;
-							break;
+						} else if can_place(data, &self.out, j, data.input.hole[i]) {
+							cand.push(j);
 						}
 					}
 				}
-				if !ok {
+				if cand.len() == 0 {
 					return true;
+				} else if cand.len() == 1 {
+					let j = cand[0];
+					if !self.set(data, j, data.input.hole[i]) {
+						return false;
+					}
 				}
 			}
 		}
@@ -267,7 +310,7 @@ impl State {
 	}
 }
 
-fn output(out: &Vec<Point>, data: &Data) {
+fn output(out: &Vec<Point>, data: &Data, to_stdout: bool) {
 	// let mut out = out.clone();
 	// for i in 0..out.len() {
 	// 	if out[i].0 < 0 {
@@ -284,7 +327,56 @@ fn output(out: &Vec<Point>, data: &Data) {
 		}
 	}
 	let out = get_new_graph(&data.input, &out, &dont_move);
-	write_output(&Output { vertices: out, bonuses: Default::default() });
+	if to_stdout {
+		write_output_to_writer(&Output { vertices: out, bonuses: Default::default() }, std::io::stdout());
+	} else {
+		write_output_to_writer(&Output { vertices: out, bonuses: Default::default() }, std::io::stderr());
+		eprintln!();
+	}
+}
+
+fn validate(state: &mut State, data: &Data) -> bool {
+	for i in 0..data.input.hole.len() {
+		let p = data.input.hole[i];
+		if state.out.contains(&p) {
+			continue;
+		}
+		let mut list = vec![];
+		for v in 0..state.out.len() {
+			if state.out[v].0 < 0 {
+				if let Some(ref c) = state.cand[v] {
+					if !c.contains(&data.input.hole[i]) {
+						continue;
+					}
+				} else if !can_place(&data, &state.out, v, data.input.hole[i]) {
+					continue;
+				}
+				let mut out = state.out.clone();
+				out[v] = p;
+				let mut cand = state.cand.clone();
+				for &u in &data.g[v] {
+					if out[u].0 < 0 {
+						let list = cand[u].clone().unwrap_or(data.cand[u][v].iter().map(|&d| p + d).collect());
+						cand[u] = Some(list.into_iter().filter(|&p| can_place(&data, &out, u, p)).collect());
+					}
+				}
+				let stime = get_time();
+				if rec_place(&data, &mut out, &cand, stime + 0.01) {
+					list.push(v);
+				} else if get_time() >= stime + 0.001 {
+					list.push(v);
+				}
+			}
+		}
+		if list.len() == 0 {
+			return false;
+		} else if list.len() == 1 {
+			if !state.set(&data, list[0], p) {
+				return false;
+			}
+		}
+	}
+	true
 }
 
 fn main() {
@@ -340,22 +432,50 @@ fn main() {
 		}
 	}
 	let data = Data { input, dist, inside, is_hole, g, cand };
-	let mut beam = vec![(0, State { out: vec![P(-1, -1); n], cand: vec![None; n] })];
-	for iter in 0.. {
-		let mut next = vec![];
-		for s in 0..data.input.hole.len() {
-			eprintln!("{} / {}", s, data.input.hole.len());
-			for &(score, ref state) in &beam {
-				rec(state, s, !0, &data, score, &mut next);
+	let mut fixed = std::env::args().skip(1).map(|v| v.parse::<usize>().unwrap()).collect::<Vec<_>>();
+	loop {
+		fixed = vec![rand::thread_rng().gen_range(0..data.input.hole.len()), rand::thread_rng().gen_range(0..data.input.hole.len())];
+		let mut beam = vec![(0, State { out: vec![P(-1, -1); n], cand: vec![None; n] })];
+		for iter in 0.. {
+			let mut next = vec![];
+			for s in 0..data.input.hole.len() {
+				if fixed.len() > iter && fixed[iter] != s {
+					continue;
+				}
+				for &(score, ref state) in &beam {
+					rec(&mut state.clone(), s, !0, &data, score, &mut next);
+				}
+			}
+			// eprintln!("validating...");
+			// beam = vec![];
+			// for mut s in next {
+			// 	if validate(&mut s.1, &data) {
+			// 		beam.push(s);
+			// 	}
+			// }
+			if next.len() == 0 {
+				break;
+			}
+			beam = next;
+			eprintln!("{}: {} / {}", iter, beam[0].0, data.input.hole.len());
+			output(&beam[0].1.out, &data, false);
+		}
+		
+		for k in 0..W.min(beam.len()) {
+			let rem_hole = get_mins(&data.input, &beam[k].1.out).iter().filter(|&&v| v > 0).count();
+			eprintln!("{}: remaining holes = {}", k, rem_hole);
+			let mut state = beam[k].1.clone();
+			output(&state.out, &data, false);
+			if validate(&mut state, &data) {
+				eprintln!("Succeeded");
+				if rem_hole <= 1 {
+					output(&state.out, &data, true);
+					return;
+				}
+			} else {
+				eprintln!("orz");
 			}
 		}
-		if next.len() == 0 {
-			break;
-		}
-		beam = next;
-		eprintln!("{}: {} / {}", iter, beam[0].0, data.input.hole.len());
-		output(&beam[0].1.out, &data);
+		eprintln!("failed");
 	}
-	
-	eprintln!("Finished");
 }
