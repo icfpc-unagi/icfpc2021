@@ -1,6 +1,171 @@
-<svg height="500" viewBox="-2 -2 64 78" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M5 7L1 21L3 32L14 41L4 46L2 56L13 60L10 74L24 74L49 62L50 74L60 74L59 62L57 51L42 47L54 36L45 30L60 20L60 7L45 1L31 0L42 18L27 30L15 27L24 13L14 0M-2 -2L62 -2L62 76L-2 76" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<circle cx="60" cy="7" r="5" style="fill:#ffff0066;stroke:none;"/>
-<path class="ok" d="" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M0 0L0 34M0 0L30 17M0 34L5 72M0 34L30 17M5 72L43 74M30 17L60 40M43 74L60 40" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 66 78" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M7 7L3 21L5 32L16 41L6 46L4 56L15 60L12 74L26 74L51 62L52 74L62 74L61 62L59 51L44 47L56 36L47 30L62 20L62 7L47 1L33 0L44 18L29 30L17 27L26 13L16 0M-2 -2L64 -2L64 76L-2 76" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="62" cy="7" r="5" style="fill:#ffff0066;" title="Globalist"/>
+<circle cx="30" cy="54" r="5" style="fill:#ffff0066;" title="WallHack"/>
+<path class="ok" d="" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M0 0L0 34M0 0L30 17M0 34L5 72M0 34L30 17M5 72L43 74M30 17L60 40M43 74L60 40" style="stroke:#ff0000;stroke-linecap:round"/>
+<g fill="#333333">
+<circle cx="7" cy="7" r="0.5" tabindex="0">
+<title>
+hole:0
+</title>
+</circle>
+<circle cx="3" cy="21" r="0.5" tabindex="1">
+<title>
+hole:1
+</title>
+</circle>
+<circle cx="5" cy="32" r="0.5" tabindex="2">
+<title>
+hole:2
+</title>
+</circle>
+<circle cx="16" cy="41" r="0.5" tabindex="3">
+<title>
+hole:3
+</title>
+</circle>
+<circle cx="6" cy="46" r="0.5" tabindex="4">
+<title>
+hole:4
+</title>
+</circle>
+<circle cx="4" cy="56" r="0.5" tabindex="5">
+<title>
+hole:5
+</title>
+</circle>
+<circle cx="15" cy="60" r="0.5" tabindex="6">
+<title>
+hole:6
+</title>
+</circle>
+<circle cx="12" cy="74" r="0.5" tabindex="7">
+<title>
+hole:7
+</title>
+</circle>
+<circle cx="26" cy="74" r="0.5" tabindex="8">
+<title>
+hole:8
+</title>
+</circle>
+<circle cx="51" cy="62" r="0.5" tabindex="9">
+<title>
+hole:9
+</title>
+</circle>
+<circle cx="52" cy="74" r="0.5" tabindex="10">
+<title>
+hole:10
+</title>
+</circle>
+<circle cx="62" cy="74" r="0.5" tabindex="11">
+<title>
+hole:11
+</title>
+</circle>
+<circle cx="61" cy="62" r="0.5" tabindex="12">
+<title>
+hole:12
+</title>
+</circle>
+<circle cx="59" cy="51" r="0.5" tabindex="13">
+<title>
+hole:13
+</title>
+</circle>
+<circle cx="44" cy="47" r="0.5" tabindex="14">
+<title>
+hole:14
+</title>
+</circle>
+<circle cx="56" cy="36" r="0.5" tabindex="15">
+<title>
+hole:15
+</title>
+</circle>
+<circle cx="47" cy="30" r="0.5" tabindex="16">
+<title>
+hole:16
+</title>
+</circle>
+<circle cx="62" cy="20" r="0.5" tabindex="17">
+<title>
+hole:17
+</title>
+</circle>
+<circle cx="62" cy="7" r="0.5" tabindex="18">
+<title>
+hole:18
+</title>
+</circle>
+<circle cx="47" cy="1" r="0.5" tabindex="19">
+<title>
+hole:19
+</title>
+</circle>
+<circle cx="33" cy="0" r="0.5" tabindex="20">
+<title>
+hole:20
+</title>
+</circle>
+<circle cx="44" cy="18" r="0.5" tabindex="21">
+<title>
+hole:21
+</title>
+</circle>
+<circle cx="29" cy="30" r="0.5" tabindex="22">
+<title>
+hole:22
+</title>
+</circle>
+<circle cx="17" cy="27" r="0.5" tabindex="23">
+<title>
+hole:23
+</title>
+</circle>
+<circle cx="26" cy="13" r="0.5" tabindex="24">
+<title>
+hole:24
+</title>
+</circle>
+<circle cx="16" cy="0" r="0.5" tabindex="25">
+<title>
+hole:25
+</title>
+</circle>
+</g>
+<g fill="#999999">
+<circle cx="0" cy="0" r="0.5" tabindex="26">
+<title>
+v:0
+</title>
+</circle>
+<circle cx="0" cy="34" r="0.5" tabindex="27">
+<title>
+v:1
+</title>
+</circle>
+<circle cx="5" cy="72" r="0.5" tabindex="28">
+<title>
+v:2
+</title>
+</circle>
+<circle cx="30" cy="17" r="0.5" tabindex="29">
+<title>
+v:3
+</title>
+</circle>
+<circle cx="43" cy="74" r="0.5" tabindex="30">
+<title>
+v:4
+</title>
+</circle>
+<circle cx="60" cy="40" r="0.5" tabindex="31">
+<title>
+v:5
+</title>
+</circle>
+</g>
 </svg>

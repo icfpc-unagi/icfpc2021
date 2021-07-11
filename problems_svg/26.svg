@@ -1,6 +1,75 @@
-<svg height="500" viewBox="-2 -2 84 69" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M0 46L26 65L80 51L76 17L46 0L17 17M-2 -2L82 -2L82 67L-2 67" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<circle cx="53" cy="58" r="5" style="fill:#ffff0066;stroke:none;"/>
-<path class="ok" d="M34 15L53 43M34 15L19 45M53 30L19 45M53 43L19 45M53 43L34 14M19 45L34 14" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M64 0L34 15M64 0L53 30M53 30L0 12M19 45L0 12M34 14L0 12" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 86 69" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 46L28 65L82 51L78 17L48 0L19 17M-2 -2L84 -2L84 67L-2 67" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="55" cy="58" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
+<path class="ok" d="M34 15L53 43M34 15L19 45M53 30L19 45M53 43L19 45M53 43L34 14M19 45L34 14" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M64 0L34 15M64 0L53 30M53 30L0 12M19 45L0 12M34 14L0 12" style="stroke:#ff0000;stroke-linecap:round"/>
+<g fill="#333333">
+<circle cx="2" cy="46" r="0.5" tabindex="0">
+<title>
+hole:0
+</title>
+</circle>
+<circle cx="28" cy="65" r="0.5" tabindex="1">
+<title>
+hole:1
+</title>
+</circle>
+<circle cx="82" cy="51" r="0.5" tabindex="2">
+<title>
+hole:2
+</title>
+</circle>
+<circle cx="78" cy="17" r="0.5" tabindex="3">
+<title>
+hole:3
+</title>
+</circle>
+<circle cx="48" cy="0" r="0.5" tabindex="4">
+<title>
+hole:4
+</title>
+</circle>
+<circle cx="19" cy="17" r="0.5" tabindex="5">
+<title>
+hole:5
+</title>
+</circle>
+</g>
+<g fill="#999999">
+<circle cx="64" cy="0" r="0.5" tabindex="6">
+<title>
+v:0
+</title>
+</circle>
+<circle cx="34" cy="15" r="0.5" tabindex="7">
+<title>
+v:1
+</title>
+</circle>
+<circle cx="53" cy="30" r="0.5" tabindex="8">
+<title>
+v:2
+</title>
+</circle>
+<circle cx="53" cy="43" r="0.5" tabindex="9">
+<title>
+v:3
+</title>
+</circle>
+<circle cx="19" cy="45" r="0.5" tabindex="10">
+<title>
+v:4
+</title>
+</circle>
+<circle cx="34" cy="14" r="0.5" tabindex="11">
+<title>
+v:5
+</title>
+</circle>
+<circle cx="0" cy="12" r="0.5" tabindex="12">
+<title>
+v:6
+</title>
+</circle>
+</g>
 </svg>

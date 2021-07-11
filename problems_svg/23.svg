@@ -1,6 +1,70 @@
-<svg height="500" viewBox="-2 -2 64 84" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M0 34L10 69L41 72L60 41L30 17L0 0M-2 -2L62 -2L62 82L-2 82" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<circle cx="28" cy="46" r="5" style="fill:#ffff0066;stroke:none;"/>
-<path class="ok" d="M0 0L0 34M0 0L30 17M0 34L10 69M0 34L30 17M30 17L54 47" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M10 69L39 80M39 80L54 47" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 66 84" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 34L12 69L43 72L62 41L32 17L2 0M-2 -2L64 -2L64 82L-2 82" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="30" cy="46" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
+<path class="ok" d="M30 17L54 47" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M0 0L0 34M0 0L30 17M0 34L10 69M0 34L30 17M10 69L39 80M39 80L54 47" style="stroke:#ff0000;stroke-linecap:round"/>
+<g fill="#333333">
+<circle cx="2" cy="34" r="0.5" tabindex="0">
+<title>
+hole:0
+</title>
+</circle>
+<circle cx="12" cy="69" r="0.5" tabindex="1">
+<title>
+hole:1
+</title>
+</circle>
+<circle cx="43" cy="72" r="0.5" tabindex="2">
+<title>
+hole:2
+</title>
+</circle>
+<circle cx="62" cy="41" r="0.5" tabindex="3">
+<title>
+hole:3
+</title>
+</circle>
+<circle cx="32" cy="17" r="0.5" tabindex="4">
+<title>
+hole:4
+</title>
+</circle>
+<circle cx="2" cy="0" r="0.5" tabindex="5">
+<title>
+hole:5
+</title>
+</circle>
+</g>
+<g fill="#999999">
+<circle cx="0" cy="0" r="0.5" tabindex="6">
+<title>
+v:0
+</title>
+</circle>
+<circle cx="0" cy="34" r="0.5" tabindex="7">
+<title>
+v:1
+</title>
+</circle>
+<circle cx="10" cy="69" r="0.5" tabindex="8">
+<title>
+v:2
+</title>
+</circle>
+<circle cx="30" cy="17" r="0.5" tabindex="9">
+<title>
+v:3
+</title>
+</circle>
+<circle cx="39" cy="80" r="0.5" tabindex="10">
+<title>
+v:4
+</title>
+</circle>
+<circle cx="54" cy="47" r="0.5" tabindex="11">
+<title>
+v:5
+</title>
+</circle>
+</g>
 </svg>
