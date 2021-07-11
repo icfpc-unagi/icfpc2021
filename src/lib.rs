@@ -46,6 +46,8 @@ pub enum BonusType {
 	Globalist,
 	#[serde(rename = "BREAK_A_LEG")]
 	BreakALeg,
+	#[serde(rename = "WALLHACK")]
+	WallHack,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -74,8 +76,18 @@ pub fn read_input_from_file(f: impl AsRef<std::path::Path>) -> Input {
 	read_input_from_reader(std::fs::File::open(f).unwrap()).unwrap()
 }
 
+const SHIFT_X: i64 = 2;
+const SHIFT_Y: i64 = 0;
+
 pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
 	let mut input: Input = serde_json::from_reader(r)?;
+	for i in 0..input.hole.len() {
+		input.hole[i] += P(SHIFT_X, SHIFT_Y);
+		assert!(input.hole[i].0 >= 0 && input.hole[i].1 >= 0);
+	}
+	for bonus in &mut input.bonuses {
+		bonus.position += P(SHIFT_X, SHIFT_Y);
+	}
 	for i in 0..input.figure.edges.len() {
 		if input.figure.edges[i].0 > input.figure.edges[i].1 {
 			let t = input.figure.edges[i].0;
@@ -83,6 +95,7 @@ pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
 			input.figure.edges[i].1 = t;
 		}
 	}
+	
 	input.figure.edges.sort();
 	input.figure.edges.dedup();
 	let mut area = 0;
@@ -96,11 +109,19 @@ pub fn read_input_from_reader<R: io::Read>(r: R) -> io::Result<Input> {
 }
 
 pub fn write_output(out: &Output) {
-	println!("{}", serde_json::to_string(out).unwrap());
+	let mut out = out.clone();
+	for i in 0..out.vertices.len() {
+		out.vertices[i] -= P(SHIFT_X, SHIFT_Y);
+	}
+	println!("{}", serde_json::to_string(&out).unwrap());
 }
 
 pub fn read_output_from_file(f: impl AsRef<std::path::Path>) -> Output {
-	serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap()
+	let mut out: Output = serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap();
+	for i in 0..out.vertices.len() {
+		out.vertices[i] += P(SHIFT_X, SHIFT_Y);
+	}
+	out
 }
 
 pub fn evaluate(input: &Input, output: &Output) -> Evaluation {

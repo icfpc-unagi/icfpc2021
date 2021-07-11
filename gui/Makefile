@@ -1,3 +1,6 @@
-release:
-	npm run build
-	cp -r dist/* ~/Dropbox/ICFPC2021/tos/gui/
+.PHONY: build
+all: build
+build:
+	wasm-pack build --release
+	npm install
+	npm run env -- webpack --mode production

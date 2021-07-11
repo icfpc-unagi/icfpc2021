@@ -26,6 +26,7 @@ COPY --from=go-builder /usr/local/bin/server /usr/local/bin/server
 COPY ./problems /problems
 COPY ./problems /static/problems
 COPY ./web/dist /static/show
+COPY ./gui/dist /static/gui
 COPY ./scripts/server.sh /usr/local/bin/server.sh
 RUN chmod +x /usr/local/bin/server.sh
 ENTRYPOINT server.sh
