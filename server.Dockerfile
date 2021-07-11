@@ -22,6 +22,7 @@ RUN [ "${UNAGI_PASSWORD}" != "" ]
 ENV UNAGI_PASSWORD "${UNAGI_PASSWORD}"
 RUN apt-get update -q && apt-get install -qy openssl ca-certificates
 COPY --from=rust-builder /work/target/release/calculate_score /usr/local/bin/calculate_score
+COPY --from=rust-builder /work/target/release/evaluate /usr/local/bin/evaluate
 COPY --from=go-builder /usr/local/bin/server /usr/local/bin/server
 COPY ./problems /problems
 COPY ./problems /static/problems

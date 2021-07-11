@@ -3,13 +3,17 @@ package handler
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
+	"encoding/json"
 	"fmt"
+	"github.com/golang/glog"
+	"github.com/imos/icfpc2021/internal/api"
 	"github.com/pkg/errors"
 	"net/http"
 	"os"
 	"os/exec"
+	"reflect"
 	"strconv"
-	"strings"
 )
 
 func init() {
@@ -35,23 +39,36 @@ JSON:
 	if err != nil {
 		fmt.Fprintf(w, "Failed to parse problem_id: %+v", err)
 	}
-	submissionID, err := EstimateScore(ctx, problemID, r.Form.Get("data"))
+	evaluation, err := EstimateScore(ctx, problemID, r.Form.Get("data"))
 	if err != nil {
 		fmt.Fprintf(w, "Failed to submit: %+v", err)
 	}
-	fmt.Fprintf(w, "Score: %d", submissionID)
+	fmt.Fprintf(w, "Evaluation: %v", evaluation)
 }
 
-func EstimateScore(ctx context.Context, problemID int64, solution string) (int64, error) {
+func EstimateScore(ctx context.Context, problemID int64, solution string) (*api.Evaluation, error) {
 	cmd := exec.CommandContext(ctx, "bash", "-c",
-		fmt.Sprintf("calculate_score /problems/%d.json <(cat)", problemID))
+		fmt.Sprintf("evaluate /problems/%d.json <(cat)", problemID))
 	cmd.Stdin = bytes.NewBuffer([]byte(solution))
 	cmd.Stderr = os.Stderr
 	output, _ := cmd.Output()
-	result := strings.TrimSpace(string(output))
-	score, err := strconv.ParseInt(result, 10, 64)
-	if err != nil {
-		return 0, errors.Wrapf(err, "failed to parse output: %s", result)
+	glog.Infof("Evaluation: %s", string(output))
+	evaluation := &api.Evaluation{}
+	if err := json.Unmarshal(output, evaluation); err != nil {
+		return nil, errors.Wrapf(err, "failed to parse output")
 	}
-	return score, nil
+	evaluation.BonusesStr = EncodeStr(evaluation.Bonuses)
+	evaluation.ObtainedBonusesStr = EncodeStr(evaluation.ObtainedBonuses)
+	evaluation.BonusesHash = fmt.Sprintf("%x", md5.Sum([]byte(
+		evaluation.BonusesStr + "\n" +
+			evaluation.ObtainedBonusesStr)))
+	return evaluation, nil
+}
+
+func EncodeStr(x interface{}) string {
+	if reflect.DeepEqual(x, []interface{}{}) {
+		return ""
+	}
+	buf, _ := json.Marshal(x)
+	return string(buf)
 }
