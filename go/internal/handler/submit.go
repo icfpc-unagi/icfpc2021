@@ -5,13 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/golang/glog"
-	"github.com/imos/icfpc2021/pkg/db"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/golang/glog"
+	"github.com/imos/icfpc2021/pkg/db"
+	"github.com/pkg/errors"
 )
 
 func init() {
@@ -23,16 +24,17 @@ func handleSubmit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	if r.Method == "GET" {
-		fmt.Fprintln(w, `
-<body><form action="/submit" method="POST">
-Problem ID: <input type="text" name="problem_id"><br><br>
-JSON:
-<textarea name="data"></textarea><br><br>
-強制アップデート（スコアを確認しない）:
-<input type="checkbox" name="force" value="1"><br><br>
-<input type="submit" value="Submit">
-</form></body>
-`)
+		// 		fmt.Fprintln(w, `
+		// <body><form action="/submit" method="POST">
+		// Problem ID: <input type="text" name="problem_id"><br><br>
+		// JSON:
+		// <textarea name="data"></textarea><br><br>
+		// 強制アップデート（スコアを確認しない）:
+		// <input type="checkbox" name="force" value="1"><br><br>
+		// <input type="submit" value="Submit">
+		// </form></body>
+		// `)
+		http.Redirect(w, r, "/static/show/", http.StatusMovedPermanently)
 		return
 	}
 	r.ParseForm()
@@ -185,7 +187,7 @@ func submitToOfficial(problemID int64, solution string) (string, error) {
 		return "", errors.Wrapf(err, "failed to create a submission request")
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer " + os.Getenv("UNAGI_API_KEY"))
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("UNAGI_API_KEY"))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
