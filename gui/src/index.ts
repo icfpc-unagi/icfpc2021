@@ -124,7 +124,7 @@ class ProblemRenderer {
     const vertices: Graphics[] = [];
     for (const [x, y] of fig.vertices) {
       const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
-      g.tint = 0x008000;
+      // g.tint = 0x008000;
       g.position.set(x, y);
       g.scale.set(1 / guiScale);
       dragHandler.register(g);
@@ -144,9 +144,18 @@ class ProblemRenderer {
     this.edges = edges;
     this.vertices = vertices;
     for (const [k, v] of vertices.entries()) {
-      v.on("drag", () => {
+      {
         const { x, y } = v.position;
+        const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
+        v.tint = atCorner ? 0x00ff00 : 0x008000;
+      }
+      v.on("drag", () => {
+        let { x, y } = v.position;
+        x = Math.round(x);
+        y = Math.round(y);
         v.position.set(Math.round(x), Math.round(y));
+        const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
+        v.tint = atCorner ? 0x00ff00 : 0x008000;
         v.emit("myupdate");
       }).on("dragend", () => {
         const solutionJson = this.pose;
@@ -164,7 +173,9 @@ class ProblemRenderer {
     if (wasm == null) return;
     const [ok_v, ok_e] = wasm.check_solution1(input, output);
     for (const [i, ok] of ok_v.entries()) {
-      this.vertices[i].tint = ok ? 0x008000 : 0x800080;
+      if (!ok) {
+        this.vertices[i].tint = 0x800080;
+      }
     }
     for (const [i, ok] of ok_e.entries()) {
       if (!ok) {
@@ -181,6 +192,12 @@ class ProblemRenderer {
     }
     for (const [i, v] of solutionJson.vertices.entries()) {
       this.vertices[i].position.set(...v);
+      {
+        let v = this.vertices[i];
+        const { x, y } = v.position;
+        const atCorner = this.inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
+        v.tint = atCorner ? 0x00ff00 : 0x008000;
+      }
     }
     for (const edge of this.edges) {
       edge.update();
