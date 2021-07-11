@@ -61,6 +61,8 @@ pub enum BonusType {
 	BreakALeg,
 	#[serde(rename = "WALLHACK")]
 	WallHack,
+	#[serde(rename = "SUPERFLEX")]
+	SuperFlex,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -563,6 +565,26 @@ fn stretch_within<T: num::traits::Signed + From<i32> + Copy>(
 	} else {
 		Ordering::Greater
 	}
+}
+
+// zenkan
+fn all_pair_dist_ub(input: &Input) -> Vec<Vec<f64>> {
+	let n = input.figure.vertices.len();
+	let mul_ub = (1.0 + input.epsilon as f64 * 1e-6).sqrt();
+	let mut dist = mat![1e20; n; n];
+	for &(i, j) in &input.figure.edges {
+		dist[i][j] = ((input.figure.vertices[i] - input.figure.vertices[j]).abs2() as f64).sqrt() * mul_ub;
+		dist[j][i] = dist[i][j];
+	}
+	for k in 0..n {
+		for i in 0..n {
+			for j in 0..n {
+				let tmp = dist[i][k] + dist[k][j];
+				dist[i][j].setmin(tmp);
+			}
+		}
+	}
+	dist
 }
 
 //

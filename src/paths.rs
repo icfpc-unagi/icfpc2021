@@ -92,12 +92,13 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 				.set("d", hole_polygon),
 		);
 	for bonus in &prob.bonuses {
+		let got = vertices.iter().find(|&p| p == &bonus.position).is_some();
 		svg = svg.add(
 			element::Circle::new()
 				.set("cx", bonus.position.0)
 				.set("cy", bonus.position.1)
 				.set("r", 5)
-				.set("style", "fill:#ffff0066;")
+				.set("fill", if got { "#ff666666" } else { "#ffff0066" })
 				.set("title", format!("{:?}", bonus.bonus)),
 		);
 	}
@@ -132,7 +133,6 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 		);
 	}
 
-	let mut tabindex = 0;
 	let mut g = element::Group::new().set("fill", "#333333");
 	for (i, p) in prob.hole.iter().enumerate() {
 		g = g.add(
@@ -140,13 +140,12 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 				.set("cx", p.0)
 				.set("cy", p.1)
 				.set("r", 0.5)
-				.set("tabindex", tabindex)
 				.add(element::Title::new().add(node::Text::new(format!("hole:{}", i)))),
 		);
-		tabindex += 1;
 	}
 	svg = svg.add(g);
 
+	let mut tabindex = 0;
 	let mut g = element::Group::new().set("fill", "#999999");
 	for (i, p) in vertices.iter().enumerate() {
 		g = g.add(
@@ -155,6 +154,7 @@ fn render_svg<W: io::Write>(prob: &Input, vertices: &Vec<Point>, w: W) -> io::Re
 				.set("cy", p.1)
 				.set("r", 0.5)
 				.set("tabindex", tabindex)
+				.set("i", i)
 				.add(element::Title::new().add(node::Text::new(format!("v:{}", i)))),
 		);
 		tabindex += 1;

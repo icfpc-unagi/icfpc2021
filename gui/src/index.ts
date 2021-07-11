@@ -22,10 +22,13 @@ function xyFromPoint({ x, y }: { x: number; y: number }): XY {
   return [x, y];
 }
 
+const appWidth = parseInt(urlParams.get("w") ?? "800");
+const appHeight = parseInt(urlParams.get("h") ?? "600");
+
 PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
 const app = new PIXI.Application({
-  width: parseInt(urlParams.get("w") ?? "800"),
-  height: parseInt(urlParams.get("h") ?? "600"),
+  width: appWidth,
+  height: appHeight,
   backgroundColor: 0x999999,
   autoDensity: true,
 });
@@ -45,7 +48,7 @@ type Problem = {
   };
   internal?: {
     reversed_hole: boolean;
-  }
+  };
 };
 
 type Solution = {
@@ -61,17 +64,56 @@ const sampleInput: string = '{"hole":[[45,80],[35,95],[5,95],[35,50],[5,5],[35,5
 const sampleOutput: string = '{"vertices":[[35,51],[40,60],[83,93],[34,25],[48,40],[59,70],[73,92],[29,15],[44,29],[40,18],[49,76],[36,7],[34,27],[30,17],[32,38],[40,69],[27,94],[17,93],[11,13],[18,21]]}';
 // const sampleOutput: Solution = {"vertices": [[21, 28], [31, 28], [31, 87], [29, 41], [44, 43], [58, 70],[38, 79], [32, 31], [36, 50], [39, 40], [66, 77], [42, 29],[46, 49], [49, 38], [39, 57], [69, 66], [41, 70], [39, 60],[42, 25], [40, 35]]};
 
+class VertexObject {
+  g: Graphics;
+  edges: EdgeObject[];
+
+  constructor([x, y]: XY, public hole: XY[]) {
+    const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
+    g.position.set(x, y);
+    g.scale.set(1 / guiScale);
+    this.g = g;
+    this.edges = [];
+    this.update();
+  }
+
+  get pos(): XY {
+    return xyFromPoint(this.g.position);
+  }
+
+  set pos([x, y]: XY) {
+    this.g.position.set(x, y);
+  }
+
+  update(updateEdges: boolean = true): void {
+    const g = this.g;
+    let [x, y] = this.pos;
+    x = Math.round(x);
+    y = Math.round(y);
+    g.position.set(x, y);
+    const atCorner = this.hole.some(([hx, hy]) => hx === x && hy === y);
+    g.tint = atCorner ? 0x00ff00 : 0x008000;
+    if (updateEdges) {
+      for (const edge of this.edges) {
+        edge.update();
+      }
+    }
+  }
+}
+
 class EdgeObject {
   g: Graphics;
   d2Orig: number;
 
   constructor(
-    public vertex0: Graphics,
-    public vertex1: Graphics,
+    public vertex0: VertexObject,
+    public vertex1: VertexObject,
     public epsilon: number
   ) {
-    const p0 = xyFromPoint(this.vertex0.position);
-    const p1 = xyFromPoint(this.vertex1.position);
+    vertex0.edges.push(this);
+    vertex1.edges.push(this);
+    const p0 = this.vertex0.pos;
+    const p1 = this.vertex1.pos;
     this.g = new Graphics();
     this.d2Orig = abs2(p0, p1);
     this.update();
@@ -79,22 +121,35 @@ class EdgeObject {
 
   update(): void {
     const d2Orig = this.d2Orig;
-    const p0 = xyFromPoint(this.vertex0.position);
-    const p1 = xyFromPoint(this.vertex1.position);
+    const p0 = this.vertex0.pos;
+    const p1 = this.vertex1.pos;
     const d2Now = abs2(p0, p1);
     const atol = d2Orig * this.epsilon;
     const target = 1_000_000 * d2Orig;
     const ok = Math.abs(1_000_000 * d2Now - target) <= atol;
     const color = ok ? 0x0000ff : d2Now < d2Orig ? 0xcccc00 : 0xff0000;
-    this.g
-      .clear()
+    const g = this.g;
+    g.zIndex = ok ? 0 : 1;
+    g.tint = color;
+    g.clear()
       .lineStyle({
         color: WHITE,
         width: 1,
         cap: "round" as any,
       })
       .moveTo(...p0)
-      .lineTo(...p1).tint = color;
+      .lineTo(...p1);
+  }
+
+  hintFor(vertex: VertexObject): Graphics {
+    const rInner = Math.sqrt(this.d2Orig * (1 - this.epsilon / 1_000_000));
+    const rOuter = Math.sqrt(this.d2Orig * (1 + this.epsilon / 1_000_000));
+    const [x, y] = [this.vertex0, this.vertex1].find((v) => v !== vertex)!.pos;
+    return new Graphics()
+      .beginFill(0x0000ff, 0.2)
+      .drawCircle(x, y, rOuter)
+      .beginHole()
+      .drawCircle(x, y, rInner);
   }
 }
 
@@ -102,16 +157,22 @@ class ProblemRenderer {
   inputJson: Problem;
   hole: Graphics;
   holeCorners: DisplayObject[];
+  vertices: VertexObject[];
   edges: EdgeObject[];
-  vertices: Graphics[];
   epsilon: number;
-  lastDrag?: Graphics;
+  lastDrag?: VertexObject;
+  hintContainer?: Container;
+  abs2UpperBound?: Uint32Array;
+  holePairContainer: Container;
 
   constructor(problem: string) {
     console.log(problem);
     const inputJson: Problem = (wasm?.read_problem ?? JSON.parse)(problem);
     console.log(inputJson);
     this.inputJson = inputJson;
+    if (wasm != null) {
+      this.abs2UpperBound = wasm.all_pair_abs2_ub(inputJson);
+    }
     const dropArea = new Container(); // unused...
     const dragHandler = new DragHandler(
       app.renderer.plugins.interaction,
@@ -149,15 +210,9 @@ class ProblemRenderer {
 
     const fig = inputJson.figure;
 
-    const vertices: Graphics[] = [];
-    for (const [x, y] of fig.vertices) {
-      const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
-      // g.tint = 0x008000;
-      g.position.set(x, y);
-      g.scale.set(1 / guiScale);
-      dragHandler.register(g);
-      vertices.push(g);
-    }
+    const vertices: VertexObject[] = fig.vertices.map(
+      (xy) => new VertexObject(xy, origHole)
+    );
 
     // for (const [i, v] of vertices.entries()) {
     //   const text = new PIXI.Text(`${i}`, {
@@ -175,70 +230,102 @@ class ProblemRenderer {
     const edges: EdgeObject[] = [];
     for (const [i, j] of fig.edges) {
       const edge = new EdgeObject(vertices[i], vertices[j], this.epsilon);
-      vertices[i].on("myupdate", () => edge.update());
-      vertices[j].on("myupdate", () => edge.update());
       edges.push(edge);
     }
 
     this.hole = hole;
     this.edges = edges;
     this.vertices = vertices;
+    this.holePairContainer = new Container();
+
     for (const [k, v] of vertices.entries()) {
-      {
-        const { x, y } = v.position;
-        const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-        v.tint = atCorner ? 0x00ff00 : 0x008000;
-      }
-      v.on("drag", () => {
-        let { x, y } = v.position;
-        x = Math.round(x);
-        y = Math.round(y);
-        v.position.set(x, y);
-        const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-        v.tint = atCorner ? 0x00ff00 : 0x008000;
-        v.emit("myupdate");
-      }).on("dragend", () => {
-        const solutionJson = this.pose;
-        this.runCheckSolution1(inputJson, solutionJson);
-        (document.getElementById("output-json") as any).value = (
-          wasm?.write_pose ?? JSON.stringify
-        )(solutionJson);
-        this.lastDrag = v;
-      });
+      dragHandler.register(v.g);
+      v.g
+        .on("dragstart", () => {
+          let c = this.hintContainer;
+          if (c == null) {
+            c = new Container();
+            mainContainer.addChild(c);
+            this.hintContainer = c;
+          }
+          c.addChild(...v.edges.map((e) => e.hintFor(v)));
+        })
+        .on("drag", () => {
+          v.update();
+        })
+        .on("dragend", () => {
+          let c = this.hintContainer;
+          if (c != null) {
+            mainContainer.removeChild(c);
+            delete this.hintContainer;
+          }
+          this.update();
+          this.lastDrag = v;
+        });
     }
 
-    this.runCheckSolution1(inputJson, inputJson.figure);
+    this.update();
   }
 
-  moveLastVertex([dx, dy]: XY) {
+  moveLastVertex([dx, dy]: XY): void {
     const v = this.lastDrag;
     if (v == null) return;
-    let { x, y } = v.position;
+    let [x, y] = v.pos;
     x = Math.round(x + dx);
     y = Math.round(y + dy);
-    v.position.set(x, y);
-    const inputJson = this.inputJson;
-    const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-    v.tint = atCorner ? 0x00ff00 : 0x008000;
-    v.emit("myupdate");
+    v.pos = [x, y];
+    v.update();
+    this.update();
+  }
+
+  update(): void {
     const solutionJson = this.pose;
-    this.runCheckSolution1(inputJson, solutionJson);
+    this.runCheckSolution1(this.inputJson, solutionJson);
+    this.runTestPairDist(solutionJson);
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
     )(solutionJson);
-}
+  }
 
   runCheckSolution1(input: Problem, output: Solution): void {
     if (wasm == null) return;
     const [ok_v, ok_e] = wasm.check_solution1(input, output);
     for (const [i, ok] of ok_v.entries()) {
       if (!ok) {
-        this.vertices[i].tint = 0x800080;
+        this.vertices[i].g.tint = 0x800080;
       }
     }
     for (const [i, ok] of ok_e.entries()) {
       if (!ok) {
-        this.edges[i].g.tint = 0x800080;
+        const g = this.edges[i].g;
+        g.zIndex = 2;
+        g.tint = 0x800080;
+      }
+    }
+  }
+
+  runTestPairDist(pose: Solution): void {
+    if (wasm == null) return;
+    const ub = this.abs2UpperBound!;
+    const abs2 = wasm.all_pair_abs2(pose);
+
+    const c = this.holePairContainer;
+    c.removeChildren();
+    const isHole = this.vertices.map(({ g }) => g.tint == 0x00ff00); // TODO
+
+    let k = 0;
+    const vs = pose.vertices;
+    for (const [i, v0] of vs.entries()) {
+      for (const [j, v1] of vs.entries()) {
+        if (isHole[i] && isHole[j] && abs2[k] > ub[k]) {
+          c.addChild(
+            new Graphics()
+              .lineStyle({ color: 0xff0000, width: 2, alpha: 0.5 })
+              .moveTo(...v0)
+              .lineTo(...v1)
+          );
+        }
+        k++;
       }
     }
   }
@@ -250,41 +337,42 @@ class ProblemRenderer {
       return;
     }
     for (const [i, v] of solutionJson.vertices.entries()) {
-      this.vertices[i].position.set(...v);
-      {
-        let v = this.vertices[i];
-        const { x, y } = v.position;
-        const atCorner = this.inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
-        v.tint = atCorner ? 0x00ff00 : 0x008000;
-      }
+      this.vertices[i].pos = v;
+      this.vertices[i].update(false);
     }
     for (const edge of this.edges) {
       edge.update();
     }
 
-    this.runCheckSolution1(this.inputJson, solutionJson);
+    this.update();
   }
 
   get pose(): Solution {
-    return { vertices: this.vertices.map((v) => xyFromPoint(v)) };
+    return { vertices: this.vertices.map((v) => v.pos) };
   }
 
   render(c: Container): void {
     c.removeChildren();
-    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.holeCorners, ...this.vertices);
+    let edgesContainer = new Container();
+    edgesContainer.sortableChildren = true;
+    edgesContainer.addChild(...this.edges.map(({ g }) => g));
+    c.addChild(
+      this.hole,
+      edgesContainer,
+      ...this.holeCorners,
+      ...this.vertices.map(({ g }) => g),
+      this.holePairContainer
+    );
   }
 
   updateGuiScale(): void {
-    for (const v of [...this.vertices, ...this.holeCorners]) {
+    for (const v of [...this.vertices.map(({ g }) => g), ...this.holeCorners]) {
       v.scale.set(1 / guiScale);
     }
   }
 }
 
 mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
-// console.log(wasm);
-// console.log(wasm.check_solution1);
-// console.log(wasm.check_solution1(sampleInput, sampleOutput));
 
 (wasm_ as any)
   .then((wasm__: any) => {
@@ -298,7 +386,7 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
     r.render(mainContainer);
     r.loadSolution(sampleOutput);
 
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
       const vec = {
         ArrowLeft: [-1, 0],
         ArrowUp: [0, -1],
@@ -307,6 +395,21 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
       }[e.key];
       if (vec == null) return;
       r.moveLastVertex(vec as any);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      const vec = {
+        a: [-1, 0],
+        w: [0, -1],
+        d: [1, 0],
+        s: [0, 1],
+      }[e.key.toLowerCase()];
+      if (vec == null) return;
+      const flip = (document.getElementById("flip-wasd") as any).checked;
+      const scale = flip ? -100 : 100;
+      const [x, y] = vec as any;
+      mainContainer.x += scale * x;
+      mainContainer.y += scale * y;
     });
 
     // load problem
@@ -343,9 +446,20 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
     // gui scale
     {
       const elem: any = document.getElementById("gui-scale")!;
-      elem.addEventListener("change", () => {
-        guiScale = parseInt(elem.value);
+      elem.addEventListener("input", () => {
+        const { x, y } = mainContainer;
+        const cx = appWidth / 2;
+        const cy = appHeight / 2;
+        const { width, height } = app.renderer;
+        const rx = (cx - x) / guiScale;
+        const ry = (cy - y) / guiScale;
+
+        const s = parseFloat(elem.value);
+        if (s < 0.1) return;
+        guiScale = s;
+
         mainContainer.scale.set(guiScale);
+        mainContainer.position.set(cx - rx * guiScale, cy - ry * guiScale);
         r.updateGuiScale();
       });
     }

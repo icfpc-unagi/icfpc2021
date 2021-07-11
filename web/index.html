@@ -6,10 +6,14 @@
   </head>
   <body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+    <label for="_problem_id">Problem ID:</label>
+    <input id="_problem_id" type="number" min="1">
+    <p>
     <div id="_container"></div>
+    <p><textarea id="_pose" width="300"></textarea>
     <div id="_message"></div>
-    <textarea id="_pose"></textarea>
-    <input id="_morph" type="button" value="morph random" disabled>
+    <div>←↓↑→: move focused point (shift x10)</div>
+    <div><input id="_morph" type="button" value="morph random" disabled></div>
     <script src="./bootstrap.js"></script>
   </body>
 </html>
