@@ -217,6 +217,9 @@ fn main() {
 
         #[structopt(long)]
         glucose_path: String,
+
+        #[structopt(long)]
+        initial_relax: Option<f64>,
     }
     let args = Args::from_args();
     dbg!(&args);
@@ -231,8 +234,9 @@ fn main() {
 
     dump(&input, &positions, 0);
 
-    if false {
-        let penalty_limit = find_largest_penalty(&input, &positions).0 * 3; // TODO: ハイパラ
+    if let Some(initial_relax_ratio) = args.initial_relax {
+        let penalty_limit =
+            (find_largest_penalty(&input, &positions).0 as f64 * initial_relax_ratio) as i64;
         positions = step(&config, &input, positions, penalty_limit);
     }
 
