@@ -23,8 +23,19 @@ pub struct Input {
 	pub hole: Vec<Point>,
 	pub figure: Figure,
 	pub epsilon: i64,
-	#[serde(default)]
+	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
 	pub bonuses: Vec<Bonus>,
+
+	// None: shiftしていない。
+	// Some(flag): shiftした。flag: hole逆順にした。
+	#[serde(skip_serializing_if = "Option::is_none")]
+	#[serde(default)]
+	pub internal: Option<InputInternal>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize, Default)]
+pub struct InputInternal {
+	pub reversed_hole: bool,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -38,6 +49,8 @@ pub struct Bonus {
 	pub bonus: BonusType,
 	pub problem: u32,
 	pub position: Point,
+	#[serde(default, skip_serializing_if = "serde_skip::is_default")]
+	pub edge: (usize, usize),
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -53,7 +66,7 @@ pub enum BonusType {
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Output {
 	pub vertices: Vec<Point>,
-	#[serde(default)]
+	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
 	pub bonuses: Vec<Bonus>,
 }
 
@@ -80,6 +93,8 @@ const SHIFT_Y: i64 = 0;
 
 impl Input {
 	pub fn to_internal(&mut self) {
+		assert!(self.internal.is_none());
+		let mut internal: InputInternal = Default::default();
 		for i in 0..self.hole.len() {
 			self.hole[i] += P(SHIFT_X, SHIFT_Y);
 			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
@@ -87,6 +102,8 @@ impl Input {
 		for bonus in &mut self.bonuses {
 			bonus.position += P(SHIFT_X, SHIFT_Y);
 		}
+
+		// edgeの重複消すのは元に戻す方法が今のところないので注意。
 		for i in 0..self.figure.edges.len() {
 			if self.figure.edges[i].0 > self.figure.edges[i].1 {
 				let t = self.figure.edges[i].0;
@@ -97,22 +114,30 @@ impl Input {
 
 		self.figure.edges.sort();
 		self.figure.edges.dedup();
+
 		let mut area = 0;
 		for i in 0..self.hole.len() {
 			area += self.hole[i].det(self.hole[(i + 1) % self.hole.len()]);
 		}
 		if area > 0 {
 			// 時計回りにする
+			internal.reversed_hole = true;
 			self.hole.reverse();
 		}
+		self.internal = Some(internal);
 	}
 
 	pub fn to_external(&mut self) {
+		let internal = self.internal.take()
+			.expect("This `Input` is already external");
 		for i in 0..self.hole.len() {
 			self.hole[i] -= P(SHIFT_X, SHIFT_Y);
 		}
 		for bonus in &mut self.bonuses {
 			bonus.position -= P(SHIFT_X, SHIFT_Y);
+		}
+		if internal.reversed_hole {
+			self.hole.reverse();
 		}
 	}
 }

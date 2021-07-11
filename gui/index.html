@@ -5,9 +5,14 @@
     <title>GUI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"><script defer src="bundle.js"></script></head>
   <body>
+    <table><tr><td>
       problem json: <input id="input-json" type="file" accept=".json" /><br />
       solution json (input): <input id="input-solution-json" type="file" /><br />
-      solution json (output): <input id="output-json" type="text" /><br />
+      solution json (output): <input id="output-json" type="text" />
+    </td><td>
       GUI scale <input id="gui-scale" type="number" value=4 /><br />
+      ←↓↑→: move last vertex<br />
+      WASD: move view (reverse: <input id="flip-wasd" type="checkbox" />)<br />
+    </td></tr></table>
   </body>
 </html>
