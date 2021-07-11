@@ -20,6 +20,27 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 // }
 
 #[wasm_bindgen]
+pub fn read_problem(s: &str) -> Result<JsValue, JsValue> {
+	let mut prob: Input = serde_json::from_str(s).map_err(|e| JsValue::from(e.to_string()))?;
+	prob.to_internal();
+	JsValue::from_serde(&prob).map_err(|e| JsValue::from(e.to_string()))
+}
+
+#[wasm_bindgen]
+pub fn read_pose(s: &str) -> Result<JsValue, JsValue> {
+	let mut pose: Output = serde_json::from_str(s).map_err(|e| JsValue::from(e.to_string()))?;
+	pose.to_internal();
+	JsValue::from_serde(&pose).map_err(|e| JsValue::from(e.to_string()))
+}
+
+#[wasm_bindgen]
+pub fn write_pose(j: JsValue) -> Result<String, JsValue> {
+	let mut pose: Output = j.into_serde().map_err(|e| JsValue::from(e.to_string()))?;
+	pose.to_external();
+	serde_json::to_string(&pose).map_err(|e| JsValue::from(e.to_string()))
+}
+
+#[wasm_bindgen]
 pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 	let input: Input = input.into_serde().unwrap();
 	let out: Output = out.into_serde().unwrap();
