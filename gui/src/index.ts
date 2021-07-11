@@ -67,6 +67,7 @@ const sampleOutput: string = '{"vertices":[[35,51],[40,60],[83,93],[34,25],[48,4
 class VertexObject {
   g: Graphics;
   edges: EdgeObject[];
+  atCorner: boolean;
 
   constructor([x, y]: XY, public hole: XY[]) {
     const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
@@ -74,6 +75,7 @@ class VertexObject {
     g.scale.set(1 / guiScale);
     this.g = g;
     this.edges = [];
+    this.atCorner = false; // set by update()
     this.update();
   }
 
@@ -91,8 +93,8 @@ class VertexObject {
     x = Math.round(x);
     y = Math.round(y);
     g.position.set(x, y);
-    const atCorner = this.hole.some(([hx, hy]) => hx === x && hy === y);
-    g.tint = atCorner ? 0x00ff00 : 0x008000;
+    this.atCorner = this.hole.some(([hx, hy]) => hx === x && hy === y);
+    g.tint = this.atCorner ? 0x00ff00 : 0x008000;
     if (updateEdges) {
       for (const edge of this.edges) {
         edge.update();
@@ -237,16 +239,21 @@ class ProblemRenderer {
     this.edges = edges;
     this.vertices = vertices;
     this.holePairContainer = new Container();
-    this.hintContainer = new Container();
+    this.hintContainer = new Container(); // new Graphics();
 
     for (const [k, v] of vertices.entries()) {
       dragHandler.register(v.g);
       v.g
         .on("dragstart", () => {
           this.hintContainer.addChild(...v.edges.map((e) => e.hintFor(v)));
+          this.runTestPairDist(this.pose, k); // slow?
         })
         .on("drag", () => {
           v.update();
+          // this.hintContainer
+          //   .clear()
+          //   .lineStyle({ color: 0xff0000, width: 2, alpha: 0.5 });
+          this.runTestPairDist(this.pose, k); // slow?
         })
         .on("dragend", () => {
           this.hintContainer.removeChildren();
@@ -295,20 +302,20 @@ class ProblemRenderer {
     }
   }
 
-  runTestPairDist(pose: Solution): void {
+  runTestPairDist(pose: Solution, addIndex?: number): void {
     if (wasm == null) return;
     const ub = this.abs2UpperBound!;
     const abs2 = wasm.all_pair_abs2(pose);
 
     const c = this.holePairContainer;
     c.removeChildren();
-    const isHole = this.vertices.map(({ g }) => g.tint == 0x00ff00); // TODO
+    const isTarget = this.vertices.map((v, k) => v.atCorner || k === addIndex); // TODO: refactor
 
     let k = 0;
     const vs = pose.vertices;
     for (const [i, v0] of vs.entries()) {
       for (const [j, v1] of vs.entries()) {
-        if (isHole[i] && isHole[j] && abs2[k] > ub[k]) {
+        if (isTarget[i] && isTarget[j] && abs2[k] > ub[k]) {
           c.addChild(
             new Graphics()
               .lineStyle({ color: 0xff0000, width: 2, alpha: 0.5 })
