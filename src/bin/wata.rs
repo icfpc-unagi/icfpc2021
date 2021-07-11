@@ -238,5 +238,5 @@ fn main() {
 		data.input.epsilon /= 2;
 	}
 	eprintln!("Score = {}", best_score);
-	write_output(&Output { vertices: best });
+	write_output(&Output { vertices: best, bonuses: Default::default() });
 }

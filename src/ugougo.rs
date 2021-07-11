@@ -67,6 +67,7 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
 				problem,
 				&Output {
 					vertices: vertices.clone(),
+					bonuses: Vec::new(),
 				},
 			);
 			if new_score <= score {
@@ -78,5 +79,8 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: usize) -> (Output, i32) {
 		vertices[a] -= d; // revert
 	}
 
-	(Output { vertices }, k)
+	(Output {
+		vertices: vertices,
+		bonuses: Vec::new(),
+	}, k)
 }

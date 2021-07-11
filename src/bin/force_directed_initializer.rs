@@ -390,7 +390,7 @@ fn main() {
 
         if i_iter % 1000 == 0 {
             let positions = state.positions.iter().map(|p| P(p.0 / state.config.scale, p.1 / state.config.scale)).collect();
-            let raw_output = Output { vertices: positions };
+            let raw_output = Output { vertices: positions, bonuses: Default::default() };
             let file = std::fs::File::create(format!("out/{:06}.svg", i_iter)).unwrap();
             let writer = std::io::BufWriter::new(file);
             render_pose_svg(&raw_input, &raw_output, writer);
@@ -398,7 +398,7 @@ fn main() {
     }
 
     let positions = state.positions.iter().map(|p| P(p.0 / state.config.scale, p.1 / state.config.scale)).collect();
-    let raw_output = Output { vertices: positions };
+    let raw_output = Output { vertices: positions, bonuses: Default::default() };
     write_output(&raw_output);
 
     let file = std::fs::File::create("out.svg").unwrap();
