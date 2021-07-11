@@ -1,6 +1,101 @@
-<svg height="500" viewBox="-2 -2 104 72" width="500" xmlns="http://www.w3.org/2000/svg">
-<path class="hole" d="M0 41L43 68L66 68L100 22L53 0M-2 -2L102 -2L102 70L-2 70" style="fill:#00000066;fill-rule:evenodd;stroke:none;"/>
-<circle cx="75" cy="14" r="5" style="fill:#ffff0066;stroke:none;"/>
-<path class="ok" d="M14 34L44 63M27 41L30 53M27 41L44 58M30 53L44 58M44 58L44 63M44 58L59 53M44 58L61 41M44 63L56 68M44 63L89 21M56 68L59 53M56 68L89 21M59 53L61 41" style="fill:none;stroke:#0000ff;stroke-linecap:round"/>
-<path class="out" d="M0 48L9 34M0 48L14 34M9 34L14 34M9 34L33 68M27 41L44 0M30 53L33 68M33 68L44 63M44 0L44 58M44 0L61 41" style="fill:none;stroke:#ff0000;stroke-linecap:round"/>
+<svg height="500" viewBox="-2 -2 106 72" width="500" xmlns="http://www.w3.org/2000/svg">
+<path class="hole" d="M2 41L45 68L68 68L102 22L55 0M-2 -2L104 -2L104 70L-2 70" style="fill:#00000066;fill-rule:evenodd;"/>
+<circle cx="77" cy="14" r="5" style="fill:#ffff0066;" title="BreakALeg"/>
+<circle cx="32" cy="18" r="5" style="fill:#ffff0066;" title="WallHack"/>
+<path class="ok" d="M14 34L44 63M27 41L30 53M27 41L44 58M30 53L44 58M44 58L44 63M44 58L59 53M44 58L61 41M44 63L56 68M44 63L89 21M56 68L59 53M56 68L89 21M59 53L61 41" style="stroke:#0000ff;stroke-linecap:round"/>
+<path class="out" d="M0 48L9 34M0 48L14 34M9 34L14 34M9 34L33 68M27 41L44 0M30 53L33 68M33 68L44 63M44 0L44 58M44 0L61 41" style="stroke:#ff0000;stroke-linecap:round"/>
+<g fill="#333333">
+<circle cx="2" cy="41" r="0.5" tabindex="0">
+<title>
+hole:0
+</title>
+</circle>
+<circle cx="45" cy="68" r="0.5" tabindex="1">
+<title>
+hole:1
+</title>
+</circle>
+<circle cx="68" cy="68" r="0.5" tabindex="2">
+<title>
+hole:2
+</title>
+</circle>
+<circle cx="102" cy="22" r="0.5" tabindex="3">
+<title>
+hole:3
+</title>
+</circle>
+<circle cx="55" cy="0" r="0.5" tabindex="4">
+<title>
+hole:4
+</title>
+</circle>
+</g>
+<g fill="#999999">
+<circle cx="0" cy="48" r="0.5" tabindex="5">
+<title>
+v:0
+</title>
+</circle>
+<circle cx="9" cy="34" r="0.5" tabindex="6">
+<title>
+v:1
+</title>
+</circle>
+<circle cx="14" cy="34" r="0.5" tabindex="7">
+<title>
+v:2
+</title>
+</circle>
+<circle cx="27" cy="41" r="0.5" tabindex="8">
+<title>
+v:3
+</title>
+</circle>
+<circle cx="30" cy="53" r="0.5" tabindex="9">
+<title>
+v:4
+</title>
+</circle>
+<circle cx="33" cy="68" r="0.5" tabindex="10">
+<title>
+v:5
+</title>
+</circle>
+<circle cx="44" cy="0" r="0.5" tabindex="11">
+<title>
+v:6
+</title>
+</circle>
+<circle cx="44" cy="58" r="0.5" tabindex="12">
+<title>
+v:7
+</title>
+</circle>
+<circle cx="44" cy="63" r="0.5" tabindex="13">
+<title>
+v:8
+</title>
+</circle>
+<circle cx="56" cy="68" r="0.5" tabindex="14">
+<title>
+v:9
+</title>
+</circle>
+<circle cx="59" cy="53" r="0.5" tabindex="15">
+<title>
+v:10
+</title>
+</circle>
+<circle cx="61" cy="41" r="0.5" tabindex="16">
+<title>
+v:11
+</title>
+</circle>
+<circle cx="89" cy="21" r="0.5" tabindex="17">
+<title>
+v:12
+</title>
+</circle>
+</g>
 </svg>

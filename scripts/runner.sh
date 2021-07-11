@@ -15,8 +15,8 @@ run() {
 	export TMPDIR="/tmp/runs/$PROBLEM_ID/$RUN_ID"
 	mkdir -p ${TMPDIR}
 	{
-		timeout 900s ./bin/wata_rnd < ./problems/$PROBLEM_ID.json > $TMPDIR/wata.json
-		timeout 900s ./bin/chokudai ./problems/$PROBLEM_ID.json $TMPDIR/wata.json >$TMPDIR/chokudai.json
+		timeout 1200s ./bin/wata < ./problems/$PROBLEM_ID.json > $TMPDIR/wata.json
+		TIMEOUT=1200 timeout 2400s ./bin/chokudai ./problems/$PROBLEM_ID.json $TMPDIR/wata.json >$TMPDIR/chokudai.json
 		curl -X POST -d @$TMPDIR/chokudai.json "https://icfpc.sx9.jp/api/submit?problem_id=$PROBLEM_ID"
 	} 2>&1 | while read line; do
 		echo "$PROBLEM_ID-$RUN_ID: $line"
