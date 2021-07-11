@@ -494,7 +494,7 @@ mainContainer.addChild(new Text("loading wasm", { fill: "red" }));
         const ry = (cy - y) / guiScale;
 
         const s = parseFloat(elem.value);
-        if (s < 0.1) return;
+        if (!(s >= 0.1)) return;
         guiScale = s;
 
         mainContainer.scale.set(guiScale);
