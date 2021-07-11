@@ -16,9 +16,8 @@ import * as wasm from "icfpc2021";
     let p_pose = params['pose_url'] && fetch(params['pose_url']).then(resp => resp.text())
     problem = p_problem && await p_problem
     pose = p_pose && await p_pose
-    if (render(problem, pose)) {
-      el_morph.disabled = false
-    }
+    render(problem, pose)
+    el_morph.disabled = !pose
   }
 
   function render(problem, pose) {
@@ -26,7 +25,6 @@ import * as wasm from "icfpc2021";
       el_container.innerHTML = wasm.render_pose(problem, pose)
       el_message.textContent = `score: ${wasm.calculate_score(problem, pose)}`
       el_pose.value = pose
-      return true
     } else if (problem) {
       el_container.innerHTML = wasm.render(problem)
       el_message.textContent = ''
@@ -34,7 +32,26 @@ import * as wasm from "icfpc2021";
     } else {
       throw arguments
     }
-    return false
+    document.querySelectorAll('circle[i]').forEach(el => {
+      function f(dx, dy) {
+        let i = parseInt(el.getAttribute('i'))
+        let json = JSON.parse(pose)
+        json.vertices[i][0] += dx
+        json.vertices[i][1] += dy
+        pose = JSON.stringify(json)
+        render(problem, pose)
+        document.querySelector(`circle[i="${i}"]`).focus()
+      }
+      el.addEventListener('keydown', ev => {
+        let a = (ev.shiftKey ? 10 : 1)
+        switch (ev.key) {
+          case 'ArrowUp': f(0, -a); break;
+          case 'ArrowDown': f(0, a); break;
+          case 'ArrowLeft': f(-a, 0); break;
+          case 'ArrowRight': f(a, 0); break;
+        }
+      })
+    })
   }
 
   addEventListener('hashchange', _ => render_for_hash(location.href), false)
@@ -46,7 +63,8 @@ import * as wasm from "icfpc2021";
       pose = validated
       render(problem, pose)
       e.target.style.boxShadow = ''
-    } catch {
+    } catch (e) {
+      console.error(e)
       e.target.style.boxShadow = '0 0 2px 2px red'
     }
   })
@@ -61,5 +79,21 @@ import * as wasm from "icfpc2021";
       }
       this.disabled = false
     }
+  })
+
+  el_container.addEventListener('click', e => {
+    let closest = Infinity
+    let closest_target = null
+    el_container.querySelectorAll('circle').forEach(el => {
+      let rect = el.getBoundingClientRect()
+      let dx = (rect.left + rect.right) / 2 - e.clientX
+      let dy = (rect.top + rect.bottom) / 2 - e.clientY
+      let d2 = dx * dx + dy * dy
+      if (d2 < closest) {
+        closest = d2
+        closest_target = el
+      }
+    })
+    if (closest_target) closest_target.focus()
   })
 })()
