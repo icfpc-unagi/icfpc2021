@@ -54,7 +54,7 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 		adj[b].push((a, i));
 	}
 
-	let mut score = compute_score(problem, &pose);
+	let mut dislikes = compute_dislikes(problem, &pose);
 
 	let mut rng = rand::thread_rng();
 	let mut k = 0;
@@ -82,15 +82,15 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 			) <= penalty
 		};
 		if ok {
-			let new_score = compute_score(
+			let new_dislikes = compute_dislikes(
 				problem,
 				&Output {
 					vertices: vertices.clone(),
 					bonuses: Vec::new(),
 				},
 			);
-			if new_score <= score {
-				score = new_score;
+			if new_dislikes <= dislikes {
+				dislikes = new_dislikes;
 				k += 1;
 				continue; // accept change
 			}

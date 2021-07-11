@@ -222,16 +222,25 @@ pub fn compute_score(input: &Input, out: &Output) -> i64 {
 }
 
 fn compute_score_or_err(input: &Input, out: &Output) -> Result<i64, &'static str> {
-	if out.vertices.len() != input.figure.vertices.len() {
-		return Err("vertices len");
-	}
-	let mut score = 0;
+	check_constraints(input, out)?;
+	Ok(compute_dislikes(input, out))
+}
+
+fn compute_dislikes(input: &Input, out: &Output) -> i64 {
+	let mut disikes = 0;
 	for &p in &input.hole {
 		let mut min = i64::max_value();
 		for &q in &out.vertices {
 			min.setmin((p - q).abs2());
 		}
-		score += min;
+		disikes += min;
+	}
+	disikes
+}
+
+fn check_constraints(input: &Input, out: &Output) -> Result<(), &'static str> {
+	if out.vertices.len() != input.figure.vertices.len() {
+		return Err("vertices len");
 	}
 	for &p in &out.vertices {
 		if P::contains_p(&input.hole, p) < 0 {
@@ -248,7 +257,7 @@ fn compute_score_or_err(input: &Input, out: &Output) -> Result<i64, &'static str
 			return Err("illegal length");
 		}
 	}
-	Ok(score)
+	Ok(())
 }
 
 #[derive(
