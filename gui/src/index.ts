@@ -43,6 +43,9 @@ type Problem = {
     vertices: XY[];
     edges: [number, number][];
   };
+  internal?: {
+    reversed_hole: boolean;
+  }
 };
 
 type Solution = {
@@ -104,9 +107,9 @@ class ProblemRenderer {
   epsilon: number;
 
   constructor(problem: string) {
-    // console.log(problem);
+    console.log(problem);
     const inputJson: Problem = (wasm?.read_problem ?? JSON.parse)(problem);
-    // console.log(inputJson);
+    console.log(inputJson);
     this.inputJson = inputJson;
     const dropArea = new Container(); // unused...
     const dragHandler = new DragHandler(
@@ -123,7 +126,11 @@ class ProblemRenderer {
     hole.closePath();
 
     const holeCorners = [];
-    for (const [i, [x, y]] of inputJson.hole.entries()) {
+    let origHole = inputJson.hole.slice();
+    if (inputJson.internal?.reversed_hole) {
+      origHole.reverse();
+    }
+    for (const [i, [x, y]] of origHole.entries()) {
       // TODO: maybe reversed
       const text = new PIXI.Text(`${i}`, {
         fontSize: 12,

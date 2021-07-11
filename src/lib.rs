@@ -30,7 +30,12 @@ pub struct Input {
 	// Some(flag): shiftした。flag: hole逆順にした。
 	#[serde(skip_serializing_if = "Option::is_none")]
 	#[serde(default)]
-	pub internal: Option<bool>,
+	pub internal: Option<InputInternal>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize, Default)]
+pub struct InputInternal {
+	pub reversed_hole: bool,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -87,6 +92,7 @@ const SHIFT_Y: i64 = 0;
 impl Input {
 	pub fn to_internal(&mut self) {
 		assert!(self.internal.is_none());
+		let mut internal: InputInternal = Default::default();
 		for i in 0..self.hole.len() {
 			self.hole[i] += P(SHIFT_X, SHIFT_Y);
 			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
@@ -113,19 +119,22 @@ impl Input {
 		}
 		if area > 0 {
 			// 時計回りにする
+			internal.reversed_hole = true;
 			self.hole.reverse();
 		}
+		self.internal = Some(internal);
 	}
 
 	pub fn to_external(&mut self) {
-		let flag = self.internal.expect("This `Input` is already external");
+		let internal = self.internal.take()
+			.expect("This `Input` is already external");
 		for i in 0..self.hole.len() {
 			self.hole[i] -= P(SHIFT_X, SHIFT_Y);
 		}
 		for bonus in &mut self.bonuses {
 			bonus.position -= P(SHIFT_X, SHIFT_Y);
 		}
-		if flag {
+		if internal.reversed_hole {
 			self.hole.reverse();
 		}
 	}
