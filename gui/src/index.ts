@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Container, Graphics } from "pixi.js";
+import { Container, DisplayObject, Graphics } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
 // lazy import
@@ -98,6 +98,7 @@ class EdgeObject {
 class ProblemRenderer {
   inputJson: Problem;
   hole: Graphics;
+  holeCorners: DisplayObject[];
   edges: EdgeObject[];
   vertices: Graphics[];
   epsilon: number;
@@ -121,6 +122,23 @@ class ProblemRenderer {
     }
     hole.closePath();
 
+    const holeCorners = [];
+    for (const [i, [x, y]] of inputJson.hole.entries()) {
+      // TODO: maybe reversed
+      const text = new PIXI.Text(`${i}`, {
+        fontSize: 12,
+        fill: 0xffffff,
+        stroke: 0x000000,
+        strokeThickness: 2,
+        // align: "center",
+      });
+      text.anchor.set(0.5);
+      text.position.set(x, y);
+      text.scale.set(1 / guiScale);
+      holeCorners.push(text);
+    }
+    this.holeCorners = holeCorners;
+
     const fig = inputJson.figure;
 
     const vertices: Graphics[] = [];
@@ -133,19 +151,17 @@ class ProblemRenderer {
       vertices.push(g);
     }
 
-    for (const [i, v] of vertices.entries()) {
-      // TODO: maybe reversed
-      const text = new PIXI.Text(`${i}`, {
-        fontSize: 12,
-        fill: 0xffffff,
-        stroke: 0x000000,
-        strokeThickness: 2,
-        // align: "center",
-      });
-      text.anchor.set(0.5);
-      v.addChild(text);
-    }
-
+    // for (const [i, v] of vertices.entries()) {
+    //   const text = new PIXI.Text(`${i}`, {
+    //     fontSize: 12,
+    //     fill: 0xffffff,
+    //     stroke: 0x000000,
+    //     strokeThickness: 2,
+    //     // align: "center",
+    //   });
+    //   text.anchor.set(0.5);
+    //   v.addChild(text);
+    // }
 
     this.epsilon = inputJson.epsilon;
     const edges: EdgeObject[] = [];
@@ -228,11 +244,11 @@ class ProblemRenderer {
 
   render(c: Container): void {
     c.removeChildren();
-    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.vertices);
+    c.addChild(this.hole, ...this.edges.map(({ g }) => g), ...this.holeCorners, ...this.vertices);
   }
 
   updateGuiScale(): void {
-    for (const v of this.vertices) {
+    for (const v of [...this.vertices, ...this.holeCorners]) {
       v.scale.set(1 / guiScale);
     }
   }
