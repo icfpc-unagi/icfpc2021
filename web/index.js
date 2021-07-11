@@ -18,7 +18,7 @@ import * as wasm from "icfpc2021";
     if (!hash.startsWith('#')) return
     let params = Object.fromEntries(hash.substr(1).split('&').map(e => e.split('=', 2).map(e => decodeURIComponent(e))))
     if (params['problem_id']) {
-      el_problem_id = params['problem_id']
+      el_problem_id.value = params['problem_id']
       params['problem_url'] = `/static/problems/${params['problem_id']}.json`
     }
     let p_problem = params['problem_url'] && fetch(params['problem_url']).then(resp => resp.ok && resp.text())

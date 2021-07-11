@@ -204,7 +204,7 @@ form { margin: 0; }
 
 <a href="/problems">Problems</a>
 - <a href="/bonuses">Bonuses</a>
-- <a href="/static/show/#problem_url=%%2Fstatic%%2Fproblems%%2F1.json">svg</a>
+- <a href="/static/show/#problem_id=1">svg</a>
 - <a href="/static/gui">gui</a>
 - <a href="/submit">submit</a>
 
