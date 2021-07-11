@@ -439,7 +439,9 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
     {
       const elem: any = document.getElementById("gui-scale")!;
       elem.addEventListener("change", () => {
-        guiScale = parseInt(elem.value);
+        const { x, y } = mainContainer;
+        const { width, height } = app.renderer;
+        guiScale = parseFloat(elem.value);
         mainContainer.scale.set(guiScale);
         r.updateGuiScale();
       });
