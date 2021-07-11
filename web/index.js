@@ -33,7 +33,7 @@ import * as wasm from "icfpc2021";
   function render(problem, pose) {
     if (pose && problem) {
       el_container.innerHTML = wasm.render_pose(problem, pose)
-      el_message.textContent = `score: ${wasm.calculate_score(problem, pose)}`
+      el_message.textContent = `dislikes: ${wasm.calculate_score(problem, pose)}`
       el_pose.value = pose
       el_pose.style.boxShadow = ''
     } else if (problem) {
