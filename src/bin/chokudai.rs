@@ -3,7 +3,7 @@ use core::f64;
 use icfpc2021::*;
 use num::integer::Roots;
 use rand::prelude::*;
-use std::{env, usize, vec};
+use std::{env, io, usize, vec};
 
 fn main() {
     let timeout: f64 = match std::env::var("TIMEOUT") {
@@ -16,7 +16,11 @@ fn main() {
 
     //制限時間の秒数
     let timeout = if timeout < 0.0 { 600.0 } else { timeout };
+    //頂点と穴の端点が一致した奴を動かなくする
     let dontmoveflag = false;
+    //↑がtrueの時、端点以外を良い感じに移動する
+    let fittingflag = false;
+    //途中状況を出力する
     let tempout = false;
 
     let args: Vec<String> = env::args().collect();
@@ -168,7 +172,10 @@ fn main() {
         //first_now[i] = P(input.figure.vertices[i].0 / 2 + maxnum as i64 / 4, input.figure.vertices[i].1 / 2 + maxnum as i64 / 4);
         //first_now[i] = P(input.figure.vertices[i].0 / 4 + maxnum as i64 * 3 / 8, input.figure.vertices[i].1 / 4 + maxnum as i64 * 3 / 8);
 
-        //first_now[i] = P(thread_rng().gen_range(0..maxnum) as i64, thread_rng().gen_range(0..maxnum) as i64);
+        //first_now[i] = P(
+        //    thread_rng().gen_range(0..maxnum) as i64,
+        //    thread_rng().gen_range(0..maxnum) as i64,
+        //);
         //first_now[i] = P(thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4, thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4);
     }
     //write_output(&Output { vertices: first_now.clone(), bonuses: Default::default() });
@@ -243,41 +250,41 @@ fn main() {
         println!();
         */
 
-        for _ in 0..100000 {
-            let mut next_now = first_now.clone();
+        if fittingflag {
+            for _ in 0..100000 {
+                let mut next_now = first_now.clone();
 
-            for e in &input.figure.edges {
-                let a = e.0;
-                let b = e.1;
-                let d1 = (first_now[b] - first_now[a]).abs2();
-                let d2 = (input.figure.vertices[b] - input.figure.vertices[a]).abs2();
+                for e in &input.figure.edges {
+                    let a = e.0;
+                    let b = e.1;
+                    let d1 = (first_now[b] - first_now[a]).abs2();
+                    let d2 = (input.figure.vertices[b] - input.figure.vertices[a]).abs2();
 
-                if d1 > d2 {
-                    if !dont_move[a] {
-                        next_now[a].0 += (first_now[b] - first_now[a]).0 / 20;
-                        next_now[a].1 += (first_now[b] - first_now[a]).1 / 20;
-                    }
+                    if d1 > d2 {
+                        if !dont_move[a] {
+                            next_now[a].0 += (first_now[b] - first_now[a]).0 / 20;
+                            next_now[a].1 += (first_now[b] - first_now[a]).1 / 20;
+                        }
 
-                    if !dont_move[b] {
-                        next_now[b].0 += (first_now[a] - first_now[b]).0 / 20;
-                        next_now[b].1 += (first_now[a] - first_now[b]).1 / 20;
-                    }
-                } else {
-                    if !dont_move[a] {
-                        next_now[a].0 -= (first_now[b] - first_now[a]).0 / 40;
-                        next_now[a].1 -= (first_now[b] - first_now[a]).1 / 40;
-                    }
+                        if !dont_move[b] {
+                            next_now[b].0 += (first_now[a] - first_now[b]).0 / 20;
+                            next_now[b].1 += (first_now[a] - first_now[b]).1 / 20;
+                        }
+                    } else {
+                        if !dont_move[a] {
+                            next_now[a].0 -= (first_now[b] - first_now[a]).0 / 40;
+                            next_now[a].1 -= (first_now[b] - first_now[a]).1 / 40;
+                        }
 
-                    if !dont_move[b] {
-                        next_now[b].0 -= (first_now[a] - first_now[b]).0 / 40;
-                        next_now[b].1 -= (first_now[a] - first_now[b]).1 / 40;
+                        if !dont_move[b] {
+                            next_now[b].0 -= (first_now[a] - first_now[b]).0 / 40;
+                            next_now[b].1 -= (first_now[a] - first_now[b]).1 / 40;
+                        }
                     }
                 }
+                first_now = next_now.clone();
             }
-            first_now = next_now.clone();
         }
-
-        println!();
     }
 
     let mut allbest = -9999999999999999.0;
@@ -381,7 +388,7 @@ fn main() {
 
         let none = 9999;
         let mut prechoose = none;
-        let mut premove = none;
+        let mut premove = P(0, 0);
 
         let mut prescore = ret;
 
@@ -398,9 +405,17 @@ fn main() {
                     prechoose
                 }
             };
-            let move_type = {
+            let move_p = {
                 if prechoose == none {
-                    thread_rng().gen_range(0..8)
+                    if thread_rng().gen_range(0..4) == 0 {
+                        let target1 = thread_rng().gen_range(0..v_list[target].len());
+                        let target2 = thread_rng().gen_range(0..v_list[target].len());
+                        let v1 = now[v_list[target][target1]];
+                        let v2 = now[v_list[target][target2]];
+                        v1 + v2 - now[target] - now[target]
+                    } else {
+                        vp[thread_rng().gen_range(0..8)]
+                    }
                 } else {
                     premove
                 }
@@ -414,7 +429,7 @@ fn main() {
             if (now_score.0 - now_score.1).abs() < 1e-6 {
                 let error = point_error[target] + edge_error[target] + dist_error[target];
                 if error > -1e-6 {
-                    premove = none;
+                    premove = P(0, 0);
                     prechoose = none;
                     continue;
                 }
@@ -422,7 +437,7 @@ fn main() {
 
             let mut move_vec = vec![0; 0];
             move_vec.push(target);
-            let move_rate = thread_rng().gen_range(0..100);
+            let move_rate = thread_rng().gen_range(0..50);
 
             for i in &v_list[target] {
                 if thread_rng().gen_range(0..100) < move_rate && !dont_move[*i] {
@@ -433,7 +448,7 @@ fn main() {
             let mut nextcheck = false;
             for i in &move_vec {
                 if !dont_move[*i] {
-                    let pos = now[*i] + vp[move_type];
+                    let pos = now[*i] + move_p;
                     if pos.0 < 0 {
                         nextcheck = true;
                     }
@@ -450,7 +465,7 @@ fn main() {
             }
 
             if nextcheck {
-                premove = none;
+                premove = P(0, 0);
                 prechoose = none;
                 continue;
             }
@@ -462,7 +477,7 @@ fn main() {
             let mut next_score = now_score;
 
             for i in &move_vec {
-                let nextp = now[*i] + vp[move_type];
+                let nextp = now[*i] + move_p;
                 let add = get_move_score(
                     false,
                     &input,
@@ -489,7 +504,7 @@ fn main() {
                     / 1000.0
             {
                 for i in &move_vec {
-                    let nextp = now[*i] - vp[move_type];
+                    let nextp = now[*i] - move_p;
                     let add = get_move_score(
                         false,
                         &input,
@@ -508,16 +523,16 @@ fn main() {
                     next_score.1 += add.1;
                 }
                 prescore = next_score;
-                premove = none;
+                premove = P(0, 0);
                 prechoose = none;
             //now[target] = now[target] - vp[move_type];
             } else {
                 prescore = next_score;
-                premove = move_type;
+                premove = move_p;
                 prechoose = target;
 
                 //eprintln!(" temp : {} {} {}", cnt, next_score.0, next_score.1);
-                if next_score.0 > bestscore {
+                if next_score.0 - 1e-6 > bestscore {
                     if tempout {
                         eprintln!("temp2 : {} {} {}", cnt, next_score.0, next_score.1);
                     }
@@ -547,6 +562,14 @@ fn main() {
                         next_score.1 = 0.0;
                         allbest = next_score.0;
                         best_ans = now.clone();
+
+                        write_output_to_writer(
+                            &Output {
+                                vertices: now.clone(),
+                                bonuses: Default::default(),
+                            },
+                            io::stderr(),
+                        );
                     } else {
                         next_score = get_first_score(
                             &input,
@@ -567,11 +590,18 @@ fn main() {
 
         //eprintln!("ans : {} {}", prescore.0, prescore.1);
 
-        //if allbest2 == bestscore {
-        //	best_part = nowpart.clone();
-        //}
+        if allbest2 == bestscore {
+            eprintln!("bestscore : {}", bestscore);
+            write_output_to_writer(
+                &Output {
+                    vertices: first_now.clone(),
+                    bonuses: Default::default(),
+                },
+                io::stderr(),
+            );
+        }
 
-        if allbest >= 0.0 {
+        if allbest >= -1e-7 {
             break;
         }
     }
@@ -604,8 +634,8 @@ fn get_move_score(
     //設定値
     let perror_value = 20.0;
     let eerror_value = 1000.0;
-    let derror_value = 100.0;
-    let derror_value2 = 1000.0;
+    let derror_value = 10.0;
+    let derror_value2 = 100000.0;
 
     let vs = &inp.figure.vertices;
 
@@ -661,7 +691,7 @@ fn get_move_score(
             let mypos = now[id];
             let my_pointerror = point_board[mypos.0 as usize][mypos.1 as usize];
 
-            if pre_pointerror > 0.0 || point_error[*v] > 0.0 {
+            if my_pointerror > 1e-3 || point_error[*v] > 1e-3 {
                 let val = -derror_value2;
                 edge_error[id] -= val;
                 edge_error[*v] -= val;
@@ -682,7 +712,7 @@ fn get_move_score(
             let mypos = next_pos;
             let my_pointerror = point_board[mypos.0 as usize][mypos.1 as usize];
 
-            if my_pointerror > 0.0 || point_error[*v] > 0.0 {
+            if my_pointerror > 1e-3 || point_error[*v] > 1e-3 {
                 let val = -derror_value2;
                 edge_error[id] += val;
                 edge_error[*v] += val;
@@ -747,8 +777,8 @@ fn get_first_score(
     //設定値
     let perror_value = 20.0;
     let eerror_value = 1000.0;
-    let derror_value = 100.0;
-    let derror_value2 = 1000.0;
+    let derror_value = 10.0;
+    let derror_value2 = 100000.0;
 
     let n = inp.figure.vertices.len();
     let v = inp.hole.len();
