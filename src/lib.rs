@@ -38,6 +38,8 @@ pub struct Bonus {
 	pub bonus: BonusType,
 	pub problem: u32,
 	pub position: Point,
+	#[serde(default, skip_serializing_if = "serde_skip::is_default")]
+	pub edge: (usize, usize),
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
