@@ -26,6 +26,7 @@ PIXI.settings.RESOLUTION = window.devicePixelRatio || 1;
 const app = new PIXI.Application({
   width: parseInt(urlParams.get("w") ?? "800"),
   height: parseInt(urlParams.get("h") ?? "600"),
+  backgroundColor: 0x999999,
   autoDensity: true,
 });
 document.body.appendChild(app.view);
