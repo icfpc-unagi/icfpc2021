@@ -3,7 +3,7 @@ import { Container, DisplayObject, Graphics } from "pixi.js";
 import { DragHandler } from "./dragdrop";
 
 // lazy import
-import wasm_ from "icfpc2021";
+import wasm_, { AllPairDist } from "icfpc2021";
 let wasm: undefined | typeof wasm_;
 
 const urlParams = new URL(document.location.href).searchParams;
@@ -160,12 +160,16 @@ class ProblemRenderer {
   epsilon: number;
   lastDrag?: VertexObject;
   hintContainer?: Container;
+  allPairDist?: AllPairDist;
 
   constructor(problem: string) {
     console.log(problem);
     const inputJson: Problem = (wasm?.read_problem ?? JSON.parse)(problem);
     console.log(inputJson);
     this.inputJson = inputJson;
+    if (wasm != null) {
+      this.allPairDist = wasm.AllPairDist.from_problem(inputJson);
+    }
     const dropArea = new Container(); // unused...
     const dragHandler = new DragHandler(
       app.renderer.plugins.interaction,
@@ -272,6 +276,7 @@ class ProblemRenderer {
   update(): void {
     const solutionJson = this.pose;
     this.runCheckSolution1(this.inputJson, solutionJson);
+    console.log(this.allPairDist?.test_pose(solutionJson));
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
     )(solutionJson);

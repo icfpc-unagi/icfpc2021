@@ -234,6 +234,7 @@ dependencies = [
  "glob",
  "image",
  "indicatif",
+ "js-sys",
  "num",
  "ordered-float",
  "rand",

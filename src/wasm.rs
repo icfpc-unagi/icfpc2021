@@ -58,6 +58,53 @@ pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 	JsValue::from_serde(&(ok_v, ok_e)).unwrap()
 }
 
+// zenkan
+#[wasm_bindgen]
+pub struct AllPairDist {
+	n: usize,
+	dist_flat: js_sys::Float64Array,
+}
+
+// impl Index<(usize, usize)> for AllPairDist {
+// 	type Output = f64;
+// 	fn index(&self, (i, j): (usize, usize)) -> &f64 {
+// 		let k = i * self.n + j;
+// 		&self.dist_flat.get_index(k as u32)
+// 	}
+// }
+
+#[wasm_bindgen]
+impl AllPairDist {
+	pub fn from_problem(prob: JsValue) -> Self {
+		let prob: Input = prob.into_serde().unwrap();
+		let dist = all_pair_dist_ub(&prob);
+		let n = dist.len();
+		let dist_flat: Vec<_> = dist.into_iter().flatten().collect();
+		Self {
+			n,
+			dist_flat: dist_flat[..].into(),
+		}
+	}
+
+	pub fn test_pose(&self, pose: JsValue) -> js_sys::Int16Array {
+		let pose: Output = pose.into_serde().unwrap();
+		let vs = pose.vertices;
+		let n = self.n;
+		let mut ret = vec![];
+		for i in 0..n {
+			for j in i+1..n {
+				let d = ((vs[i] - vs[j]).abs2() as f64).sqrt();
+				let k = i * n + j;
+				if self.dist_flat.get_index(k as u32) < d - 1e-4 {
+					ret.push(i as i16);
+					ret.push(j as i16);
+				}
+			}
+		}
+		ret[..].into()
+	}
+}
+
 #[wasm_bindgen]
 pub fn render_problem(s: &str) -> String {
 	let prob = read_input_from_reader(s.as_bytes()).unwrap();
