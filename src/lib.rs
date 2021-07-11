@@ -50,7 +50,19 @@ pub enum BonusType {
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Output {
-	pub vertices: Vec<Point>
+	pub vertices: Vec<Point>,
+	#[serde(default)]
+	pub bonuses: Vec<Bonus>,
+}
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct Evaluation {
+	// スコア。不正なときにはこれは -1 が入るので気をつけて！！！
+	pub dislikes: i64,
+	// 実際に問題で使ったボーナス（ソート済み）
+	pub bonuses: Vec<Bonus>,
+	// この問題で獲得できたボーナス（ソート済み）
+	pub obtained_bonuses: Vec<Bonus>,
 }
 
 pub fn read_input() -> Input {
@@ -89,6 +101,29 @@ pub fn write_output(out: &Output) {
 
 pub fn read_output_from_file(f: impl AsRef<std::path::Path>) -> Output {
 	serde_json::from_reader(std::fs::File::open(f).unwrap()).unwrap()
+}
+
+pub fn evaluate(input: &Input, output: &Output) -> Evaluation {
+	let dislikes = compute_score(input, output);
+
+	let mut obtained_bonuses: Vec<_> = Vec::new();
+    for bonus in &input.bonuses {
+        for p in &output.vertices {
+            if bonus.position == *p {
+                obtained_bonuses.push(bonus.clone());
+            }
+        }
+    }
+	obtained_bonuses.sort();
+
+	let mut bonuses = output.bonuses.clone();
+	bonuses.sort();
+
+	Evaluation{
+		dislikes: if dislikes < 1000000000 { dislikes } else { -1 },
+		bonuses: bonuses,
+		obtained_bonuses: obtained_bonuses,
+	}
 }
 
 pub fn compute_score(input: &Input, out: &Output) -> i64 {
