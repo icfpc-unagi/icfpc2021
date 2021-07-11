@@ -110,6 +110,14 @@ fn rec(data: &Data, i: usize, order: &Vec<usize>, out: &mut Vec<Point>, used: &m
 }
 
 fn main() {
+    let no_search = match std::env::var("WATA_NO_SEARCH") {
+        Ok(value) => match value.parse::<i64>() {
+            Ok(value) => value != 0,
+            Err(_) => false,
+        },
+        Err(_) => false,
+    };
+
 	let input = read_input();
 	let n = input.figure.vertices.len();
 	let mut g = vec![vec![]; n];
@@ -221,6 +229,12 @@ fn main() {
 		}
 		used[order[0]] = true;
 		rec(&data, 1, &order, &mut out, &mut used, &min, &mut best, &mut best_score, stime + 10.0);
+
+        // もし何かが見つかったら直ちに終了する
+        if no_search && best.len() > 0 {
+            break;
+        }
+
 		// if best.len() > 0 {
 		// 	let stime = get_time();
 		// 	let x = best[order[0]].0;
