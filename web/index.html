@@ -19,10 +19,13 @@
       placeholder="Select problem ID first then paste json here" required></textarea><br>
     <label for="_force">強制アップデート（スコアを確認しない）:</label><input type="checkbox" name="force" value="1" id="_force"><br>
     <input type="submit" value="Submit">
+
     <ul>
       <li>←↓↑→: move focused point (shift x10)
       <li>H: flip horizontally
       <li>V: flip vertically
+      <li>,: rotate 30 ccw (rounding to grid)
+      <li>.: rotate 30 cw (rounding to grid)
       <li>-: minify (rounding to grid)
       <li>+: magnify (rounding to grid)
     </ul>

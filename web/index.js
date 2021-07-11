@@ -59,6 +59,8 @@ import * as wasm from "icfpc2021";
         case 'ArrowRight': apply(i, v => [v[0] + a, v[1]], false); return false;
         case 'h': apply(i, (v, p) => [2 * p[0] - v[0], v[1]], true); return false;
         case 'v': apply(i, (v, p) => [v[0], 2 * p[1] - v[1]], true); return false;
+        case ',': apply(i, (v, p) => [Math.round((v[0] - p[0]) * Math.cos(Math.PI / -6) - (v[1] - p[1]) * Math.sin(Math.PI / -6) + p[0]), Math.round((v[0] - p[0]) * Math.sin(Math.PI / -6) + (v[1] - p[1]) * Math.cos(Math.PI / -6) + p[1])], true); return false;
+        case '.': apply(i, (v, p) => [Math.round((v[0] - p[0]) * Math.cos(Math.PI / 6) - (v[1] - p[1]) * Math.sin(Math.PI / 6) + p[0]), Math.round((v[0] - p[0]) * Math.sin(Math.PI / 6) + (v[1] - p[1]) * Math.cos(Math.PI / 6) + p[1])], true); return false;
         case '-': apply(i, (v, p) => [Math.round((v[0] - p[0]) * .9 + p[0]), Math.round((v[1] - p[1]) * .9 + p[1])], true); return false;
         case '+': apply(i, (v, p) => [Math.round((v[0] - p[0]) / .9 + p[0]), Math.round((v[1] - p[1]) / .9 + p[1])], true); return false;
       }
