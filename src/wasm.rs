@@ -49,8 +49,7 @@ pub fn render_problem(s: &str) -> Result<String, JsValue> {
 
 #[wasm_bindgen]
 pub fn render_pose(problem: &str, pose: &str) -> Result<String, JsValue> {
-	let prob =
-		read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let prob = serde_json::from_str(problem).map_err(|e| JsValue::from(e.to_string()))?;
 	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
 
 	let mut buf = Vec::new();
@@ -61,8 +60,7 @@ pub fn render_pose(problem: &str, pose: &str) -> Result<String, JsValue> {
 
 #[wasm_bindgen]
 pub fn calculate_score(problem: &str, pose: &str) -> Result<f64, JsValue> {
-	let prob =
-		read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let prob = serde_json::from_str(problem).map_err(|e| JsValue::from(e.to_string()))?;
 	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
 
 	Ok(compute_score(&prob, &pose) as f64)
@@ -70,8 +68,7 @@ pub fn calculate_score(problem: &str, pose: &str) -> Result<f64, JsValue> {
 
 #[wasm_bindgen]
 pub fn morph(problem: &str, pose: &str, n: usize) -> Result<String, JsValue> {
-	let prob =
-		read_input_from_reader(problem.as_bytes()).map_err(|e| JsValue::from(e.to_string()))?;
+	let prob = serde_json::from_str(problem).map_err(|e| JsValue::from(e.to_string()))?;
 	let pose = serde_json::from_str(pose).map_err(|e| JsValue::from(e.to_string()))?;
 
 	let (pose, k) = ugougo::ugougo(&prob, &pose, n);
