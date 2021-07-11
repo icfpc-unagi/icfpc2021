@@ -303,9 +303,9 @@ fn main() {
 				out[i] = P((min_x + max_x) / 2, (min_y + max_y) / 2);
 			}
 		}
-		write_output(&Output { vertices: out });
+		write_output(&Output { vertices: out, bonuses: Default::default() });
 	} else {
 		eprintln!("orz");
-		write_output(&Output { vertices: vec![] });
+		write_output(&Output { vertices: vec![], bonuses: Default::default() });
 	}
 }

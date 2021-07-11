@@ -289,7 +289,7 @@ fn main() {
 					out[i] = P((min_x + max_x) / 2, (min_y + max_y) / 2);
 				}
 			}
-			write_output(&Output { vertices: out });
+			write_output(&Output { vertices: out, bonuses: Default::default() });
 			// let stime = get_time();
 			// let t = 1.0;
 			// let ok = rec(&data, &mut out, &beam[0].1.cand, stime + t);
@@ -373,12 +373,12 @@ fn main() {
 			eprintln!("{:.3}: trial: {}", get_time(), k);
 			let mut state = beam[k].1.clone();
 			if rec(&data, &mut state.out, &state.cand, get_time() + 60.0) {
-				write_output(&Output { vertices: state.out });
+				write_output(&Output { vertices: state.out, bonuses: Default::default() });
 				eprintln!("Succeeded!!!");
 				return;
 			}
 		}
 	}
 	eprintln!("orz");
-	write_output(&Output { vertices: vec![] });
+	write_output(&Output { vertices: vec![], bonuses: Default::default() });
 }

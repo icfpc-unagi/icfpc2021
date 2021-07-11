@@ -284,7 +284,7 @@ fn output(out: &Vec<Point>, data: &Data) {
 		}
 	}
 	let out = get_new_graph(&data.input, &out, &dont_move);
-	write_output(&Output { vertices: out });
+	write_output(&Output { vertices: out, bonuses: Default::default() });
 }
 
 fn main() {
