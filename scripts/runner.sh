@@ -2,15 +2,20 @@
 
 set -eu
 
+: ${PROBLEM_ID:=4}
+: ${NPROC:=$(nproc)}
+: ${JOBS:=$(( NPROC * 4 ))}
+: ${COMMIT_ID:=215c8fa}
+
 cd
-if [ ! -e ./problems ]; then
-	gsutil -m cp -r gs://icfpc2021/problems ./
-fi
-mkdir -p ./bin && gsutil -m cp -r gs://icfpc2021/artifacts/215c8fa/* ./bin/ && chmod +x ./bin/*
+mkdir -p ./problems ./bin
+gsutil cp gs://icfpc2021/problems/$PROBLEM_ID.json ./problems/
+for program in chokudai wata_rnd; do
+    gsutil -m cp -r gs://icfpc2021/artifacts/$COMMIT_ID/$program ./bin/
+done
+chmod +x ./bin/*
 
 export START_TIME="$(date +%s)"
-
-: ${PROBLEM_ID:=4}
 
 run() {
 	export RUN_ID=$(head -c 1000 /dev/urandom | openssl dgst -md5 -binary | xxd -p | head -c 10)
@@ -19,8 +24,9 @@ run() {
 	{
 		timeout 1200s ./bin/wata_rnd < ./problems/$PROBLEM_ID.json > $TMPDIR/wata.json
         CURRENT_TIME="$(date +%s)"
-		TIMEOUT="$(( 1200 + START_TIME - CURRENT_TIME ))" \
-            timeout "$(( 1300 + START_TIME - CURRENT_TIME ))s" \
+        DEADLINE="$(( 1800 + (RANDOM % JOBS) / 10 ))"
+		TIMEOUT="$(( 1800 + START_TIME - CURRENT_TIME ))" \
+            timeout "$(( 2000 + START_TIME - CURRENT_TIME ))s" \
             ./bin/chokudai ./problems/$PROBLEM_ID.json $TMPDIR/wata.json >$TMPDIR/chokudai.json
 		curl -X POST -d @$TMPDIR/chokudai.json "https://icfpc.sx9.jp/api/submit?problem_id=$PROBLEM_ID"
 	} 2>&1 | while read line; do
@@ -28,8 +34,6 @@ run() {
 	done
 }
 
-: ${NPROC:=$(nproc)}
-: ${JOBS:=$(( NPROC * 2 ))}
 
 for i in $(seq $JOBS); do
     run &
