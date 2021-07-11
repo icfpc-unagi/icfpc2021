@@ -61,10 +61,27 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 	for _ in 0..cycles {
 		let a = rng.gen_range(0..n);
 		let d = DIRS[rng.gen_range(0..4)];
-		vertices[a] += d; // destructive
-		if check_constraints_around_vertex(
+
+		let penalty = if check_constraints_around_vertex(
 			hole, edges, &vertices, &dist2, a, &adj[a], *epsilon, globalist,
 		) {
+			0
+		} else {
+			calculate_penalty(
+				hole, edges, &vertices, &dist2, a, &adj[a], *epsilon, globalist,
+			)
+		};
+		vertices[a] += d; // destructive
+		let ok = if penalty == 0 {
+			check_constraints_around_vertex(
+				hole, edges, &vertices, &dist2, a, &adj[a], *epsilon, globalist,
+			)
+		} else {
+			calculate_penalty(
+				hole, edges, &vertices, &dist2, a, &adj[a], *epsilon, globalist,
+			) <= penalty
+		};
+		if ok {
 			let new_score = compute_score(
 				problem,
 				&Output {
@@ -114,4 +131,29 @@ fn check_constraints_around_vertex(
 						&& stretch_within((d.0 - d.1).abs2(), dist2[i], epsilon) == Ordering::Equal
 				})
 		}
+}
+
+fn calculate_penalty(
+	hole: &Vec<Point>,
+	edges: &Vec<(usize, usize)>,
+	vertices: &Vec<Point>,
+	dist2: &Vec<i64>,
+	a: usize,
+	adj: &[(usize, usize)],
+	epsilon: i64,
+	globalist: bool,
+) -> i64 {
+	let mut penalty = 0;
+	if P::contains_p(hole, vertices[a]).is_negative() {
+		penalty += 1000;
+	}
+	adj.iter()
+		.map(|&(b, i)| (i, (vertices[a], vertices[b])))
+		.for_each(|(i, d)| {
+			if !P::contains_s(hole, d) {
+				penalty += 1000
+			}
+			penalty += std::cmp::max(0, ((d.0 - d.1).abs2() - dist2[i]).abs() * 1000000 - epsilon * dist2[i]);
+		});
+	return penalty;
 }
