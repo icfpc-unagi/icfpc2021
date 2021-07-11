@@ -218,10 +218,10 @@ fn main() {
         for i in 0..n {
             for j in 0..v {
                 if output.vertices[i] == input.hole[j] {
-                    eprintln!(
-                        "v{} stop by {}, pos: {} {}",
-                        i, j, output.vertices[i].0, output.vertices[i].1
-                    );
+                    //eprintln!(
+                    //    "v{} stop by {}, pos: {} {}",
+                    //    i, j, output.vertices[i].0, output.vertices[i].1
+                    //);
                     dont_move[i] = true;
                 }
             }
@@ -277,11 +277,6 @@ fn main() {
             first_now = next_now.clone();
         }
 
-        println!("start_position:");
-        write_output(&Output {
-            vertices: first_now.clone(),
-            bonuses: Default::default(),
-        });
         println!();
     }
 
