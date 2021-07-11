@@ -215,8 +215,8 @@ fn main() {
 
     dump(&input, &positions, 0);
 
-    if true {
-        let penalty_limit = find_largest_penalty(&input, &positions).0 * 2; // TODO: ハイパラ
+    if false {
+        let penalty_limit = find_largest_penalty(&input, &positions).0 * 3; // TODO: ハイパラ
         positions = step(&input, positions, penalty_limit);
     }
 
@@ -234,4 +234,6 @@ fn main() {
 
         i_iter += 1;
     }
+
+    dump(&input, &positions, 999);
 }
