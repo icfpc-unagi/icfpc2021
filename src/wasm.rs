@@ -95,5 +95,7 @@ pub fn morph(problem: &str, pose: &str, n: usize) -> String {
 	let (pose, k) = ugougo::ugougo(&prob, &pose, n);
 	console::log_1(&format!("success rate {}/{}", k, n).into());
 
-	serde_json::to_string(&pose).unwrap()
+	let mut buf = Vec::new();
+	write_output_to_writer(&pose, &mut buf);
+	String::from_utf8(buf).unwrap()
 }
