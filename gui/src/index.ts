@@ -103,7 +103,9 @@ class ProblemRenderer {
   epsilon: number;
 
   constructor(problem: string) {
+    // console.log(problem);
     const inputJson: Problem = (wasm?.read_problem ?? JSON.parse)(problem);
+    // console.log(inputJson);
     this.inputJson = inputJson;
     const dropArea = new Container(); // unused...
     const dragHandler = new DragHandler(
@@ -130,6 +132,20 @@ class ProblemRenderer {
       dragHandler.register(g);
       vertices.push(g);
     }
+
+    for (const [i, v] of vertices.entries()) {
+      // TODO: maybe reversed
+      const text = new PIXI.Text(`${i}`, {
+        fontSize: 12,
+        fill: 0xffffff,
+        stroke: 0x000000,
+        strokeThickness: 2,
+        // align: "center",
+      });
+      text.anchor.set(0.5);
+      v.addChild(text);
+    }
+
 
     this.epsilon = inputJson.epsilon;
     const edges: EdgeObject[] = [];
