@@ -25,6 +25,12 @@ pub struct Input {
 	pub epsilon: i64,
 	#[serde(default)]
 	pub bonuses: Vec<Bonus>,
+
+	// None: shiftしていない。
+	// Some(flag): shiftした。flag: hole逆順にした。
+	#[serde(skip_serializing_if = "Option::is_none")]
+	#[serde(default)]
+	pub internal: Option<bool>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -80,6 +86,7 @@ const SHIFT_Y: i64 = 0;
 
 impl Input {
 	pub fn to_internal(&mut self) {
+		assert!(self.internal.is_none());
 		for i in 0..self.hole.len() {
 			self.hole[i] += P(SHIFT_X, SHIFT_Y);
 			assert!(self.hole[i].0 >= 0 && self.hole[i].1 >= 0);
@@ -87,6 +94,8 @@ impl Input {
 		for bonus in &mut self.bonuses {
 			bonus.position += P(SHIFT_X, SHIFT_Y);
 		}
+
+		// edgeの重複消すのは元に戻す方法が今のところないので注意。
 		for i in 0..self.figure.edges.len() {
 			if self.figure.edges[i].0 > self.figure.edges[i].1 {
 				let t = self.figure.edges[i].0;
@@ -97,6 +106,7 @@ impl Input {
 
 		self.figure.edges.sort();
 		self.figure.edges.dedup();
+
 		let mut area = 0;
 		for i in 0..self.hole.len() {
 			area += self.hole[i].det(self.hole[(i + 1) % self.hole.len()]);
@@ -108,11 +118,15 @@ impl Input {
 	}
 
 	pub fn to_external(&mut self) {
+		let flag = self.internal.expect("This `Input` is already external");
 		for i in 0..self.hole.len() {
 			self.hole[i] -= P(SHIFT_X, SHIFT_Y);
 		}
 		for bonus in &mut self.bonuses {
 			bonus.position -= P(SHIFT_X, SHIFT_Y);
+		}
+		if flag {
+			self.hole.reverse();
 		}
 	}
 }
