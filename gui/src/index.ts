@@ -102,6 +102,7 @@ class ProblemRenderer {
   edges: EdgeObject[];
   vertices: Graphics[];
   epsilon: number;
+  lastDrag?: Graphics;
 
   constructor(problem: string) {
     // console.log(problem);
@@ -185,7 +186,7 @@ class ProblemRenderer {
         let { x, y } = v.position;
         x = Math.round(x);
         y = Math.round(y);
-        v.position.set(Math.round(x), Math.round(y));
+        v.position.set(x, y);
         const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
         v.tint = atCorner ? 0x00ff00 : 0x008000;
         v.emit("myupdate");
@@ -195,11 +196,30 @@ class ProblemRenderer {
         (document.getElementById("output-json") as any).value = (
           wasm?.write_pose ?? JSON.stringify
         )(solutionJson);
+        this.lastDrag = v;
       });
     }
 
     this.runCheckSolution1(inputJson, inputJson.figure);
   }
+
+  moveLastVertex([dx, dy]: XY) {
+    const v = this.lastDrag;
+    if (v == null) return;
+    let { x, y } = v.position;
+    x = Math.round(x + dx);
+    y = Math.round(y + dy);
+    v.position.set(x, y);
+    const inputJson = this.inputJson;
+    const atCorner = inputJson.hole.some((hole) => hole[0] === x && hole[1] === y);
+    v.tint = atCorner ? 0x00ff00 : 0x008000;
+    v.emit("myupdate");
+    const solutionJson = this.pose;
+    this.runCheckSolution1(inputJson, solutionJson);
+    (document.getElementById("output-json") as any).value = (
+      wasm?.write_pose ?? JSON.stringify
+    )(solutionJson);
+}
 
   runCheckSolution1(input: Problem, output: Solution): void {
     if (wasm == null) return;
@@ -270,6 +290,17 @@ mainContainer.addChild(new PIXI.Text("loading wasm", { fill: "red" }));
     let r = new ProblemRenderer(sampleInput);
     r.render(mainContainer);
     r.loadSolution(sampleOutput);
+
+    document.addEventListener('keydown', (e) => {
+      const vec = {
+        ArrowLeft: [-1, 0],
+        ArrowUp: [0, -1],
+        ArrowRight: [1, 0],
+        ArrowDown: [0, 1],
+      }[e.key];
+      if (vec == null) return;
+      r.moveLastVertex(vec as any);
+    });
 
     // load problem
     {
