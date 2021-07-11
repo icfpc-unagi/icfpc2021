@@ -125,15 +125,17 @@ class EdgeObject {
     const target = 1_000_000 * d2Orig;
     const ok = Math.abs(1_000_000 * d2Now - target) <= atol;
     const color = ok ? 0x0000ff : d2Now < d2Orig ? 0xcccc00 : 0xff0000;
-    this.g
-      .clear()
+    const g = this.g;
+    g.zIndex = ok ? 0 : 1;
+    g.tint = color;
+    g.clear()
       .lineStyle({
         color: WHITE,
         width: 1,
         cap: "round" as any,
       })
       .moveTo(...p0)
-      .lineTo(...p1).tint = color;
+      .lineTo(...p1);
   }
 
   hintFor(vertex: VertexObject): Graphics {
@@ -285,7 +287,9 @@ class ProblemRenderer {
     }
     for (const [i, ok] of ok_e.entries()) {
       if (!ok) {
-        this.edges[i].g.tint = 0x800080;
+        const g = this.edges[i].g;
+        g.zIndex = 2;
+        g.tint = 0x800080;
       }
     }
   }
@@ -313,9 +317,12 @@ class ProblemRenderer {
 
   render(c: Container): void {
     c.removeChildren();
+    let edgesContainer = new Container();
+    edgesContainer.sortableChildren = true;
+    edgesContainer.addChild(...this.edges.map(({ g }) => g));
     c.addChild(
       this.hole,
-      ...this.edges.map(({ g }) => g),
+      edgesContainer,
       ...this.holeCorners,
       ...this.vertices.map(({ g }) => g)
     );
