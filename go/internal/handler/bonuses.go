@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/http"
+	"sort"
+
 	"github.com/golang/glog"
 	"github.com/imos/icfpc2021/pkg/db"
 	"github.com/pkg/errors"
-	"net/http"
-	"sort"
 )
 
 func init() {
@@ -47,7 +48,7 @@ func renderSubmissionBonuses(ctx context.Context, w http.ResponseWriter, bonuses
 		for i, bonus := range bonuses {
 			fmt.Fprintf(buf, "<tr>")
 			if i == 0 {
-				fmt.Fprintf(buf, "<td rowspan=%d>%d</td>", len(bonuses), bonus.ProblemID)
+				fmt.Fprintf(buf, "<td rowspan=%d><a href=\"/static/show/#problem_id=%d\">%d</a></td>", len(bonuses), bonus.ProblemID, bonus.ProblemID)
 			}
 			fmt.Fprintf(buf, "<td>%s</td>", bonus.SubmissionBonuses)
 			fmt.Fprintf(buf, "<td>%s</td>", bonus.SubmissionObtainedBonuses)
