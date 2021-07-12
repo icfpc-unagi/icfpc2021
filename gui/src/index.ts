@@ -8,6 +8,13 @@ let wasm: undefined | typeof wasm_;
 
 const urlParams = new URL(document.location.href).searchParams;
 
+const visibilityKeys = [
+  "show-vertex-id",
+  "show-hole-id",
+  "show-hole-dis",
+] as const;
+type VisibilityKey = typeof visibilityKeys[number];
+
 const WHITE: number = 0xffffff;
 
 type XY = [number, number];
@@ -233,7 +240,7 @@ class ProblemRenderer {
       text.anchor.set(0.5);
       text.position.set(x, y);
       text.scale.set(1 / guiScale);
-      text.tint = 0xff0000,
+      text.tint = 0xff0000;
       holeDislikes.push(text);
     }
     this.holeDislikes = holeDislikes;
@@ -319,6 +326,9 @@ class ProblemRenderer {
         });
     }
 
+    for (const key of visibilityKeys) {
+      this.updateGuiVisibility(key);
+    }
     this.update();
   }
 
@@ -339,7 +349,7 @@ class ProblemRenderer {
     try {
       this.runCheckSolution1(inputJson, solutionJson);
       this.runTestPairDist(solutionJson);
-      this.computeDislikes(inputJson, solutionJson)
+      this.computeDislikes(inputJson, solutionJson);
     } catch (e) {
       // 例外が出てdrag終了失敗しているっぽい？
       console.error(e);
@@ -470,6 +480,19 @@ class ProblemRenderer {
     ];
   }
 
+  updateGuiVisibility(which: VisibilityKey): void {
+    const targets = {
+      "show-vertex-id": this.vertices.map((v) => v.idText),
+      "show-hole-id": this.holeCorners,
+      "show-hole-dis": this.holeDislikes,
+    }[which];
+    const elem = document.getElementById(which) as any;
+    const visible = elem.checked;
+    for (const label of targets) {
+      label.visible = visible;
+    }
+  }
+
   updateGuiScale(): void {
     for (const v of [...this.vertices.map(({ g }) => g), ...this.holeCorners]) {
       v.scale.set(1 / guiScale);
@@ -570,34 +593,8 @@ mainContainer.addChild(new Text("loading wasm", { fill: "red" }));
     }
 
     // gui label
-    {
-      const elem: any = document.getElementById("show-vertex-id")!;
-      function change(): void {
-        const visible = elem.checked;
-        for (const label of r.vertices.map((v) => v.idText)) {
-          label.visible = visible;
-        }
-      }
-      elem.addEventListener("change", change);
-    }
-    {
-      const elem: any = document.getElementById("show-hole-id")!;
-      function change(): void {
-        const visible = elem.checked;
-        for (const label of r.holeCorners) {
-          label.visible = visible;
-        }
-      }
-      elem.addEventListener("change", change);
-    }
-    {
-      const elem: any = document.getElementById("show-hole-dis")!;
-      function change(): void {
-        const visible = elem.checked;
-        for (const label of r.holeDislikes) {
-          label.visible = visible;
-        }
-      }
-      elem.addEventListener("change", change);
+    for (const name of visibilityKeys) {
+      const elem: any = document.getElementById(name)!;
+      elem.addEventListener("change", () => r.updateGuiVisibility(name));
     }
   });
