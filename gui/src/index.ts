@@ -292,6 +292,11 @@ class ProblemRenderer {
         })
         .on("dragend", () => {
           this.hintContainer.removeChildren();
+          // try {
+          //   console.log(wasm?.tmp_result(v.pos[1]));
+          // } catch (e) {
+          //   console.error(e);
+          // }
           this.update();
           this.lastDrag = v;
         });
@@ -312,15 +317,21 @@ class ProblemRenderer {
   }
 
   update(): void {
+    const inputJson = this.inputJson;
     const solutionJson = this.pose;
-    this.runCheckSolution1(this.inputJson, solutionJson);
-    this.runTestPairDist(solutionJson);
+    try {
+      this.runCheckSolution1(inputJson, solutionJson);
+      this.runTestPairDist(solutionJson);
+    } catch (e) {
+      // 例外が出てdrag終了失敗しているっぽい？
+      console.error(e);
+    }
     (document.getElementById("output-json") as any).value = (
       wasm?.write_pose ?? JSON.stringify
     )(solutionJson);
     if (wasm != null) {
-      console.log(wasm.score_or_message(this.inputJson, solutionJson));
-      scoreText.text = wasm.score_or_message(this.inputJson, solutionJson);
+      // console.log(wasm.score_or_message(this.inputJson, solutionJson));
+      scoreText.text = wasm.score_or_message(inputJson, solutionJson);
     }
   }
 
