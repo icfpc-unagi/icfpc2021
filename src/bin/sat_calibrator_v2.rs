@@ -7,6 +7,7 @@ use icfpc2021::*;
 struct Config {
     initial_relax: Option<f64>,
     glucose_path: String,
+    local_penalty: bool,
     /// 3, 5, 7, ...
     min_neighbor: i64,
     max_neighbor: i64,
@@ -160,15 +161,10 @@ impl SatCalibrator {
                     let tp2 = p2 + self.dv(d2);
                     let new_penalty = self.edge_penalty(v1, v2, tp1, tp2);
 
-                    let ok;
-                    if true {
-                        // グローバルペナルティ版
-                        ok = self.contains_s(tp1, tp2) && new_penalty < penalty_limit;
-                    } else {
-                        // 個別ペナルティ版
-                        ok = self.contains_s(tp1, tp2)
-                            && new_penalty < penalty_limit
-                            && new_penalty <= current_penalty;
+                    let mut ok = self.contains_s(tp1, tp2);
+                    ok &= new_penalty < penalty_limit;
+                    if self.config.local_penalty {
+                        ok &= new_penalty <= current_penalty;
                     }
 
                     if !ok {
@@ -347,11 +343,17 @@ fn main() {
         #[structopt(long)]
         glucose_path: String,
 
+        #[structopt(short, long, default_value = "3")]
+        neighbor: i64,
+
+        #[structopt(short, long, default_value = "15")]
+        max_neighbor: i64,
+
         #[structopt(long)]
         initial_relax: Option<f64>,
 
-        #[structopt(short, long, default_value = "3")]
-        neighbor: i64,
+        #[structopt(long)]
+        local_penalty: bool,
     }
     let args = Args::from_args();
     dbg!(&args);
@@ -361,8 +363,9 @@ fn main() {
     let config = Config {
         glucose_path: args.glucose_path.clone(),
         min_neighbor: args.neighbor,
-        max_neighbor: 15,
+        max_neighbor: args.max_neighbor,
         initial_relax: args.initial_relax,
+        local_penalty: args.local_penalty,
     };
 
     let mut sat_calibrator = SatCalibrator::new(input, config);
