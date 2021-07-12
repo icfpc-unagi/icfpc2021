@@ -62,11 +62,11 @@ pub fn score_or_message(prob: &JsValue, pose: &JsValue) -> String {
 	}
 }
 
-// #[wasm_bindgen]
-// pub fn tmp_panic(x: i32) -> i32 {
-// 	assert!(x >= 0);
-// 	x
-// }
+#[wasm_bindgen]
+pub fn tmp_panic(x: i32) -> i32 {
+	assert!(x >= 0);
+	x
+}
 
 // #[wasm_bindgen]
 // pub fn tmp_result(x: i32) -> Result<i32, JsValue> {
