@@ -54,6 +54,13 @@ pub struct Bonus {
 	pub edge: (usize, usize),
 }
 
+
+#[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
+pub struct UseBonus {
+	pub bonus: BonusType,
+	pub problem: u32,
+}
+
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub enum BonusType {
 	#[serde(rename = "GLOBALIST")]
@@ -69,8 +76,8 @@ pub enum BonusType {
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
 pub struct Output {
 	pub vertices: Vec<Point>,
-	#[serde(default, skip_serializing_if = "Vec::<Bonus>::is_empty")]
-	pub bonuses: Vec<Bonus>,
+	#[serde(default, skip_serializing_if = "Vec::<UseBonus>::is_empty")]
+	pub bonuses: Vec<UseBonus>,
 }
 
 #[derive(Clone, Debug, Hash, PartialEq, PartialOrd, Eq, Ord, Deserialize, Serialize)]
@@ -78,7 +85,7 @@ pub struct Evaluation {
 	// スコア。不正なときにはこれは -1 が入るので気をつけて！！！
 	pub dislikes: i64,
 	// 実際に問題で使ったボーナス（ソート済み）
-	pub bonuses: Vec<Bonus>,
+	pub bonuses: Vec<UseBonus>,
 	// この問題で獲得できたボーナス（ソート済み）
 	pub obtained_bonuses: Vec<Bonus>,
 }
@@ -247,15 +254,25 @@ fn check_constraints(input: &Input, out: &Output) -> Result<(), &'static str> {
 			return Err("outside point");
 		}
 	}
+	let globalist = out.bonuses.iter().any(|b| b.bonus == BonusType::Globalist);
+	dbg!(globalist);
+	let mut err = 0.0;
 	for &(i, j) in &input.figure.edges {
 		if !P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])) {
 			return Err("cross edge");
 		}
 		let before = (input.figure.vertices[i] - input.figure.vertices[j]).abs2();
 		let after = (out.vertices[i] - out.vertices[j]).abs2();
-		if (after * 1000000 - before * 1000000).abs() > input.epsilon * before {
-			return Err("illegal length");
+		if globalist {
+			err += (after as f64 / before as f64 - 1.0).abs();
+		} else {
+			if (after * 1000000 - before * 1000000).abs() > input.epsilon * before {
+				return Err("illegal length");
+			}
 		}
+	}
+	if globalist && err > input.figure.edges.len() as f64 * input.epsilon as f64 * 1e-6 {
+		return Err("illegal length");
 	}
 	Ok(())
 }
