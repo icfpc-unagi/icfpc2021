@@ -413,6 +413,13 @@ class ProblemRenderer {
     );
   }
 
+  get labels(): DisplayObject[] {
+    return [
+      ...this.vertices.map(({ g }) => g.getChildAt(0)),
+      ...this.holeCorners,
+    ];
+  }
+
   updateGuiScale(): void {
     for (const v of [...this.vertices.map(({ g }) => g), ...this.holeCorners]) {
       v.scale.set(1 / guiScale);
@@ -509,6 +516,17 @@ mainContainer.addChild(new Text("loading wasm", { fill: "red" }));
         mainContainer.scale.set(guiScale);
         mainContainer.position.set(cx - rx * guiScale, cy - ry * guiScale);
         r.updateGuiScale();
+      });
+    }
+
+    // gui label
+    {
+      const elem: any = document.getElementById("show-labels")!;
+      elem.addEventListener("change", () => {
+        const visible = elem.checked;
+        for (const label of r.labels) {
+          label.visible = visible;
+        }
       });
     }
   });
