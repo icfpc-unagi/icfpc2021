@@ -27,7 +27,7 @@ So, we developed approaches to exactly solve these problems.
 
 One approach is to use back-tracking search with pruning (`src/bin/{zenkan.rs, zenkan2.rs. ...}`). We placed vertices one by one, and pruned by using metrics such as distances.
 
-The other approach is conduct manual work. We developed GUI (`gui/...`) and spent plenty of time to search solutions by hand.
+The other approach is to conduct manual work. We developed GUI (`gui/...`) and spent plenty of time to search solutions by hand.
 
 
 ### Heuristic Approaches
