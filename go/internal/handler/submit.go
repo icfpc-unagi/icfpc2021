@@ -17,6 +17,7 @@ import (
 
 func init() {
 	http.HandleFunc("/api/submit", handleAPISubmit)
+	http.HandleFunc("/api/final_submit", handleAPIFinalSubmit)
 	http.HandleFunc("/submit", handleSubmit)
 }
 
@@ -84,6 +85,83 @@ func handleAPISubmit(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%d", poseID)
 }
 
+func handleAPIFinalSubmit(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	if r.Body == nil {
+		glog.Errorf("body is empty")
+		w.WriteHeader(400)
+		return
+	}
+	defer r.Body.Close()
+	buf, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		glog.Errorf("body is broken: %#v", err)
+		w.WriteHeader(400)
+		return
+	}
+
+	problemID, err := strconv.ParseInt(
+		r.URL.Query().Get("problem_id"), 10, 64)
+	if err != nil {
+		glog.Errorf("Failed to parse problem ID: %+v", err)
+		w.WriteHeader(400)
+		return
+	}
+
+	poseID, err := Submit(ctx, problemID, string(buf), false)
+	if err != nil {
+		glog.Errorf("Failed to submit: %+v", err)
+		w.WriteHeader(400)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+	fmt.Fprintf(w, "%d", poseID)
+}
+
+func FinalSubmit(ctx context.Context, problemID int64, solution string) (int64, error) {
+	evaluation, err := EstimateScore(ctx, problemID, solution)
+	if err != nil {
+		return 0, err
+	}
+	if evaluation.Dislikes < 0 {
+		return 0, errors.New("solution is invalid")
+	}
+
+
+	poseID, err := submitToOfficial(problemID, solution)
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := db.Execute(ctx, `
+INSERT INTO submissions
+SET
+	problem_id = ?,
+	submission_data = ?,
+	submission_bonuses = ?,
+	submission_obtained_bonuses = ?,
+	submission_estimated_score = ?,
+	submission_uuid = ?,
+	submission_submitted = CURRENT_TIMESTAMP()
+`,
+		problemID, solution,
+		evaluation.BonusesStr,
+		evaluation.ObtainedBonusesStr,
+		evaluation.Dislikes,
+		poseID)
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to insert a submission")
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to get an insert ID")
+	}
+	return id, nil
+}
+
 func Submit(ctx context.Context, problemID int64, solution string, force bool) (int64, error) {
 	evaluation, err := EstimateScore(ctx, problemID, solution)
 	if err != nil {
@@ -130,15 +208,16 @@ WHERE problem_id = ? AND submission_estimated_score >= 0
 		return 0, errors.Wrapf(err, "failed to get the all best score")
 	}
 
-	var poseID string
-	if allBestScore == -1 || evaluation.Dislikes < allBestScore || force {
-		poseID, err = submitToOfficial(problemID, solution)
-		if err != nil {
-			return 0, err
-		}
-	} else {
-		glog.Infof("Skipping submission: %d vs %d", evaluation.Dislikes, bestScore)
-	}
+	poseID := ""
+	// var poseID string
+	// if allBestScore == -1 || evaluation.Dislikes < allBestScore || force {
+	// 	poseID, err = submitToOfficial(problemID, solution)
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
+	// } else {
+	// 	glog.Infof("Skipping submission: %d vs %d", evaluation.Dislikes, bestScore)
+	// }
 
 	result, err := db.Execute(ctx, `
 INSERT INTO submissions
