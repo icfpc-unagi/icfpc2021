@@ -276,6 +276,34 @@ fn check_constraints(input: &Input, out: &Output) -> Result<(), &'static str> {
         return Err("illegal length");
     }
     Ok(())
+	if out.vertices.len() != input.figure.vertices.len() {
+		return Err("vertices len");
+	}
+	for &p in &out.vertices {
+		if P::contains_p(&input.hole, p) < 0 {
+			return Err("outside point");
+		}
+	}
+	let globalist = out.bonuses.iter().any(|b| b.bonus == BonusType::Globalist);
+	let mut err = 0.0;
+	for &(i, j) in &input.figure.edges {
+		if !P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])) {
+			return Err("cross edge");
+		}
+		let before = (input.figure.vertices[i] - input.figure.vertices[j]).abs2();
+		let after = (out.vertices[i] - out.vertices[j]).abs2();
+		if globalist {
+			err += (after as f64 / before as f64 - 1.0).abs();
+		} else {
+			if (after * 1000000 - before * 1000000).abs() > input.epsilon * before {
+				return Err("illegal length");
+			}
+		}
+	}
+	if globalist && err > input.figure.edges.len() as f64 * input.epsilon as f64 * 1e-6 {
+		return Err("illegal length");
+	}
+	Ok(())
 }
 
 #[derive(
