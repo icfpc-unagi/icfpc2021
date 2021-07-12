@@ -7,6 +7,7 @@ use icfpc2021::*;
 struct Config {
     initial_relax: Option<f64>,
     glucose_path: String,
+    work_dir: String,
 
     /// 3, 5, 7, ...
     min_neighbor: i64,
@@ -189,9 +190,11 @@ impl SatHillclimber {
     //
     // SATソルバ部分
     //
-    fn write_clauses(clauses: &Vec<Vec<i64>>) {
+    fn write_clauses(&self, clauses: &Vec<Vec<i64>>) {
         use std::io::Write;
-        let mut writer = std::io::BufWriter::new(std::fs::File::create("sat_in.txt").unwrap());
+        let mut writer = std::io::BufWriter::new(
+            std::fs::File::create(format!("{}/sat_in.txt", &self.config.work_dir)).unwrap(),
+        );
 
         let max_lit = clauses
             .iter()
@@ -207,10 +210,12 @@ impl SatHillclimber {
         }
     }
 
-    fn read_solution() -> Option<Vec<bool>> {
+    fn read_solution(&self) -> Option<Vec<bool>> {
         use std::io::BufRead;
 
-        let mut reader = std::io::BufReader::new(std::fs::File::open("sat_out.txt").unwrap());
+        let mut reader = std::io::BufReader::new(
+            std::fs::File::open(format!("{}/sat_out.txt", &self.config.work_dir)).unwrap(),
+        );
         let mut line = String::new();
         reader.read_line(&mut line);
 
@@ -232,16 +237,19 @@ impl SatHillclimber {
     }
 
     fn solve_by_glucose(&self, clauses: &Vec<Vec<i64>>) -> Option<Vec<bool>> {
-        Self::write_clauses(clauses);
+        self.write_clauses(clauses);
 
         // TODO: stdoutの最後の行見てSATかUNSATかあれしたほうがいいかもしれない
         std::process::Command::new(&self.config.glucose_path)
-            .args(vec!["sat_in.txt", "sat_out.txt"])
+            .args(vec![
+                format!("{}/sat_in.txt", &self.config.work_dir),
+                format!("{}/sat_out.txt", &self.config.work_dir),
+            ])
             .status()
             .unwrap()
             .success();
 
-        Self::read_solution()
+        self.read_solution()
     }
 
     //
@@ -260,12 +268,14 @@ impl SatHillclimber {
             bonuses: Default::default(),
         };
         let writer = std::io::BufWriter::new(
-            std::fs::File::create(format!("out/viz{:06}.svg", i_iter)).unwrap(),
+            std::fs::File::create(format!("{}/viz{:06}.svg", &self.config.work_dir, i_iter))
+                .unwrap(),
         );
         icfpc2021::paths::render_pose_svg(&self.input, &output, writer);
 
         let writer = std::io::BufWriter::new(
-            std::fs::File::create(format!("out/sol{:06}.json", i_iter)).unwrap(),
+            std::fs::File::create(format!("{}/sol{:06}.json", &self.config.work_dir, i_iter))
+                .unwrap(),
         );
         icfpc2021::write_output_to_writer(&output, writer);
 
@@ -275,6 +285,8 @@ impl SatHillclimber {
 
     /// 更新できたらSome、全く更新できなかったらNone
     fn solve(&mut self, mut positions: Vec<Point>) -> Option<Vec<Point>> {
+        std::fs::create_dir_all(&self.config.work_dir).unwrap();
+
         // アゲていく！
         let mut i_iter: i64 = 0;
         loop {
@@ -326,10 +338,13 @@ fn main() {
         #[structopt(long)]
         glucose_path: String,
 
-        #[structopt(short, long, default_value = "3")]
+        #[structopt(long, default_value = "./out/")]
+        work_dir: String,
+
+        #[structopt(long, default_value = "3")]
         neighbor: i64,
 
-        #[structopt(short, long, default_value = "11")]
+        #[structopt(long, default_value = "11")]
         max_neighbor: i64,
 
         #[structopt(long)]
@@ -348,6 +363,7 @@ fn main() {
         min_neighbor: args.neighbor,
         max_neighbor: args.max_neighbor,
         initial_relax: args.initial_relax,
+        work_dir: args.work_dir.clone(),
     };
     let mut sat_calibrator = SatHillclimber::new(input, config);
     let sol = sat_calibrator.solve(output.vertices).unwrap();
