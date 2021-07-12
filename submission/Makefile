@@ -30,7 +30,7 @@ evaluate:
 	mv $*.json.tmp $*.json
 
 submit/%: %.json FORCE
-	curl -X POST -d @$*.json "http://icfpc.sx9.jp/api/final_submit?problem_id=$*"
+	curl -X POST -d @$*.json "https://icfpc.sx9.jp/api/final_submit?problem_id=$*"
 
 submit:
 	make evaluate
