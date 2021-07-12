@@ -1,3 +1,5 @@
+use std::iter::*;
+
 use crate::*;
 use rand;
 use rand::*;
@@ -17,14 +19,15 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 			vertices: original_vertices,
 		},
 		epsilon,
+		bonuses,
 		..
 	} = problem;
 	let Output {
 		mut vertices,
-		bonuses,
+		bonuses: use_bonuses,
 	} = pose.clone();
 
-	let globalist = bonuses
+	let globalist = use_bonuses
 		.iter()
 		.find(|&b| b.bonus == BonusType::Globalist)
 		.is_some();
@@ -53,8 +56,10 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 		adj[a].push((b, i));
 		adj[b].push((a, i));
 	}
+	let bonus_set = std::collections::BTreeSet::from_iter(bonuses.iter().map(|b| b.position));
 
-	let mut dislikes = compute_dislikes(problem, &pose);
+	let mut dislikes = compute_dislikes(problem, &pose)
+		- vertices.iter().filter(|&v| bonus_set.contains(v)).count() as i64;
 
 	let mut rng = rand::thread_rng();
 	let mut k = 0;
@@ -88,7 +93,8 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 					vertices: vertices.clone(),
 					bonuses: Vec::new(),
 				},
-			);
+			) - vertices.iter().filter(|&v| bonus_set.contains(v)).count()
+				as i64;
 			if new_dislikes <= dislikes {
 				dislikes = new_dislikes;
 				k += 1;
@@ -98,7 +104,13 @@ pub fn ugougo(problem: &Input, pose: &Output, cycles: i32) -> (Output, i32) {
 		vertices[a] -= d; // revert
 	}
 
-	(Output { vertices, bonuses }, k)
+	(
+		Output {
+			vertices,
+			bonuses: use_bonuses,
+		},
+		k,
+	)
 }
 
 fn check_constraints_around_vertex(
@@ -153,7 +165,10 @@ fn calculate_penalty(
 			if !P::contains_s(hole, d) {
 				penalty += 1000
 			}
-			penalty += std::cmp::max(0, ((d.0 - d.1).abs2() - dist2[i]).abs() * 1000000 - epsilon * dist2[i]);
+			penalty += std::cmp::max(
+				0,
+				((d.0 - d.1).abs2() - dist2[i]).abs() * 1000000 - epsilon * dist2[i],
+			);
 		});
 	return penalty;
 }
