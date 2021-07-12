@@ -5,6 +5,10 @@ use num::integer::Roots;
 use rand::prelude::*;
 use std::{env, io, usize, vec};
 
+struct Config {
+	flex: f64
+}
+
 fn main() {
     let timeout: f64 = match std::env::var("TIMEOUT") {
         Ok(value) => match value.parse::<f64>() {
@@ -13,6 +17,15 @@ fn main() {
         },
         Err(_) => -1.0,
     };
+	let config = &Config {
+		flex: match std::env::var("CHOKUDAI_FLEX") {
+			Ok(value) => match value.parse::<f64>() {
+				Ok(value) => value,
+				Err(_) => -1.0,
+			},
+			Err(_) => -1.0,
+		},
+	};
 
     //制限時間の秒数
     let timeout = if timeout < 0.0 { 600.0 } else { timeout };
@@ -297,6 +310,7 @@ fn main() {
     let mut v_best = vec![0.0; v];
 
     let ret = get_first_score(
+		&config,
         &input,
         &mut first_now,
         eps,
@@ -371,6 +385,7 @@ fn main() {
         */
 
         let ret = get_first_score(
+			&config,
             &input,
             &mut now,
             eps,
@@ -479,6 +494,7 @@ fn main() {
             for i in &move_vec {
                 let nextp = now[*i] + move_p;
                 let add = get_move_score(
+					config,
                     false,
                     &input,
                     &mut now,
@@ -506,6 +522,7 @@ fn main() {
                 for i in &move_vec {
                     let nextp = now[*i] - move_p;
                     let add = get_move_score(
+						config,
                         false,
                         &input,
                         &mut now,
@@ -572,6 +589,7 @@ fn main() {
                         );
                     } else {
                         next_score = get_first_score(
+							&config,
                             &input,
                             &mut now,
                             eps,
@@ -618,6 +636,7 @@ fn main() {
 ///差分評価を返す関数
 
 fn get_move_score(
+	config: &Config,
     firstflag: bool,
     inp: &Input,
     now: &mut Vec<P<i64>>,
@@ -661,8 +680,10 @@ fn get_move_score(
             let mut dd = (d2 - d1).abs() as f64;
             if dd <= epsd {
                 dd = 0.0;
-            } else {
-                dd += 0.1;
+            } else if config.flex < 0.0 {
+				dd += 0.1;
+			} else {
+                dd += (dd / epsd - 1.0) * (dd / epsd - 1.0) * config.flex;
             }
             let add = -dd * derror_value;
             dist_error[id] -= add;
@@ -675,8 +696,10 @@ fn get_move_score(
             let mut dd = (d2 - d1).abs() as f64;
             if dd <= epsd {
                 dd = 0.0;
-            } else {
-                dd += 0.1;
+            } else if config.flex < 0.0 {
+				dd += 0.1;
+			} else {
+                dd += (dd / epsd - 1.0) * (dd / epsd - 1.0) * config.flex;
             }
             let add = -dd * derror_value;
             dist_error[id] += add;
@@ -764,6 +787,7 @@ fn get_move_score(
 }
 
 fn get_first_score(
+	config: &Config,
     inp: &Input,
     now: &mut Vec<P<i64>>,
     eps: i64,
@@ -799,6 +823,7 @@ fn get_first_score(
 
     for i in 0..n {
         get_move_score(
+			config,
             true,
             inp,
             now,
