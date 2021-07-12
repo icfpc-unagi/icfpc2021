@@ -1,9 +1,0 @@
-#!/bin/sh
-#
-for infile in `ls test_instance`
-do
- file=${infile%.*}
- outfile="$file.td"
- echo $file
- td-validate-master/td-validate "test_instance/$infile" "test_result/$outfile"  
-done

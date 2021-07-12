@@ -1,0 +1,3 @@
+[submodule "tree_decomposition/PACE2017-TrackA"]
+	path = tree_decomposition/PACE2017-TrackA
+	url = git@github.com:TCS-Meiji/PACE2017-TrackA.git
