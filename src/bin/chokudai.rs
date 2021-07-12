@@ -15,7 +15,7 @@ fn main() {
     };
 
     //制限時間の秒数
-    let timeout = if timeout < 0.0 { 60.0 } else { timeout };
+    let timeout = if timeout < 0.0 { 600.0 } else { timeout };
     //grobalistフラグ
     let is_grobalist = false;
     //頂点と穴の端点が一致した奴を動かなくする
@@ -24,6 +24,11 @@ fn main() {
     let fittingflag = false;
     //途中状況を出力する
     let tempout = false;
+    //何番のoptionを取りに行くか決める -1の時は狙わない
+    let target_option = 0;
+    //optionの場所
+    let opt_pos = P(0, 0);
+    let mut opt_dist = 0.0;
 
     let args: Vec<String> = env::args().collect();
 
@@ -89,6 +94,18 @@ fn main() {
             maxnum = p.1;
         }
     }
+
+    //optionの場所
+    let opt_pos = {
+        if target_option == -1 {
+            P(0, 0)
+        } else {
+            P(
+                input.bonuses[target_option as usize].position.0,
+                input.bonuses[target_option as usize].position.1,
+            )
+        }
+    };
 
     /*
     let mut dist = mat![1e20; n; n];
@@ -319,6 +336,9 @@ fn main() {
         &v_list,
         is_grobalist,
         &mut grobalist_sum,
+        target_option,
+        opt_pos,
+        &mut opt_dist,
     );
     if ret.1 == 0.0 {
         allbest = ret.0;
@@ -395,10 +415,13 @@ fn main() {
             &v_list,
             is_grobalist,
             &mut grobalist_sum,
+            target_option,
+            opt_pos,
+            &mut opt_dist,
         );
         let mut bestscore = ret.0;
         let loopend = 3000000;
-        let updatenum = 1000;
+        let updatenum = 2000;
         let mut update = updatenum;
 
         let none = 9999;
@@ -407,7 +430,7 @@ fn main() {
 
         let mut prescore = ret;
 
-        //eprintln!("first data: {} {}", ret.0, ret.1);
+        //println!("first data: {} {}", ret.0, ret.1);
 
         for mut cnt in 0..loopend {
             if update < 0 {
@@ -510,6 +533,9 @@ fn main() {
                     &v_list,
                     is_grobalist,
                     &mut grobalist_sum,
+                    target_option,
+                    opt_pos,
+                    &mut opt_dist,
                 );
                 next_score.0 += add.0;
                 next_score.1 += add.1;
@@ -520,7 +546,7 @@ fn main() {
             if now_score.0 - next_score.0
                 > thread_rng().gen_range(0..100000000) as f64 * pow3(pow3(pow3(1.0 - temp)))
                     / 200.0
-                    / 1000.0
+                    / 3000.0
             {
                 for i in &move_vec {
                     let nextp = now[*i] - move_p;
@@ -539,6 +565,9 @@ fn main() {
                         &v_list,
                         is_grobalist,
                         &mut grobalist_sum,
+                        target_option,
+                        opt_pos,
+                        &mut opt_dist,
                     );
                     next_score.0 += add.0;
                     next_score.1 += add.1;
@@ -597,6 +626,9 @@ fn main() {
                             &v_list,
                             is_grobalist,
                             &mut grobalist_sum,
+                            target_option,
+                            opt_pos,
+                            &mut opt_dist,
                         );
                     }
                     prescore = next_score;
@@ -630,9 +662,31 @@ fn main() {
 
     write_output(&Output {
         vertices: best_ans.clone(),
-        bonuses: Default::default(),
+        bonuses: vec![UseBonus {
+            bonus: BonusType::Globalist,
+            problem: 0,
+        }],
     })
 }
+
+/*
+fn writer_output_with_bonus(vertices: Vec<P<i64>>, out: Output, is_groballist: bool) {
+    if is_groballist {
+        write_output(&Output {
+            vertices: vertices.clone(),
+            bonuses: vec![UseBonus {
+                bonus: BonusType::Globalist,
+                problem: 0,
+            }],
+        })
+    } else {
+        write_output(&Output {
+            vertices: vertices.clone(),
+            bonuses: Default::default(),
+        })
+    }
+}
+*/
 
 ///差分評価を返す関数
 
@@ -651,6 +705,9 @@ fn get_move_score(
     v_list: &Vec<Vec<usize>>,
     is_grobalist: bool,
     grobalist_sum: &mut f64,
+    target_option: i32,
+    opt_pos: P<i64>,
+    opt_dist: &mut f64,
 ) -> (f64, f64) {
     //設定値
     let perror_value = 20.0;
@@ -658,6 +715,7 @@ fn get_move_score(
     let derror_value = 100.0;
     let derror_value2 = 10000.0;
     let grobalerror_value = 100000.0;
+    let optdist_value = 100000.0;
 
     let vs = &inp.figure.vertices;
 
@@ -828,6 +886,27 @@ fn get_move_score(
     }
     //eprintln!();
 
+    if target_option != -1 {
+        ans2 += *opt_dist * optdist_value;
+
+        let d1 = (opt_pos - now[id]).abs2() as f64;
+        let d2 = (opt_pos - next_pos).abs2() as f64;
+
+        if d1 < d2 && *opt_dist >= d1 {
+            *opt_dist = 999999999999.9;
+            for i in 0..inp.figure.vertices.len() {
+                let d = (opt_pos - now[i]).abs2() as f64;
+                if d < *opt_dist && i != id {
+                    *opt_dist = d;
+                }
+            }
+        }
+        if d2 < *opt_dist {
+            *opt_dist = d2;
+        }
+        ans2 -= *opt_dist * optdist_value;
+    }
+
     now[id] = next_pos;
     return (ans1 + ans2, ans2);
 }
@@ -844,6 +923,9 @@ fn get_first_score(
     v_list: &Vec<Vec<usize>>,
     is_grobalist: bool,
     grobalist_sum: &mut f64,
+    target_option: i32,
+    opt_pos: P<i64>,
+    opt_dist: &mut f64,
 ) -> (f64, f64) {
     //設定値
     let perror_value = 20.0;
@@ -851,6 +933,7 @@ fn get_first_score(
     let derror_value = 100.0;
     let derror_value2 = 10000.0;
     let grobalerror_value = 100000.0;
+    let optdist_value = 100000.0;
 
     let n = inp.figure.vertices.len();
     let v = inp.hole.len();
@@ -870,6 +953,7 @@ fn get_first_score(
     }
 
     *grobalist_sum = 0.0;
+    *opt_dist = 0.0;
 
     for i in 0..n {
         get_move_score(
@@ -887,6 +971,9 @@ fn get_first_score(
             v_list,
             is_grobalist,
             grobalist_sum,
+            target_option,
+            opt_pos,
+            opt_dist,
         );
     }
 
@@ -951,6 +1038,17 @@ fn get_first_score(
     for i in 0..v {
         ans1 -= v_best[i];
         //eprintln!("{}", v_best[i]);
+    }
+
+    if target_option != -1 {
+        *opt_dist = 9999999999.0;
+        for i in 0..n {
+            let d = (opt_pos - now[i]).abs2() as f64;
+            if d < *opt_dist {
+                *opt_dist = d;
+            }
+        }
+        ans2 -= *opt_dist * optdist_value;
     }
 
     return (ans1 + ans2, ans2);
