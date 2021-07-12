@@ -34,8 +34,7 @@ submit/%: %.json FORCE
 
 submit:
 	make evaluate
-	@read -p "Are you sure to submit? (yes/no): " answer && [ "$$answer" == "yes" ]
-	echo "Submitting... (with 5 seconds sleep)" && sleep 5
+	echo "Submitting... (with 10 seconds sleep)" && sleep 10
 	for i in `seq 132`; do \
 		make submit/$$i; \
 	done
