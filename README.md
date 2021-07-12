@@ -25,8 +25,9 @@ We also used Go, JavaScript, TypeScript and Python for utilities.
 For some problems, we can achieve zero dislike. Due to the scoring rule, it is very important to achieve zero dislike for these problems.
 So, we developed approaches to exactly solve these problems.
 
-* One approach is to use back-tracking search with pruning (`src/bin/{zenkan.rs, zenkan2.rs. ...}`). We placed vertices one by one, and pruned by using metrics such as distances.
-* The other approach is conduct manual work. We developed GUI (`gui/...`) and spent plenty of time to search solutions by hand.
+One approach is to use back-tracking search with pruning (`src/bin/{zenkan.rs, zenkan2.rs. ...}`). We placed vertices one by one, and pruned by using metrics such as distances.
+
+The other approach is conduct manual work. We developed GUI (`gui/...`) and spent plenty of time to search solutions by hand.
 
 
 ### Heuristic Approaches
