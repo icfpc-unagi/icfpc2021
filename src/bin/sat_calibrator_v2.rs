@@ -8,6 +8,7 @@ struct Config {
     initial_relax: Option<f64>,
     glucose_path: String,
     local_penalty: bool,
+    require_all: bool,
     /// 3, 5, 7, ...
     min_neighbor: i64,
     max_neighbor: i64,
@@ -21,7 +22,11 @@ struct SatCalibrator {
     input: Input,
     config: Config,
     neighbor: i64,
-    is_fixed: Vec<bool>,
+
+    // 点が1つ以上いてほしい場所（つまりholeの頂点）
+    //is_fixed: Vec<bool>,
+    n_required_points: usize,
+    require_id: std::collections::HashMap<Point, usize>,
 
     contains_p_cache: std::collections::HashMap<Point, i32>,
     contains_s_cache: std::collections::HashMap<(Point, Point), bool>,
@@ -35,7 +40,9 @@ impl SatCalibrator {
             config,
             contains_p_cache: Default::default(),
             contains_s_cache: Default::default(),
-            is_fixed: vec![],
+            // is_fixed: vec![],
+            n_required_points: 0,
+            require_id: Default::default(),
         }
     }
 
@@ -126,6 +133,7 @@ impl SatCalibrator {
             }
         }
 
+        /*
         // 角を構成してるやつは真ん中に固定
         for v in 0..n_vs {
             //let p = vertices[v];
@@ -135,6 +143,20 @@ impl SatCalibrator {
                 clauses.push(vec![self.lit(v, self.d_center())]);
             }
         }
+         */
+
+        // requireされてる場所には1つ以上ないと
+        dbg!(self.n_required_points);
+        let mut req_lits = vec![vec![]; self.n_required_points];
+        for v in 0..n_vs {
+            for d in 0..self.n_cands() {
+                let tp = vertices[v] + self.dv(d);
+                if let Some(i) = self.require_id.get(&tp) {
+                    req_lits[*i].push(self.lit(v, d));
+                }
+            }
+        }
+        clauses.append(&mut req_lits);
 
         // はみ出す場所には移動しない
         for v in 0..n_vs {
@@ -198,7 +220,7 @@ impl SatCalibrator {
 
         let max_lit = clauses
             .iter()
-            .map(|clause| clause.iter().map(|l| (*l).abs()).max().unwrap())
+            .map(|clause| clause.iter().map(|l| (*l).abs()).max().unwrap_or(0))
             .max()
             .unwrap();
         writeln!(&mut writer, "p cnf {} {}", max_lit, clauses.len()).unwrap();
@@ -251,6 +273,21 @@ impl SatCalibrator {
     // メインループ部分
     //
 
+    fn setup_require(&mut self, positions: &Vec<Point>) {
+        let mut n_required_points = 0;
+        let mut require_id = std::collections::HashMap::new();
+
+        for hv in &self.input.hole {
+            if self.config.require_all || positions.contains(hv) {
+                require_id.insert(*hv, n_required_points);
+                n_required_points += 1;
+            }
+        }
+
+        self.n_required_points = n_required_points;
+        self.require_id = require_id;
+    }
+
     fn step(&mut self, positions: &Vec<Point>, penalty_limit: i64) -> Option<Vec<Point>> {
         let clauses = self.generate_clauses(positions, penalty_limit);
         self.solve_by_glucose(&clauses)
@@ -277,17 +314,20 @@ impl SatCalibrator {
     }
 
     fn solve(&mut self, mut positions: Vec<Point>) {
+        /*
         self.is_fixed = positions
             .iter()
             .map(|p| self.input.hole.contains(&p))
             .collect();
+         */
+        self.setup_require(&positions);
 
         self.dump(&positions, 0);
 
         // 最初にゆるめる？
         if let Some(initial_relax_ratio) = self.config.initial_relax {
             let penalty_limit =
-                (self.find_largest_penalty(&positions).0 as f64 * initial_relax_ratio) as i64;
+                1 + (self.find_largest_penalty(&positions).0 as f64 * initial_relax_ratio) as i64;
             positions = self.step(&positions, penalty_limit).unwrap();
         }
 
@@ -354,6 +394,9 @@ fn main() {
 
         #[structopt(long)]
         local_penalty: bool,
+
+        #[structopt(long)]
+        require_all: bool,
     }
     let args = Args::from_args();
     dbg!(&args);
@@ -366,6 +409,7 @@ fn main() {
         max_neighbor: args.max_neighbor,
         initial_relax: args.initial_relax,
         local_penalty: args.local_penalty,
+        require_all: args.require_all,
     };
 
     let mut sat_calibrator = SatCalibrator::new(input, config);
