@@ -35,10 +35,12 @@ func handleProblems(w http.ResponseWriter, r *http.Request) {
 
 type Problem struct {
 	ProblemID int64
+	MyBestWithoutBonuses int64
 	MyBest int64
 	Current int64
 	GlobalBest int64
 	Scale int64
+	TeamScoreWithoutBonuses int64
 	TeamScore int64
 }
 
@@ -56,20 +58,58 @@ type Input struct {
 func renderProblems(ctx context.Context, w http.ResponseWriter, problems []Problem) error {
 	var results []struct {
 		ProblemID int64 `db:"problem_id"`
+		SubmissionUseBonuses bool `db:"submission_use_bonuses"`
 		SubmissionScore int64 `db:"submission_score"`
 	}
 	if err := db.Select(ctx, &results, `
-SELECT problem_id, MIN(submission_score) AS submission_score FROM (
-    SELECT problem_id, COALESCE(submission_score, submission_estimated_score) AS submission_score
-    FROM submissions
-) r WHERE submission_score >= 0 GROUP BY problem_id
+SELECT
+    problem_id,
+    submission_use_bonuses,
+    MIN(submission_score) AS submission_score
+FROM
+    (
+    SELECT
+        problem_id,
+        COALESCE(
+            submission_score,
+            submission_estimated_score
+        ) AS submission_score,
+        submission_bonuses != "" AS submission_use_bonuses
+    FROM
+        submissions
+) r
+WHERE
+    submission_score >= 0
+GROUP BY
+    problem_id,
+    submission_use_bonuses
+ORDER BY
+    problem_id,
+    submission_use_bonuses
 `); err != nil {
 		return errors.Wrapf(err, "failed to fetch best scores")
 	}
 
 	bestScores := map[int64]int64{}
 	for _, r := range results {
-		bestScores[r.ProblemID] = r.SubmissionScore
+		if !r.SubmissionUseBonuses {
+			bestScores[r.ProblemID] = r.SubmissionScore
+		}
+	}
+	for i := range problems {
+		problem := &problems[i]
+		if s, ok := bestScores[problem.ProblemID]; ok {
+			problem.MyBestWithoutBonuses = s
+		} else {
+			problem.MyBestWithoutBonuses = -1
+		}
+	}
+
+	bestScores = map[int64]int64{}
+	for _, r := range results {
+		if r.SubmissionUseBonuses {
+			bestScores[r.ProblemID] = r.SubmissionScore
+		}
 	}
 	for i := range problems {
 		problem := &problems[i]
@@ -88,6 +128,10 @@ SELECT problem_id, MIN(submission_score) AS submission_score FROM (
 		json.Unmarshal(data, &input)
 		problem.Scale = int64(
 			len(input.Hole) * len(input.Figure.Vertices) * len(input.Figure.Edges))
+		if problem.MyBestWithoutBonuses >= 0 {
+			problem.TeamScoreWithoutBonuses = int64(math.Ceil(1000 * math.Log2(float64(problem.Scale) / 6) *
+				math.Sqrt(float64(problem.GlobalBest+1)/float64(problem.MyBestWithoutBonuses+1))))
+		}
 		if problem.MyBest >= 0 {
 			problem.TeamScore = int64(math.Ceil(1000 * math.Log2(float64(problem.Scale) / 6) *
 				math.Sqrt(float64(problem.GlobalBest+1)/float64(problem.MyBest+1))))
@@ -96,7 +140,12 @@ SELECT problem_id, MIN(submission_score) AS submission_score FROM (
 
 	buf := &bytes.Buffer{}
 	fmt.Fprintf(buf, "<h1>Problems</h1>\n")
-	fmt.Fprintf(buf, "<table class=table><tr><td>Problem ID</td><td>Score (my/global [remaining])</td><td colspan=1>Dislikes (best / current / global)</td></tr>")
+	fmt.Fprintf(buf, `
+<table class=table><tr><td>Problem ID</td>
+<td>Score (my/global [remaining])</td>
+<td colspan=1>Dislikes (best / with bonuses / current / global)</td>
+</tr>
+`)
 	var score_sum int64
 	for _, problem := range problems {
 		global := int64(math.Ceil(1000 * math.Log2(float64(problem.Scale) / 6)))
@@ -106,16 +155,22 @@ SELECT problem_id, MIN(submission_score) AS submission_score FROM (
 			span = `<span style="color:red">`
 			span_end = `</span>`
 		}
-		fmt.Fprintf(buf, `<tr><td><a href="/static/show#problem_id=%d">%d</a></td><td align=right><code><a href="/static/show/#problem_id=%d&pose_url=%%2Fbest_solution%%3Fproblem_id%%3D%d">%5d</a> / %5d [%s%+6d%s]</code></td><td>(%d / %d / %d)</td></tr>`,
+		fmt.Fprintf(buf, `
+<tr><td><a href="/static/show#problem_id=%d">%d</a></td>
+<td align=right><code><a href="/static/show/#problem_id=%d&pose_url=%%2Fbest_solution%%3Fproblem_id%%3D%d">%5d</a> / %5d [%s%+6d%s] (%5d [%+6d])</code></td>
+<td>(%d / %d / %d / %d)</td></tr>`,
 			problem.ProblemID,
 			problem.ProblemID,
 			problem.ProblemID,
 			problem.ProblemID,
-			problem.TeamScore,
+			problem.TeamScoreWithoutBonuses,
 			global,
 			span,
-			problem.TeamScore - global,
+			problem.TeamScoreWithoutBonuses - global,
 			span_end,
+			problem.TeamScore,
+			problem.TeamScore - global,
+			problem.MyBestWithoutBonuses,
 			problem.MyBest,
 			problem.Current,
 			problem.GlobalBest)
