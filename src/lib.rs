@@ -255,7 +255,6 @@ fn check_constraints(input: &Input, out: &Output) -> Result<(), &'static str> {
 		}
 	}
 	let globalist = out.bonuses.iter().any(|b| b.bonus == BonusType::Globalist);
-	dbg!(globalist);
 	let mut err = 0.0;
 	for &(i, j) in &input.figure.edges {
 		if !P::contains_s(&input.hole, (out.vertices[i], out.vertices[j])) {
