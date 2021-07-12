@@ -191,11 +191,22 @@ pub fn render_pose(problem: &str, pose: &str) -> String {
 }
 
 #[wasm_bindgen]
-pub fn calculate_score(problem: &str, pose: &str) -> f64 {
+pub fn dislikes(problem: &str, pose: &str) -> f64 {
 	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
 	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
 
-	compute_score(&prob, &pose) as f64
+	compute_dislikes(&prob, &pose) as f64
+}
+
+#[wasm_bindgen]
+pub fn violation(problem: &str, pose: &str) -> String {
+	let prob = read_input_from_reader(problem.as_bytes()).unwrap();
+	let pose = read_output_from_reader(pose.as_bytes()).unwrap();
+
+	match check_constraints(&prob, &pose) {
+		Ok(_) => String::new(),
+		Err(reason) => reason.into(),
+	}
 }
 
 #[wasm_bindgen]

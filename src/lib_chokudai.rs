@@ -6,6 +6,9 @@ use rand::prelude::*;
 use std::{env, io, usize, vec};
 
 pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fittingflag: bool) -> Output {
+    //grobalistフラグ
+    let is_grobalist = false;
+    //途中状況を出力する
     let tempout = false;
 
     let n = output.vertices.len();
@@ -122,6 +125,10 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
         //first_now[i] = input.figure.vertices[i].clone();
         //first_now[i] = P(first_now[i].0 + maxnum as i64 * 6 / 10, first_now[i].1 + maxnum as i64 * 1 / 5);
         //eprintln!("{} {} {}", first_now[i].0, first_now[i].1, point_board[first_now[i].0 as usize][first_now[i].1 as usize]);
+        //first_now[i] = P(
+        //    input.figure.vertices[i].1,
+        //    maxnum as i64 - input.figure.vertices[i].0 - 1,
+        //);
 
         first_now[i] = output.vertices[i].clone();
         //first_now[i] = input.figure.vertices[i].clone();
@@ -134,7 +141,11 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
         //);
         //first_now[i] = P(thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4, thread_rng().gen_range(0..maxnum) as i64 / 2 + maxnum as i64 / 4);
     }
-    //write_output(&Output { vertices: first_now.clone(), bonuses: Default::default() });
+
+    //write_output(&Output {
+    //    vertices: first_now.clone(),
+    //    bonuses: Default::default(),
+    //});
 
     let starttime = get_time();
 
@@ -251,6 +262,7 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
     let mut dist_error = vec![0.0; n];
     let mut edge_error = vec![0.0; n];
     let mut v_best = vec![0.0; v];
+    let mut grobalist_sum = 0.0;
 
     let ret = get_first_score(
         &input,
@@ -262,6 +274,8 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
         &mut edge_error,
         &mut v_best,
         &v_list,
+        is_grobalist,
+        &mut grobalist_sum,
     );
     if ret.1 == 0.0 {
         allbest = ret.0;
@@ -285,7 +299,7 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
 
         if ll != 0 {
             for i in 0..n {
-                if thread_rng().gen_range(0..3) == 0 && ll != 0 && !dont_move[i] {
+                if thread_rng().gen_range(0..3) == 0 && ll == -1 && !dont_move[i] {
                     let mut nexty = now_temp[i].0
                         + thread_rng().gen_range(-(maxnum as i64) / 6..(maxnum as i64) / 6 + 1);
                     if nexty < 0 {
@@ -336,10 +350,12 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
             &mut edge_error,
             &mut v_best,
             &v_list,
+            is_grobalist,
+            &mut grobalist_sum,
         );
         let mut bestscore = ret.0;
         let loopend = 3000000;
-        let updatenum = 30000;
+        let updatenum = 1000;
         let mut update = updatenum;
 
         let none = 9999;
@@ -347,6 +363,8 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
         let mut premove = P(0, 0);
 
         let mut prescore = ret;
+
+        //eprintln!("first data: {} {}", ret.0, ret.1);
 
         for mut cnt in 0..loopend {
             if update < 0 {
@@ -447,6 +465,8 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
                     &mut edge_error,
                     &mut v_best,
                     &v_list,
+                    is_grobalist,
+                    &mut grobalist_sum,
                 );
                 next_score.0 += add.0;
                 next_score.1 += add.1;
@@ -474,6 +494,8 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
                         &mut edge_error,
                         &mut v_best,
                         &v_list,
+                        is_grobalist,
+                        &mut grobalist_sum,
                     );
                     next_score.0 += add.0;
                     next_score.1 += add.1;
@@ -502,19 +524,11 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
                 }
 
                 if allbest < next_score.0 - 0.5 && next_score.1 > -1e-5 {
-                    let watacheck = compute_score(
-                        &input,
-                        &Output {
-                            vertices: now.clone(),
-                            bonuses: Default::default(),
-                        },
-                    );
-
-                    if (watacheck < 10000000) {
+                    if true {
                         eprintln!(" OK! : {} {} {} ", cnt, next_score.0, next_score.1);
-                        eprintln!("wata-check : {}", watacheck);
+                        //eprintln!("wata-check : {}", watacheck);
 
-                        next_score.0 = -watacheck as f64;
+                        //next_score.0 = -watacheck as f64;
                         next_score.1 = 0.0;
                         allbest = next_score.0;
                         best_ans = now.clone();
@@ -526,6 +540,7 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
                             },
                             io::stderr(),
                         );
+                        eprintln!();
                     } else {
                         next_score = get_first_score(
                             &input,
@@ -537,6 +552,8 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
                             &mut edge_error,
                             &mut v_best,
                             &v_list,
+                            is_grobalist,
+                            &mut grobalist_sum,
                         );
                     }
                     prescore = next_score;
@@ -546,7 +563,7 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
 
         //eprintln!("ans : {} {}", prescore.0, prescore.1);
 
-        if allbest2 == bestscore {
+        if allbest2 == bestscore && false {
             eprintln!("bestscore : {}", bestscore);
             write_output_to_writer(
                 &Output {
@@ -555,7 +572,10 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
                 },
                 io::stderr(),
             );
+            eprintln!();
+            //eprintln!("end state : {} {}", prescore.0, prescore.1);
         }
+        //eprintln!("end state : {} {}", prescore.0, prescore.1);
 
         if allbest >= -1e-7 {
             break;
@@ -565,7 +585,7 @@ pub fn main(input: &Input, output: &Output, timeout: f64, dontmoveflag: bool, fi
     //eprintln!("ans : {}", 100000.0 - allbest);
     //eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone() }));
 
-    return Output {
+    Output {
         vertices: best_ans.clone(),
         bonuses: Default::default(),
     }
@@ -586,12 +606,15 @@ fn get_move_score(
     edge_error: &mut Vec<f64>,
     v_best: &mut Vec<f64>,
     v_list: &Vec<Vec<usize>>,
+    is_grobalist: bool,
+    grobalist_sum: &mut f64,
 ) -> (f64, f64) {
     //設定値
     let perror_value = 20.0;
-    let eerror_value = 1000.0;
-    let derror_value = 10.0;
-    let derror_value2 = 100000.0;
+    let eerror_value = 100.0;
+    let derror_value = 100.0;
+    let derror_value2 = 10000.0;
+    let grobalerror_value = 100000.0;
 
     let vs = &inp.figure.vertices;
 
@@ -609,35 +632,82 @@ fn get_move_score(
     ans2 += point_error[id];
 
     //dist_error 距離が適切でないときにエラー
-    for v in &v_list[id] {
-        let d1 = (vs[id] - vs[*v]).abs2();
-        if !firstflag {
-            let d2 = (now[id] - now[*v]).abs2();
-            let epsd = (d1 * eps) as f64 / 1000000.0;
-            let mut dd = (d2 - d1).abs() as f64;
-            if dd <= epsd {
-                dd = 0.0;
-            } else {
-                dd += 0.1;
+
+    if !is_grobalist {
+        for v in &v_list[id] {
+            let d1 = (vs[id] - vs[*v]).abs2();
+            if !firstflag {
+                let d2 = (now[id] - now[*v]).abs2();
+                let epsd = (d1 * eps) as f64 / 1000000.0;
+                let mut dd = (d2 - d1).abs() as f64;
+                if dd <= epsd {
+                    dd = 0.0;
+                } else {
+                    dd += 0.1;
+                    if dd < 2.0 {
+                        dd /= 5.0;
+                    }
+                }
+                let add = -dd * derror_value;
+                dist_error[id] -= add;
+                dist_error[*v] -= add;
+                ans2 -= add * 2.0;
             }
-            let add = -dd * derror_value;
-            dist_error[id] -= add;
-            dist_error[*v] -= add;
-            ans2 -= add * 2.0;
+            {
+                let d2 = (next_pos - now[*v]).abs2();
+                let epsd = (d1 * eps) as f64 / 1000000.0;
+                let mut dd = (d2 - d1).abs() as f64;
+                if dd <= epsd {
+                    dd = 0.0;
+                } else {
+                    dd += 0.1;
+                    if dd < 2.0 {
+                        dd /= 5.0;
+                    }
+                }
+                let add = -dd * derror_value;
+                dist_error[id] += add;
+                dist_error[*v] += add;
+                ans2 += add * 2.0;
+            }
         }
-        {
-            let d2 = (next_pos - now[*v]).abs2();
-            let epsd = (d1 * eps) as f64 / 1000000.0;
-            let mut dd = (d2 - d1).abs() as f64;
-            if dd <= epsd {
-                dd = 0.0;
-            } else {
-                dd += 0.1;
+    } else {
+        for v in &v_list[id] {
+            let d1 = (vs[id] - vs[*v]).abs2();
+            let border = eps as f64 / 1000000.0 * inp.figure.edges.len() as f64;
+
+            if !firstflag {
+                let add = {
+                    if border > *grobalist_sum {
+                        *grobalist_sum / border - 1.0
+                    } else {
+                        (*grobalist_sum - border) * grobalerror_value
+                    }
+                };
+                ans2 += add;
+
+                let d2 = (now[id] - now[*v]).abs2();
+                let mut dd = (d2 as f64 / d1 as f64 - 1.0).abs();
+                dist_error[id] -= dd;
+                dist_error[*v] -= dd;
+                *grobalist_sum -= dd;
             }
-            let add = -dd * derror_value;
-            dist_error[id] += add;
-            dist_error[*v] += add;
-            ans2 += add * 2.0;
+            {
+                let d2 = (next_pos - now[*v]).abs2();
+                let mut dd = (d2 as f64 / d1 as f64 - 1.0).abs();
+                dist_error[id] += dd;
+                dist_error[*v] += dd;
+                *grobalist_sum += dd;
+
+                let add = {
+                    if border > *grobalist_sum {
+                        *grobalist_sum / border - 1.0
+                    } else {
+                        (*grobalist_sum - border) * grobalerror_value
+                    }
+                };
+                ans2 -= add;
+            }
         }
     }
 
@@ -729,12 +799,15 @@ fn get_first_score(
     edge_error: &mut Vec<f64>,
     v_best: &mut Vec<f64>,
     v_list: &Vec<Vec<usize>>,
+    is_grobalist: bool,
+    grobalist_sum: &mut f64,
 ) -> (f64, f64) {
     //設定値
     let perror_value = 20.0;
-    let eerror_value = 1000.0;
-    let derror_value = 10.0;
-    let derror_value2 = 100000.0;
+    let eerror_value = 100.0;
+    let derror_value = 100.0;
+    let derror_value2 = 10000.0;
+    let grobalerror_value = 100000.0;
 
     let n = inp.figure.vertices.len();
     let v = inp.hole.len();
@@ -753,6 +826,8 @@ fn get_first_score(
         point_error[i] = point_board[now[i].0 as usize][now[i].1 as usize] * perror_value;
     }
 
+    *grobalist_sum = 0.0;
+
     for i in 0..n {
         get_move_score(
             true,
@@ -767,19 +842,67 @@ fn get_first_score(
             edge_error,
             v_best,
             v_list,
+            is_grobalist,
+            grobalist_sum,
         );
     }
 
     let mut ans1 = 0.0;
     let mut ans2 = 0.0;
-    for i in 0..n {
-        ans2 += point_error[i];
-        edge_error[i] /= 2.0;
-        ans2 += edge_error[i];
-        dist_error[i] /= 2.0;
-        ans2 += dist_error[i];
 
-        //eprintln!("{},{},{}", point_error[i], edge_error[i], dist_error[i]);
+    if !is_grobalist {
+        for i in 0..n {
+            ans2 += point_error[i];
+            edge_error[i] /= 2.0;
+            ans2 += edge_error[i];
+            dist_error[i] /= 2.0;
+            ans2 += dist_error[i];
+            //eprintln!("{},{},{}", point_error[i], edge_error[i], dist_error[i]);
+        }
+    } else {
+        *grobalist_sum = 0.0;
+        for i in 0..n {
+            ans2 += point_error[i];
+            edge_error[i] /= 2.0;
+            ans2 += edge_error[i];
+            dist_error[i] /= 2.0;
+            *grobalist_sum += dist_error[i] / 2.0;
+            //eprintln!("{},{},{}", point_error[i], edge_error[i], dist_error[i]);
+        }
+
+        let border = eps as f64 / 1000000.0 * inp.figure.edges.len() as f64;
+
+        let mut mygrobalist = 0.0;
+
+        for i in 0..inp.figure.edges.len() {
+            let e = inp.figure.edges[i];
+            let d1 = (inp.figure.vertices[e.0] - inp.figure.vertices[e.1]).abs2();
+            let d2 = (now[e.0] - now[e.1]).abs2();
+            let mut dd = (d2 as f64 / d1 as f64 - 1.0).abs();
+            mygrobalist += dd;
+        }
+        /*
+        for j in 0..n {
+            for k in &v_list[j] {
+                let i = *k;
+                let e = (j, i);
+                let d1 = (inp.figure.vertices[e.0] - inp.figure.vertices[e.1]).abs2();
+                let d2 = (now[e.0] - now[e.1]).abs2();
+                let mut dd = (d2 as f64 / d1 as f64 - 1.0).abs();
+                mygrobalist += dd;
+            }
+        }
+        */
+        //eprintln!("{} {} {}", border, *grobalist_sum, mygrobalist);
+
+        let add = {
+            if border > *grobalist_sum {
+                *grobalist_sum / border - 1.0
+            } else {
+                (*grobalist_sum - border) * grobalerror_value
+            }
+        };
+        ans2 -= add;
     }
 
     for i in 0..v {

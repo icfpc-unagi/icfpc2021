@@ -135,13 +135,13 @@ fn check_constraints_around_vertex(
 
 fn calculate_penalty(
 	hole: &Vec<Point>,
-	edges: &Vec<(usize, usize)>,
+	_edges: &Vec<(usize, usize)>,
 	vertices: &Vec<Point>,
 	dist2: &Vec<i64>,
 	a: usize,
 	adj: &[(usize, usize)],
 	epsilon: i64,
-	globalist: bool,
+	_globalist: bool,
 ) -> i64 {
 	let mut penalty = 0;
 	if P::contains_p(hole, vertices[a]).is_negative() {
