@@ -366,7 +366,9 @@ fn main() {
         work_dir: args.work_dir.clone(),
     };
     let mut sat_calibrator = SatHillclimber::new(input, config);
-    let sol = sat_calibrator.solve(output.vertices).unwrap();
+    let sol = sat_calibrator
+        .solve(output.vertices)
+        .expect("Cannot improve!!");
 
     sat_calibrator.dump(&sol, 999999);
     dbg!(initial_score);
