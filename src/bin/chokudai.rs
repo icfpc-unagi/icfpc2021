@@ -16,9 +16,9 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     //制限時間の秒数
-    let timeout = if timeout < 0.0 { 600.0 } else { timeout };
+    let timeout = if timeout < 0.0 { 60.0 } else { timeout };
     //grobalistフラグ
-    let is_grobalist = {
+    let globalist = {
         if args[1] == "0" {
             false
         } else {
@@ -349,7 +349,7 @@ fn main() {
         &mut edge_error,
         &mut v_best,
         &v_list,
-        is_grobalist,
+        globalist,
         &mut grobalist_sum,
         target_option,
         opt_pos,
@@ -428,7 +428,7 @@ fn main() {
             &mut edge_error,
             &mut v_best,
             &v_list,
-            is_grobalist,
+            globalist,
             &mut grobalist_sum,
             target_option,
             opt_pos,
@@ -546,7 +546,7 @@ fn main() {
                     &mut edge_error,
                     &mut v_best,
                     &v_list,
-                    is_grobalist,
+                    globalist,
                     &mut grobalist_sum,
                     target_option,
                     opt_pos,
@@ -578,7 +578,7 @@ fn main() {
                         &mut edge_error,
                         &mut v_best,
                         &v_list,
-                        is_grobalist,
+                        globalist,
                         &mut grobalist_sum,
                         target_option,
                         opt_pos,
@@ -639,7 +639,7 @@ fn main() {
                             &mut edge_error,
                             &mut v_best,
                             &v_list,
-                            is_grobalist,
+                            globalist,
                             &mut grobalist_sum,
                             target_option,
                             opt_pos,
@@ -675,7 +675,7 @@ fn main() {
     //eprintln!("ans : {}", 100000.0 - allbest);
     //eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone() }));
 
-    if is_grobalist {
+    if globalist {
         write_output(&Output {
             vertices: best_ans.clone(),
             bonuses: vec![UseBonus {
