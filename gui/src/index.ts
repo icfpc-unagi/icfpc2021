@@ -88,10 +88,20 @@ class VertexObject {
   edges: EdgeObject[];
   atCorner: boolean;
 
-  constructor([x, y]: XY, public hole: XY[]) {
+  constructor([x, y]: XY, index: number, public hole: XY[]) {
     const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
     g.position.set(x, y);
     g.scale.set(1 / guiScale);
+    {
+      const text = new Text(`${index}`, {
+        fontSize: 12,
+        fill: 0x000000,
+        stroke: 0xffffff,
+        strokeThickness: 2,
+      });
+      text.anchor.set(0.5);
+      g.addChild(text);
+    }
     this.g = g;
     this.edges = [];
     this.atCorner = false; // set by update()
@@ -233,20 +243,8 @@ class ProblemRenderer {
     const fig = inputJson.figure;
 
     const vertices: VertexObject[] = fig.vertices.map(
-      (xy) => new VertexObject(xy, origHole)
+      (xy, i) => new VertexObject(xy, i, origHole)
     );
-
-    // for (const [i, v] of vertices.entries()) {
-    //   const text = new Text(`${i}`, {
-    //     fontSize: 12,
-    //     fill: 0xffffff,
-    //     stroke: 0x000000,
-    //     strokeThickness: 2,
-    //     // align: "center",
-    //   });
-    //   text.anchor.set(0.5);
-    //   v.addChild(text);
-    // }
 
     this.epsilon = inputJson.epsilon;
     const edges: EdgeObject[] = [];
