@@ -46,14 +46,14 @@ pub fn read_pose(s: &str) -> Result<JsValue, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn write_pose(j: JsValue) -> Result<String, JsValue> {
+pub fn write_pose(j: &JsValue) -> Result<String, JsValue> {
 	let mut pose: Output = j.into_serde().map_err(|e| JsValue::from(e.to_string()))?;
 	pose.to_external();
 	serde_json::to_string(&pose).map_err(|e| JsValue::from(e.to_string()))
 }
 
 #[wasm_bindgen]
-pub fn score_or_message(prob: JsValue, pose: JsValue) -> String {
+pub fn score_or_message(prob: &JsValue, pose: &JsValue) -> String {
 	let prob: Input = prob.into_serde().unwrap();
 	let pose: Output = pose.into_serde().unwrap();
 	match compute_score_or_err(&prob, &pose) {
@@ -77,7 +77,7 @@ pub fn score_or_message(prob: JsValue, pose: JsValue) -> String {
 // }
 
 #[wasm_bindgen]
-pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
+pub fn check_solution1(input: &JsValue, out: &JsValue) -> JsValue {
 	let input: Input = input.into_serde().unwrap();
 	let out: Output = out.into_serde().unwrap();
 	let mut ok_v = vec![];
@@ -96,7 +96,7 @@ pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 
 // zenkan
 #[wasm_bindgen]
-pub fn all_pair_abs2_ub(prob: JsValue) -> Box<[u32]> {
+pub fn all_pair_abs2_ub(prob: &JsValue) -> Box<[u32]> {
 	let prob: Input = prob.into_serde().unwrap();
 	let dist = all_pair_dist_ub(&prob);
 	let abs2_ub_flat: Vec<_> = dist.into_iter().flatten()
@@ -106,7 +106,7 @@ pub fn all_pair_abs2_ub(prob: JsValue) -> Box<[u32]> {
 }
 
 #[wasm_bindgen]
-pub fn all_pair_abs2(pose: JsValue) -> Box<[u32]> {
+pub fn all_pair_abs2(pose: &JsValue) -> Box<[u32]> {
 	let pose: Output = pose.into_serde().unwrap();
 	let vs = pose.vertices;
 	let mut ret = vec![];
