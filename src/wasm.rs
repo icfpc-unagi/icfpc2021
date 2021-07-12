@@ -19,6 +19,18 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 // 	Ok(())
 // }
 
+// #[wasm_bindgen]
+// pub struct JsProblem {
+// 	hole: Box<[Point]>,
+// }
+
+// impl From<Input> for JsProblem {
+// 	fn from(Input {hole, ..}: Input) -> Self {
+// 		let hole = hole.into_boxed_slice();
+// 		Self { hole }
+// 	}
+// }
+
 #[wasm_bindgen]
 pub fn read_problem(s: &str) -> Result<JsValue, JsValue> {
 	let mut prob: Input = serde_json::from_str(s).map_err(|e| JsValue::from(e.to_string()))?;
@@ -84,17 +96,17 @@ pub fn check_solution1(input: JsValue, out: JsValue) -> JsValue {
 
 // zenkan
 #[wasm_bindgen]
-pub fn all_pair_abs2_ub(prob: JsValue) -> js_sys::Uint32Array {
+pub fn all_pair_abs2_ub(prob: JsValue) -> Box<[u32]> {
 	let prob: Input = prob.into_serde().unwrap();
 	let dist = all_pair_dist_ub(&prob);
 	let abs2_ub_flat: Vec<_> = dist.into_iter().flatten()
 		.map(|d| (d * d + 0.1) as u32)
 		.collect();
-	abs2_ub_flat[..].into()
+	abs2_ub_flat.into_boxed_slice()
 }
 
 #[wasm_bindgen]
-pub fn all_pair_abs2(pose: JsValue) -> js_sys::Uint32Array {
+pub fn all_pair_abs2(pose: JsValue) -> Box<[u32]> {
 	let pose: Output = pose.into_serde().unwrap();
 	let vs = pose.vertices;
 	let mut ret = vec![];
@@ -104,9 +116,10 @@ pub fn all_pair_abs2(pose: JsValue) -> js_sys::Uint32Array {
 			ret.push(d as u32);
 		}
 	}
-	ret[..].into()
+	ret.into_boxed_slice()
 }
 
+/*
 #[wasm_bindgen]
 pub struct AllPairDist {
 	n: usize,
@@ -154,6 +167,7 @@ impl AllPairDist {
 		ret[..].into()
 	}
 }
+*/
 
 #[wasm_bindgen]
 pub fn render_problem(s: &str) -> String {

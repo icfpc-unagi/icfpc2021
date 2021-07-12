@@ -28,7 +28,7 @@ structopt = "0.3"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen = { version = "*", features = ["serde-serialize"] }
-js-sys = "*"
+# js-sys = "*"
 web-sys = { version = "*", features = [
   'Document',
   'Element',
