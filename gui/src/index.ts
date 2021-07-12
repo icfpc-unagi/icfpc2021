@@ -335,7 +335,14 @@ class ProblemRenderer {
 
   runCheckSolution1(input: Problem, output: Solution): void {
     if (wasm == null) return;
-    const [ok_v, ok_e] = wasm.check_solution1(input, output);
+    let ret;
+    try {
+      ret = wasm.check_solution1(input, output);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+    const [ok_v, ok_e] = ret;
     for (const [i, ok] of ok_v.entries()) {
       if (!ok) {
         this.vertices[i].g.tint = 0x800080;
@@ -353,8 +360,13 @@ class ProblemRenderer {
   runTestPairDist(pose: Solution, addIndex?: number): void {
     if (wasm == null) return;
     const ub = this.abs2UpperBound!;
-    const abs2 = wasm.all_pair_abs2(pose);
-
+    let abs2;
+    try {
+      abs2 = wasm.all_pair_abs2(pose);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
     const c = this.holePairContainer;
     c.removeChildren();
     const isTarget = this.vertices.map((v, k) => v.atCorner || k === addIndex); // TODO: refactor
