@@ -33,7 +33,7 @@ import * as wasm from "icfpc2021";
   function render(problem, pose) {
     if (pose && problem) {
       el_container.innerHTML = wasm.render_pose(problem, pose)
-      el_message.textContent = `dislikes: ${wasm.calculate_score(problem, pose)}`
+      el_message.textContent = `dislikes: ${wasm.dislikes(problem, pose)} ${wasm.violation(problem, pose)}`
       el_pose.value = pose
       el_pose.style.boxShadow = ''
     } else if (problem) {
@@ -53,10 +53,10 @@ import * as wasm from "icfpc2021";
       let i = parseInt(ev.target.getAttribute('i'))
       let a = (ev.shiftKey ? 10 : 1)
       switch (ev.key) {
-        case 'ArrowUp': apply(i, v => [v[0], v[1] - a], false); return false;
-        case 'ArrowDown': apply(i, v => [v[0], v[1] + a], false); return false;
-        case 'ArrowLeft': apply(i, v => [v[0] - a, v[1]], false); return false;
-        case 'ArrowRight': apply(i, v => [v[0] + a, v[1]], false); return false;
+        case 'ArrowUp': apply(i, v => [v[0], v[1] - a], ev.ctrlKey); return false;
+        case 'ArrowDown': apply(i, v => [v[0], v[1] + a], ev.ctrlKey); return false;
+        case 'ArrowLeft': apply(i, v => [v[0] - a, v[1]], ev.ctrlKey); return false;
+        case 'ArrowRight': apply(i, v => [v[0] + a, v[1]], ev.ctrlKey); return false;
         case 'h': apply(i, (v, p) => [2 * p[0] - v[0], v[1]], true); return false;
         case 'v': apply(i, (v, p) => [v[0], 2 * p[1] - v[1]], true); return false;
         case ',': apply(i, (v, p) => [Math.round((v[0] - p[0]) * Math.cos(Math.PI / -6) - (v[1] - p[1]) * Math.sin(Math.PI / -6) + p[0]), Math.round((v[0] - p[0]) * Math.sin(Math.PI / -6) + (v[1] - p[1]) * Math.cos(Math.PI / -6) + p[1])], true); return false;
