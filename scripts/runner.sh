@@ -5,7 +5,7 @@ set -eu
 : ${PROBLEM_ID:=4}
 : ${NPROC:=$(nproc)}
 : ${JOBS:=$(( NPROC * 4 ))}
-: ${COMMIT_ID:=215c8fa}
+: ${COMMIT_ID:=e68bc48}
 
 cd
 mkdir -p ./problems ./bin
