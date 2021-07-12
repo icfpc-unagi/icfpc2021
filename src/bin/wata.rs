@@ -181,9 +181,15 @@ fn main() {
 	}
 	assert!(min_x >= 0);
 	assert!(min_y >= 0);
-	let mut data = Data { input, dist, inside, g, parent, last, cand: vec![] };
 	let mut best = vec![];
 	let mut best_score = i64::max_value();
+	let mut has_global = mat![!0; max_x as usize + 1; max_y as usize + 1];
+	for bonus in &input.bonuses {
+		if bonus.bonus == BonusType::Globalist {
+			has_global[bonus.position.0 as usize][bonus.position.1 as usize] = bonus.problem;
+		}
+	}
+	let mut data = Data { input, dist, inside, g, parent, last, cand: vec![] };
 	for _ in 0..20 {
 		eprintln!("eps = {}", data.input.epsilon);
 		let mut cand = vec![vec![]; n];
@@ -203,7 +209,7 @@ fn main() {
 		data.cand = cand;
 		for x in min_x ..= max_x {
 			for y in min_y ..= max_y {
-				if data.inside[x as usize][y as usize] {
+				if data.inside[x as usize][y as usize] && has_global[x as usize][y as usize] != !0 {
 					let stime = get_time();
 					let mut out = vec![P(x, y); n];
 					let mut used = vec![false; n];

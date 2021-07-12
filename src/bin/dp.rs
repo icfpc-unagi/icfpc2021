@@ -130,7 +130,7 @@ fn partial_score(input: &Input, out: &Vec<Point>, s: usize, m: usize) -> i64 {
 }
 
 const M: i64 = 20;
-const UB: i64 = 500;
+const UB: i64 = 3000;
 
 fn hash(p: Point) -> Point {
 	P(p.0 / M, p.1 / M)
