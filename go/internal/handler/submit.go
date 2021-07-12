@@ -109,7 +109,7 @@ func handleAPIFinalSubmit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	poseID, err := Submit(ctx, problemID, string(buf), false)
+	poseID, submissionID, err := FinalSubmit(ctx, problemID, string(buf))
 	if err != nil {
 		glog.Errorf("Failed to submit: %+v", err)
 		w.WriteHeader(400)
@@ -117,22 +117,22 @@ func handleAPIFinalSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprintf(w, "%d", poseID)
+	fmt.Fprintf(w, "pose_id=%s submission_id=%d", poseID, submissionID)
 }
 
-func FinalSubmit(ctx context.Context, problemID int64, solution string) (int64, error) {
+func FinalSubmit(ctx context.Context, problemID int64, solution string) (string, int64, error) {
 	evaluation, err := EstimateScore(ctx, problemID, solution)
 	if err != nil {
-		return 0, err
+		return "", 0, err
 	}
 	if evaluation.Dislikes < 0 {
-		return 0, errors.New("solution is invalid")
+		return "", 0, errors.New("solution is invalid")
 	}
 
 
 	poseID, err := submitToOfficial(problemID, solution)
 	if err != nil {
-		return 0, err
+		return poseID, 0, err
 	}
 
 	result, err := db.Execute(ctx, `
@@ -152,14 +152,14 @@ SET
 		evaluation.Dislikes,
 		poseID)
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to insert a submission")
+		return poseID, 0, errors.Wrapf(err, "failed to insert a submission")
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to get an insert ID")
+		return poseID, 0, errors.Wrapf(err, "failed to get an insert ID")
 	}
-	return id, nil
+	return poseID, id, nil
 }
 
 func Submit(ctx context.Context, problemID int64, solution string, force bool) (int64, error) {
