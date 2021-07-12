@@ -12,11 +12,19 @@ struct Config {
     /// 3, 5, 7, ...
     min_neighbor: i64,
     max_neighbor: i64,
+    globalist: Vec<u32>,
 }
 
 //
 // 本体
 //
+
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+enum ScoreConstraintMode {
+    Improve,
+    Keep,
+    Any,
+}
 
 struct SatHillclimber {
     input: Input,
@@ -96,7 +104,11 @@ impl SatHillclimber {
         (self.n_cands() - 1) / 2
     }
 
-    fn generate_clauses(&mut self, vertices: &Vec<Point>) -> Vec<Vec<i64>> {
+    fn generate_clauses(
+        &mut self,
+        vertices: &Vec<Point>,
+        mode: ScoreConstraintMode,
+    ) -> Vec<Vec<i64>> {
         let mut clauses = vec![];
         let n_vs = vertices.len();
 
@@ -127,7 +139,7 @@ impl SatHillclimber {
                 let next_abs2 = (tp - *h).abs2();
 
                 // 遠くなるのは一切禁止
-                if next_abs2 > current_abs2 {
+                if mode != ScoreConstraintMode::Any && next_abs2 > current_abs2 {
                     clauses.push(vec![-l]);
                 }
                 // 近くなるやつ歓迎
@@ -136,7 +148,9 @@ impl SatHillclimber {
                 }
             }
         }
-        clauses.push(improve_clause);
+        if mode == ScoreConstraintMode::Improve {
+            clauses.push(improve_clause);
+        }
 
         // はみ出す場所には移動しない
         for v in 0..n_vs {
@@ -170,6 +184,28 @@ impl SatHillclimber {
                     }
                 }
             }
+        }
+
+        for bonus in &self.input.bonuses {
+            // globalistにしか興味ない
+            if bonus.bonus != BonusType::Globalist {
+                continue;
+            }
+            // 指定された頂点番号にしか興味ない
+            if !self.config.globalist.contains(&bonus.problem) {
+                continue;
+            }
+
+            let mut clause = vec![];
+            for v in 0..n_vs {
+                for d in 0..self.n_cands() {
+                    let tp = vertices[v] + self.dv(d);
+                    if tp == bonus.position {
+                        clause.push(self.lit(v, d));
+                    }
+                }
+            }
+            clauses.push(clause);
         }
 
         clauses
@@ -256,12 +292,6 @@ impl SatHillclimber {
     // メインループ部分
     //
 
-    fn step(&mut self, positions: &Vec<Point>) -> Option<Vec<Point>> {
-        let clauses = self.generate_clauses(positions);
-        self.solve_by_glucose(&clauses)
-            .map(|solution| self.reconstruct_positions(positions, &solution))
-    }
-
     fn dump(&self, positions: &Vec<Point>, i_iter: i64) {
         let output = Output {
             vertices: positions.clone(),
@@ -283,29 +313,65 @@ impl SatHillclimber {
         dbg!(score);
     }
 
+    fn step(&mut self, positions: &Vec<Point>, mode: ScoreConstraintMode) -> Option<Vec<Point>> {
+        let clauses = self.generate_clauses(positions, mode);
+        self.solve_by_glucose(&clauses)
+            .map(|solution| self.reconstruct_positions(positions, &solution))
+    }
+
+    fn step_with_retry(
+        &mut self,
+        positions: &Vec<Point>,
+        i_iter: i64,
+        mode: ScoreConstraintMode,
+    ) -> Option<Vec<Point>> {
+        self.dump(&positions, i_iter);
+
+        let mut next_positions = None;
+        for neighbor in self.config.min_neighbor..=self.config.max_neighbor {
+            if neighbor % 2 != 1 {
+                continue;
+            }
+            self.neighbor = neighbor;
+
+            next_positions = self.step(&positions, mode);
+            if next_positions.is_some() {
+                return next_positions;
+            } else {
+                eprintln!("\n\n\n===\nFAILED WITH NEIGHBOR={}\n===\n\n\n", neighbor);
+            }
+        }
+
+        None
+    }
+
     /// 更新できたらSome、全く更新できなかったらNone
     fn solve(&mut self, mut positions: Vec<Point>) -> Option<Vec<Point>> {
         std::fs::create_dir_all(&self.config.work_dir).unwrap();
 
-        // アゲていく！
         let mut i_iter: i64 = 0;
-        loop {
-            self.dump(&positions, i_iter);
+        if !self.config.globalist.is_empty() {
+            dbg!(&self.input.bonuses);
 
-            let mut next_positions = None;
-            for neighbor in self.config.min_neighbor..=self.config.max_neighbor {
-                if neighbor % 2 != 1 {
-                    continue;
-                }
-                self.neighbor = neighbor;
-
-                next_positions = self.step(&positions);
-                if next_positions.is_some() {
-                    break;
-                } else {
-                    eprintln!("\n\n\n===\nFAILED WITH NEIGHBOR={}\n===\n\n\n", neighbor);
-                }
+            // まずはスコアキープでglobalist取れないか挑戦
+            let next_positions =
+                self.step_with_retry(&positions, i_iter, ScoreConstraintMode::Keep);
+            i_iter += 1;
+            if let Some(next_positions) = next_positions {
+                positions = next_positions;
+                eprintln!("\n\n\n===\nGLOBALIST WITH KEEP\n===\n\n\n");
+            } else {
+                positions = self
+                    .step_with_retry(&positions, i_iter, ScoreConstraintMode::Any)
+                    .expect("Cannot take globalist even with ANY");
+                i_iter += 1;
             }
+        }
+
+        // アゲていく！
+        loop {
+            let next_positions =
+                self.step_with_retry(&positions, i_iter, ScoreConstraintMode::Improve);
 
             match next_positions {
                 None => {
@@ -349,6 +415,9 @@ fn main() {
 
         #[structopt(long)]
         initial_relax: Option<f64>,
+
+        #[structopt(long, default_value = "")]
+        globalist: String,
     }
     let args = Args::from_args();
     dbg!(&args);
@@ -356,6 +425,14 @@ fn main() {
     let input = read_input_from_file(&args.input_path);
     let output = read_output_from_file(&args.output_path);
     let initial_score = compute_score(&input, &output);
+    let globalist = if args.globalist == "" {
+        vec![]
+    } else {
+        args.globalist
+            .split(',')
+            .map(|p| p.parse().unwrap())
+            .collect()
+    };
 
     // 解く
     let config = Config {
@@ -364,6 +441,7 @@ fn main() {
         max_neighbor: args.max_neighbor,
         initial_relax: args.initial_relax,
         work_dir: args.work_dir.clone(),
+        globalist,
     };
     let mut sat_calibrator = SatHillclimber::new(input, config);
     let sol = sat_calibrator

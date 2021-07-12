@@ -41,7 +41,7 @@ def doit(problem_id, glucose_path):
         f'--input-path "problems/{problem_id}.json" '
         f'--output-path "best_solutions/{problem_id}.json" '
         f'--work-dir {work_dir} '
-        f'--max-neighbor 21',
+        f'--max-neighbor 11 ',
         shell=True,
     )
 
