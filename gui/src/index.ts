@@ -87,6 +87,7 @@ class VertexObject {
   g: Graphics;
   edges: EdgeObject[];
   atCorner: boolean;
+  idText: Text;
 
   constructor([x, y]: XY, index: number, public hole: XY[]) {
     const g = new Graphics().beginFill(WHITE).drawCircle(0, 0, 6);
@@ -101,6 +102,7 @@ class VertexObject {
       });
       text.anchor.set(0.5);
       g.addChild(text);
+      this.idText = text;
     }
     this.g = g;
     this.edges = [];
@@ -569,12 +571,33 @@ mainContainer.addChild(new Text("loading wasm", { fill: "red" }));
 
     // gui label
     {
-      const elem: any = document.getElementById("show-labels")!;
-      elem.addEventListener("change", () => {
+      const elem: any = document.getElementById("show-vertex-id")!;
+      function change(): void {
         const visible = elem.checked;
-        for (const label of r.labels) {
+        for (const label of r.vertices.map((v) => v.idText)) {
           label.visible = visible;
         }
-      });
+      }
+      elem.addEventListener("change", change);
+    }
+    {
+      const elem: any = document.getElementById("show-hole-id")!;
+      function change(): void {
+        const visible = elem.checked;
+        for (const label of r.holeCorners) {
+          label.visible = visible;
+        }
+      }
+      elem.addEventListener("change", change);
+    }
+    {
+      const elem: any = document.getElementById("show-hole-dis")!;
+      function change(): void {
+        const visible = elem.checked;
+        for (const label of r.holeDislikes) {
+          label.visible = visible;
+        }
+      }
+      elem.addEventListener("change", change);
     }
   });
