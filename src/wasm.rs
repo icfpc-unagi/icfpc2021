@@ -63,6 +63,21 @@ pub fn score_or_message(prob: &JsValue, pose: &JsValue) -> String {
 }
 
 #[wasm_bindgen]
+pub fn array_dislikes(prob: &JsValue, pose: &JsValue) -> Box<[i32]> {
+	let prob: Input = prob.into_serde().unwrap();
+	let pose: Output = pose.into_serde().unwrap();
+	let mut dislikes = vec![];
+	for &p in &prob.hole {
+		let mut min = i64::max_value();
+		for &q in &pose.vertices {
+			min.setmin((p - q).abs2());
+		}
+		dislikes.push(min as i32);
+	}
+	dislikes.into_boxed_slice()
+}
+
+#[wasm_bindgen]
 pub fn tmp_panic(x: i32) -> i32 {
 	assert!(x >= 0);
 	x

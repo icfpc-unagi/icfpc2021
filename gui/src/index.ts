@@ -189,6 +189,7 @@ class ProblemRenderer {
   hole: Graphics;
   bonuses: Graphics;
   holeCorners: DisplayObject[];
+  holeDislikes: Text[];
   vertices: VertexObject[];
   edges: EdgeObject[];
   epsilon: number;
@@ -218,6 +219,22 @@ class ProblemRenderer {
       hole.lineTo(x, y);
     }
     hole.closePath();
+
+    const holeDislikes = [];
+    for (const [x, y] of inputJson.hole) {
+      const text = new Text("", {
+        fontSize: 12,
+        fill: 0xffffff,
+        stroke: 0x000000,
+        strokeThickness: 2,
+      });
+      text.anchor.set(0.5);
+      text.position.set(x, y);
+      text.scale.set(1 / guiScale);
+      text.tint = 0xff0000,
+      holeDislikes.push(text);
+    }
+    this.holeDislikes = holeDislikes;
 
     const holeCorners = [];
     let origHole = inputJson.hole.slice();
@@ -320,6 +337,7 @@ class ProblemRenderer {
     try {
       this.runCheckSolution1(inputJson, solutionJson);
       this.runTestPairDist(solutionJson);
+      this.computeDislikes(inputJson, solutionJson)
     } catch (e) {
       // 例外が出てdrag終了失敗しているっぽい？
       console.error(e);
@@ -388,6 +406,22 @@ class ProblemRenderer {
     }
   }
 
+  computeDislikes(problem: Problem, pose: Solution): void {
+    if (wasm == null) return;
+    let dislikes;
+    try {
+      dislikes = wasm.array_dislikes(problem, pose);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+    for (const [i, text] of this.holeDislikes.entries()) {
+      const d = dislikes[i];
+      text.text = `${d}`;
+      text.tint = d ? 0xff0000 : 0x00ff00;
+    }
+  }
+
   loadSolution(pose: string): void {
     const solutionJson = (wasm?.read_pose ?? JSON.parse)(pose);
     if (this.vertices.length != solutionJson.vertices.length) {
@@ -420,6 +454,7 @@ class ProblemRenderer {
       edgesContainer,
       ...this.holeCorners,
       ...this.vertices.map(({ g }) => g),
+      ...this.holeDislikes,
       this.holePairContainer,
       this.hintContainer
     );
@@ -429,6 +464,7 @@ class ProblemRenderer {
     return [
       ...this.vertices.map(({ g }) => g.getChildAt(0)),
       ...this.holeCorners,
+      ...this.holeDislikes,
     ];
   }
 
