@@ -18,32 +18,33 @@ func handleBestSolution(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	problemID, err := strconv.ParseInt(query.Get("problem_id"), 10, 64)
 	obtained_bonus := query.Get("obtained_bonus")
+	required_bonus := query.Get("required_bonus")
 	if err != nil {
 		w.WriteHeader(404)
 		return
 	}
 	var result string
-	if len(obtained_bonus) == 0 {
-		result, err = db.CellString(ctx, `
-		SELECT submission_data FROM submissions NATURAL JOIN (
-				SELECT MIN(submission_id) AS submission_id FROM submissions NATURAL JOIN (
-						SELECT problem_id, MIN(submission_estimated_score) AS submission_estimated_score
-						FROM submissions WHERE problem_id = ? AND submission_estimated_score >= 0
-				GROUP BY problem_id
-				) r
-		) r
-		`, problemID)
-	} else {
-		result, err = db.CellString(ctx, `
-		SELECT submission_data FROM submissions NATURAL JOIN (
-				SELECT MIN(submission_id) AS submission_id FROM submissions NATURAL JOIN (
-						SELECT problem_id, MIN(submission_estimated_score) AS submission_estimated_score
-						FROM submissions WHERE problem_id = ? AND INSTR(submission_obtained_bonuses, ?) > 0 AND submission_estimated_score >= 0
-				GROUP BY problem_id
-				) r
-		) r
-		`, problemID, obtained_bonus)
+	conds := "problem_id = ?"
+	params := []interface{}{problemID}
+	if len(obtained_bonus) > 0 {
+		conds += " AND INSTR(submission_obtained_bonuses, ?) > 0"
+		params = append(params, obtained_bonus)
 	}
+	if len(required_bonus) > 0 {
+		conds += " AND INSTR(submission_bonuses, ?) > 0"
+		params = append(params, required_bonus)
+	} else {
+		conds += " AND submission_bonuses = ''"
+	}
+	result, err = db.CellString(ctx, `
+	SELECT submission_data FROM submissions NATURAL JOIN (
+			SELECT MIN(submission_id) AS submission_id FROM submissions NATURAL JOIN (
+					SELECT problem_id, MIN(submission_estimated_score) AS submission_estimated_score
+					FROM submissions WHERE `+conds+` AND submission_estimated_score >= 0
+			GROUP BY problem_id
+			) r
+	) r
+	`, params...)
 	if err != nil {
 		glog.Errorf("Failed to query: %+v", err)
 		w.WriteHeader(500)
