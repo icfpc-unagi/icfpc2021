@@ -13,11 +13,18 @@ fn main() {
         },
         Err(_) => -1.0,
     };
+    let args: Vec<String> = env::args().collect();
 
     //制限時間の秒数
     let timeout = if timeout < 0.0 { 600.0 } else { timeout };
     //grobalistフラグ
-    let is_grobalist = false;
+    let is_grobalist = {
+        if args[1] == "0" {
+            false
+        } else {
+            true
+        }
+    };
     //頂点と穴の端点が一致した奴を動かなくする
     let dontmoveflag = false;
     //↑がtrueの時、端点以外を良い感じに移動する
@@ -25,20 +32,28 @@ fn main() {
     //途中状況を出力する
     let tempout = false;
     //何番のoptionを取りに行くか決める -1の時は狙わない
-    let target_option = 0;
+    let target_option = {
+        if args[2] == "-1" {
+            -1
+        } else if args[2] == "0" {
+            0
+        } else if args[2] == "1" {
+            1
+        } else {
+            2
+        }
+    };
     //optionの場所
     let opt_pos = P(0, 0);
     let mut opt_dist = 0.0;
 
-    let args: Vec<String> = env::args().collect();
-
-    let (input_path, output_path) = if args.len() == 2 {
+    let (input_path, output_path) = if args.len() == 4 {
         (
-            format!("{}{}{}", "./problems/", args[1], ".json"),
-            format!("{}{}{}", "./best/", args[1], ".json"),
+            format!("{}{}{}", "./problems/", args[3], ".json"),
+            format!("{}{}{}", "./best/", args[3], ".json"),
         )
-    } else if args.len() == 3 {
-        (args[1].to_owned(), args[2].to_owned())
+    } else if args.len() == 5 {
+        (args[3].to_owned(), args[4].to_owned())
     } else {
         eprintln!("{} <problem.json> <pose.json>", args[0]);
         std::process::exit(1);
@@ -660,20 +675,9 @@ fn main() {
     //eprintln!("ans : {}", 100000.0 - allbest);
     //eprintln!("wata-check : {}", compute_score(&input, &Output { vertices: best_ans.clone() }));
 
-    write_output(&Output {
-        vertices: best_ans.clone(),
-        bonuses: vec![UseBonus {
-            bonus: BonusType::Globalist,
-            problem: 0,
-        }],
-    })
-}
-
-/*
-fn writer_output_with_bonus(vertices: Vec<P<i64>>, out: Output, is_groballist: bool) {
-    if is_groballist {
+    if is_grobalist {
         write_output(&Output {
-            vertices: vertices.clone(),
+            vertices: best_ans.clone(),
             bonuses: vec![UseBonus {
                 bonus: BonusType::Globalist,
                 problem: 0,
@@ -681,12 +685,11 @@ fn writer_output_with_bonus(vertices: Vec<P<i64>>, out: Output, is_groballist: b
         })
     } else {
         write_output(&Output {
-            vertices: vertices.clone(),
+            vertices: best_ans.clone(),
             bonuses: Default::default(),
         })
     }
 }
-*/
 
 ///差分評価を返す関数
 
