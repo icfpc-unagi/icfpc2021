@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>problem and pose svg</title>
+  </head>
+  <body>
+    <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+    <form method="POST" action="/submit">
+    <label for="_problem_id">Problem ID:</label>
+    <input name="problem_id" id="_problem_id" type="number" min="1" placeholder="Select problem ID" required>
+    <input id="_load_init" type="button" value="load init">
+    <input id="_load_best" type="button" value="load best">
+    <p>
+    <div id="_container"></div>
+    <div id="_message"></div>
+    <label for="_pose">Pose JSON (editable):</label><br>
+    <textarea name="data" id="_pose" cols="50" rows="4"
+      placeholder="Select problem ID first then paste json here" required></textarea><br>
+    <label for="_force">強制アップデート（スコアを確認しない）:</label><input type="checkbox" name="force" value="1" id="_force"><br>
+    <input type="submit" value="Submit">
+
+    <ul>
+      <li>←↓↑→: move focused point (shift: all points, ctrl: x10)
+      <li>H: flip horizontally
+      <li>V: flip vertically
+      <li>,: rotate ccw 15° (ctrl: 90°)
+      <li>.: rotate cw 15° (ctrl: 90°)
+      <li>-: minify x0.9 (ctrl: x0.5)
+      <li>+: magnify x1.<u>1</u> (ctrl: x2)
+    </ul>
+    <div>
+      <input id="_morph" type="button" value="morph random">
+      <input id="_chokudai" type="button" value="chokudai (1s,dontmove,fitting)">
+    </div>
+    </form>
+    <script src="./bootstrap.js"></script>
+  </body>
+</html>
