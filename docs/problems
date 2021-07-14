@@ -195,8 +195,8 @@ form { margin: 0; }
 
 <a href="/problems">Problems</a>
 - <a href="/bonuses">Bonuses</a>
-- <a href="/static/show/#problem_id=1">svg</a>
-- <a href="/static/gui">gui</a>
+- <a href="./static/show/#problem_id=1">svg</a>
+- <a href="./static/gui">gui</a>
 - <a href="/submit">submit</a>
 
 </div>
@@ -209,401 +209,401 @@ form { margin: 0; }
 <td colspan=1>Dislikes (best / with bonuses / current / global)</td>
 </tr>
 
-<tr><td><a href="/static/show#problem_id=1">1</a></td>
-<td align=right><code><a href="/static/show/#problem_id=1&pose_url=%2Fbest_solution%3Fproblem_id%3D1"> 9814</a> /  9814 [    +0] (12237 [ +2423])</code></td>
+<tr><td><a href="./static/show#problem_id=1">1</a></td>
+<td align=right><code><a href="./static/show/#problem_id=1&pose_url=%2Fbest_solution%3Fproblem_id%3D1"> 9814</a> /  9814 [    +0] (12237 [ +2423])</code></td>
 <td>(624 / 401 / 624 / 624)</td></tr>
-<tr><td><a href="/static/show#problem_id=2">2</a></td>
-<td align=right><code><a href="/static/show/#problem_id=2&pose_url=%2Fbest_solution%3Fproblem_id%3D2">10360</a> / 12608 [ -2248] (12705 [   +97])</code></td>
+<tr><td><a href="./static/show#problem_id=2">2</a></td>
+<td align=right><code><a href="./static/show/#problem_id=2&pose_url=%2Fbest_solution%3Fproblem_id%3D2">10360</a> / 12608 [ -2248] (12705 [   +97])</code></td>
 <td>(193 / 128 / 130 / 130)</td></tr>
-<tr><td><a href="/static/show#problem_id=3">3</a></td>
-<td align=right><code><a href="/static/show/#problem_id=3&pose_url=%2Fbest_solution%3Fproblem_id%3D3">12567</a> / 12534 [   +33] (14902 [ +2368])</code></td>
+<tr><td><a href="./static/show#problem_id=3">3</a></td>
+<td align=right><code><a href="./static/show/#problem_id=3&pose_url=%2Fbest_solution%3Fproblem_id%3D3">12567</a> / 12534 [   +33] (14902 [ +2368])</code></td>
 <td>(186 / 132 / 202 / 187)</td></tr>
-<tr><td><a href="/static/show#problem_id=4">4</a></td>
-<td align=right><code><a href="/static/show/#problem_id=4&pose_url=%2Fbest_solution%3Fproblem_id%3D4">11945</a> / 11945 [    +0] (11945 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=4">4</a></td>
+<td align=right><code><a href="./static/show/#problem_id=4&pose_url=%2Fbest_solution%3Fproblem_id%3D4">11945</a> / 11945 [    +0] (11945 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=5">5</a></td>
-<td align=right><code><a href="/static/show/#problem_id=5&pose_url=%2Fbest_solution%3Fproblem_id%3D5">10422</a> / 12622 [ -2200] (69129 [+56507])</code></td>
+<tr><td><a href="./static/show#problem_id=5">5</a></td>
+<td align=right><code><a href="./static/show/#problem_id=5&pose_url=%2Fbest_solution%3Fproblem_id%3D5">10422</a> / 12622 [ -2200] (69129 [+56507])</code></td>
 <td>(43 / 0 / 43 / 29)</td></tr>
-<tr><td><a href="/static/show#problem_id=6">6</a></td>
-<td align=right><code><a href="/static/show/#problem_id=6&pose_url=%2Fbest_solution%3Fproblem_id%3D6">11959</a> / 11986 [   -27] (16989 [ +5003])</code></td>
+<tr><td><a href="./static/show#problem_id=6">6</a></td>
+<td align=right><code><a href="./static/show/#problem_id=6&pose_url=%2Fbest_solution%3Fproblem_id%3D6">11959</a> / 11986 [   -27] (16989 [ +5003])</code></td>
 <td>(2667 / 1321 / 2667 / 2655)</td></tr>
-<tr><td><a href="/static/show#problem_id=7">7</a></td>
-<td align=right><code><a href="/static/show/#problem_id=7&pose_url=%2Fbest_solution%3Fproblem_id%3D7"> 1256</a> / 13106 [<span style="color:red">-11850</span>] ( 6553 [ -6553])</code></td>
+<tr><td><a href="./static/show#problem_id=7">7</a></td>
+<td align=right><code><a href="./static/show/#problem_id=7&pose_url=%2Fbest_solution%3Fproblem_id%3D7"> 1256</a> / 13106 [<span style="color:red">-11850</span>] ( 6553 [ -6553])</code></td>
 <td>(108 / 3 / 3 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=8">8</a></td>
-<td align=right><code><a href="/static/show/#problem_id=8&pose_url=%2Fbest_solution%3Fproblem_id%3D8"> 8179</a> /  8830 [  -651] ( 9215 [  +385])</code></td>
+<tr><td><a href="./static/show#problem_id=8">8</a></td>
+<td align=right><code><a href="./static/show/#problem_id=8&pose_url=%2Fbest_solution%3Fproblem_id%3D8"> 8179</a> /  8830 [  -651] ( 9215 [  +385])</code></td>
 <td>(1040 / 819 / 1040 / 892)</td></tr>
-<tr><td><a href="/static/show#problem_id=9">9</a></td>
-<td align=right><code><a href="/static/show/#problem_id=9&pose_url=%2Fbest_solution%3Fproblem_id%3D9">  531</a> / 15000 [<span style="color:red">-14469</span>] (  772 [-14228])</code></td>
+<tr><td><a href="./static/show#problem_id=9">9</a></td>
+<td align=right><code><a href="./static/show/#problem_id=9&pose_url=%2Fbest_solution%3Fproblem_id%3D9">  531</a> / 15000 [<span style="color:red">-14469</span>] (  772 [-14228])</code></td>
 <td>(798 / 377 / 798 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=10">10</a></td>
-<td align=right><code><a href="/static/show/#problem_id=10&pose_url=%2Fbest_solution%3Fproblem_id%3D10">10917</a> / 12801 [ -1884] (36206 [+23405])</code></td>
+<tr><td><a href="./static/show#problem_id=10">10</a></td>
+<td align=right><code><a href="./static/show/#problem_id=10&pose_url=%2Fbest_solution%3Fproblem_id%3D10">10917</a> / 12801 [ -1884] (36206 [+23405])</code></td>
 <td>(10 / 0 / 11 / 7)</td></tr>
-<tr><td><a href="/static/show#problem_id=11">11</a></td>
-<td align=right><code><a href="/static/show/#problem_id=11&pose_url=%2Fbest_solution%3Fproblem_id%3D11"> 2170</a> /  2170 [    +0] ( 2170 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=11">11</a></td>
+<td align=right><code><a href="./static/show/#problem_id=11&pose_url=%2Fbest_solution%3Fproblem_id%3D11"> 2170</a> /  2170 [    +0] ( 2170 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=12">12</a></td>
-<td align=right><code><a href="/static/show/#problem_id=12&pose_url=%2Fbest_solution%3Fproblem_id%3D12"> 3000</a> /  3000 [    +0] ( 3000 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=12">12</a></td>
+<td align=right><code><a href="./static/show/#problem_id=12&pose_url=%2Fbest_solution%3Fproblem_id%3D12"> 3000</a> /  3000 [    +0] ( 3000 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=13">13</a></td>
-<td align=right><code><a href="/static/show/#problem_id=13&pose_url=%2Fbest_solution%3Fproblem_id%3D13"> 3416</a> /  3416 [    +0] ( 3416 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=13">13</a></td>
+<td align=right><code><a href="./static/show/#problem_id=13&pose_url=%2Fbest_solution%3Fproblem_id%3D13"> 3416</a> /  3416 [    +0] ( 3416 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=14">14</a></td>
-<td align=right><code><a href="/static/show/#problem_id=14&pose_url=%2Fbest_solution%3Fproblem_id%3D14"> 3755</a> /  3755 [    +0] ( 3755 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=14">14</a></td>
+<td align=right><code><a href="./static/show/#problem_id=14&pose_url=%2Fbest_solution%3Fproblem_id%3D14"> 3755</a> /  3755 [    +0] ( 3755 [    +0])</code></td>
 <td>(116 / 116 / 116 / 116)</td></tr>
-<tr><td><a href="/static/show#problem_id=15">15</a></td>
-<td align=right><code><a href="/static/show/#problem_id=15&pose_url=%2Fbest_solution%3Fproblem_id%3D15"> 4322</a> /  4322 [    +0] ( 4322 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=15">15</a></td>
+<td align=right><code><a href="./static/show/#problem_id=15&pose_url=%2Fbest_solution%3Fproblem_id%3D15"> 4322</a> /  4322 [    +0] ( 4322 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=16">16</a></td>
-<td align=right><code><a href="/static/show/#problem_id=16&pose_url=%2Fbest_solution%3Fproblem_id%3D16"> 4381</a> /  4381 [    +0] ( 4381 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=16">16</a></td>
+<td align=right><code><a href="./static/show/#problem_id=16&pose_url=%2Fbest_solution%3Fproblem_id%3D16"> 4381</a> /  4381 [    +0] ( 4381 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=17">17</a></td>
-<td align=right><code><a href="/static/show/#problem_id=17&pose_url=%2Fbest_solution%3Fproblem_id%3D17"> 4644</a> /  4644 [    +0] ( 4644 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=17">17</a></td>
+<td align=right><code><a href="./static/show/#problem_id=17&pose_url=%2Fbest_solution%3Fproblem_id%3D17"> 4644</a> /  4644 [    +0] ( 4644 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=18">18</a></td>
-<td align=right><code><a href="/static/show/#problem_id=18&pose_url=%2Fbest_solution%3Fproblem_id%3D18"> 4644</a> /  4644 [    +0] ( 4644 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=18">18</a></td>
+<td align=right><code><a href="./static/show/#problem_id=18&pose_url=%2Fbest_solution%3Fproblem_id%3D18"> 4644</a> /  4644 [    +0] ( 4644 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=19">19</a></td>
-<td align=right><code><a href="/static/show/#problem_id=19&pose_url=%2Fbest_solution%3Fproblem_id%3D19"> 4393</a> /  4393 [    +0] ( 4393 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=19">19</a></td>
+<td align=right><code><a href="./static/show/#problem_id=19&pose_url=%2Fbest_solution%3Fproblem_id%3D19"> 4393</a> /  4393 [    +0] ( 4393 [    +0])</code></td>
 <td>(5318 / 5318 / 5318 / 5318)</td></tr>
-<tr><td><a href="/static/show#problem_id=20">20</a></td>
-<td align=right><code><a href="/static/show/#problem_id=20&pose_url=%2Fbest_solution%3Fproblem_id%3D20"> 5130</a> /  5130 [    +0] ( 5130 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=20">20</a></td>
+<td align=right><code><a href="./static/show/#problem_id=20&pose_url=%2Fbest_solution%3Fproblem_id%3D20"> 5130</a> /  5130 [    +0] ( 5130 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=21">21</a></td>
-<td align=right><code><a href="/static/show/#problem_id=21&pose_url=%2Fbest_solution%3Fproblem_id%3D21"> 5545</a> /  5545 [    +0] ( 5545 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=21">21</a></td>
+<td align=right><code><a href="./static/show/#problem_id=21&pose_url=%2Fbest_solution%3Fproblem_id%3D21"> 5545</a> /  5545 [    +0] ( 5545 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=22">22</a></td>
-<td align=right><code><a href="/static/show/#problem_id=22&pose_url=%2Fbest_solution%3Fproblem_id%3D22"> 5585</a> /  5585 [    +0] ( 5585 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=22">22</a></td>
+<td align=right><code><a href="./static/show/#problem_id=22&pose_url=%2Fbest_solution%3Fproblem_id%3D22"> 5585</a> /  5585 [    +0] ( 5585 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=23">23</a></td>
-<td align=right><code><a href="/static/show/#problem_id=23&pose_url=%2Fbest_solution%3Fproblem_id%3D23"> 5393</a> /  5393 [    +0] ( 5393 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=23">23</a></td>
+<td align=right><code><a href="./static/show/#problem_id=23&pose_url=%2Fbest_solution%3Fproblem_id%3D23"> 5393</a> /  5393 [    +0] ( 5393 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=24">24</a></td>
-<td align=right><code><a href="/static/show/#problem_id=24&pose_url=%2Fbest_solution%3Fproblem_id%3D24"> 5545</a> /  5545 [    +0] ( 5545 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=24">24</a></td>
+<td align=right><code><a href="./static/show/#problem_id=24&pose_url=%2Fbest_solution%3Fproblem_id%3D24"> 5545</a> /  5545 [    +0] ( 5545 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=25">25</a></td>
-<td align=right><code><a href="/static/show/#problem_id=25&pose_url=%2Fbest_solution%3Fproblem_id%3D25"> 5978</a> /  5978 [    +0] ( 5978 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=25">25</a></td>
+<td align=right><code><a href="./static/show/#problem_id=25&pose_url=%2Fbest_solution%3Fproblem_id%3D25"> 5978</a> /  5978 [    +0] ( 5978 [    +0])</code></td>
 <td>(0 / 0 / 1239 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=26">26</a></td>
-<td align=right><code><a href="/static/show/#problem_id=26&pose_url=%2Fbest_solution%3Fproblem_id%3D26"> 6267</a> /  6267 [    +0] ( 6267 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=26">26</a></td>
+<td align=right><code><a href="./static/show/#problem_id=26&pose_url=%2Fbest_solution%3Fproblem_id%3D26"> 6267</a> /  6267 [    +0] ( 6267 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=27">27</a></td>
-<td align=right><code><a href="/static/show/#problem_id=27&pose_url=%2Fbest_solution%3Fproblem_id%3D27"> 5376</a> /  5808 [<span style="color:red">  -432</span>] ( 5376 [  -432])</code></td>
+<tr><td><a href="./static/show#problem_id=27">27</a></td>
+<td align=right><code><a href="./static/show/#problem_id=27&pose_url=%2Fbest_solution%3Fproblem_id%3D27"> 5376</a> /  5808 [<span style="color:red">  -432</span>] ( 5376 [  -432])</code></td>
 <td>(2423 / 2423 / 2423 / 2076)</td></tr>
-<tr><td><a href="/static/show#problem_id=28">28</a></td>
-<td align=right><code><a href="/static/show/#problem_id=28&pose_url=%2Fbest_solution%3Fproblem_id%3D28"> 5932</a> /  6000 [<span style="color:red">   -68</span>] ( 5932 [   -68])</code></td>
+<tr><td><a href="./static/show#problem_id=28">28</a></td>
+<td align=right><code><a href="./static/show/#problem_id=28&pose_url=%2Fbest_solution%3Fproblem_id%3D28"> 5932</a> /  6000 [<span style="color:red">   -68</span>] ( 5932 [   -68])</code></td>
 <td>(3216 / 3216 / 3216 / 3143)</td></tr>
-<tr><td><a href="/static/show#problem_id=29">29</a></td>
-<td align=right><code><a href="/static/show/#problem_id=29&pose_url=%2Fbest_solution%3Fproblem_id%3D29"> 6116</a> /  6116 [    +0] ( 6116 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=29">29</a></td>
+<td align=right><code><a href="./static/show/#problem_id=29&pose_url=%2Fbest_solution%3Fproblem_id%3D29"> 6116</a> /  6116 [    +0] ( 6116 [    +0])</code></td>
 <td>(3114 / 3114 / 3114 / 3114)</td></tr>
-<tr><td><a href="/static/show#problem_id=30">30</a></td>
-<td align=right><code><a href="/static/show/#problem_id=30&pose_url=%2Fbest_solution%3Fproblem_id%3D30"> 6492</a> /  6492 [    +0] ( 6492 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=30">30</a></td>
+<td align=right><code><a href="./static/show/#problem_id=30&pose_url=%2Fbest_solution%3Fproblem_id%3D30"> 6492</a> /  6492 [    +0] ( 6492 [    +0])</code></td>
 <td>(1837 / 1837 / 1837 / 1837)</td></tr>
-<tr><td><a href="/static/show#problem_id=31">31</a></td>
-<td align=right><code><a href="/static/show/#problem_id=31&pose_url=%2Fbest_solution%3Fproblem_id%3D31"> 3992</a> /  6867 [<span style="color:red"> -2875</span>] ( 4887 [ -1980])</code></td>
+<tr><td><a href="./static/show#problem_id=31">31</a></td>
+<td align=right><code><a href="./static/show/#problem_id=31&pose_url=%2Fbest_solution%3Fproblem_id%3D31"> 3992</a> /  6867 [<span style="color:red"> -2875</span>] ( 4887 [ -1980])</code></td>
 <td>(10457 / 6978 / 6978 / 3533)</td></tr>
-<tr><td><a href="/static/show#problem_id=32">32</a></td>
-<td align=right><code><a href="/static/show/#problem_id=32&pose_url=%2Fbest_solution%3Fproblem_id%3D32"> 5700</a> /  6381 [<span style="color:red">  -681</span>] ( 5700 [  -681])</code></td>
+<tr><td><a href="./static/show#problem_id=32">32</a></td>
+<td align=right><code><a href="./static/show/#problem_id=32&pose_url=%2Fbest_solution%3Fproblem_id%3D32"> 5700</a> /  6381 [<span style="color:red">  -681</span>] ( 5700 [  -681])</code></td>
 <td>(1894 / 1894 / 1894 / 1511)</td></tr>
-<tr><td><a href="/static/show#problem_id=33">33</a></td>
-<td align=right><code><a href="/static/show/#problem_id=33&pose_url=%2Fbest_solution%3Fproblem_id%3D33"> 6867</a> /  6867 [    +0] ( 6897 [   +30])</code></td>
+<tr><td><a href="./static/show#problem_id=33">33</a></td>
+<td align=right><code><a href="./static/show/#problem_id=33&pose_url=%2Fbest_solution%3Fproblem_id%3D33"> 6867</a> /  6867 [    +0] ( 6897 [   +30])</code></td>
 <td>(2362 / 2341 / 2362 / 2362)</td></tr>
-<tr><td><a href="/static/show#problem_id=34">34</a></td>
-<td align=right><code><a href="/static/show/#problem_id=34&pose_url=%2Fbest_solution%3Fproblem_id%3D34"> 6978</a> /  6978 [    +0] ( 6978 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=34">34</a></td>
+<td align=right><code><a href="./static/show/#problem_id=34&pose_url=%2Fbest_solution%3Fproblem_id%3D34"> 6978</a> /  6978 [    +0] ( 6978 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=35">35</a></td>
-<td align=right><code><a href="/static/show/#problem_id=35&pose_url=%2Fbest_solution%3Fproblem_id%3D35"> 6852</a> /  6852 [    +0] ( 6852 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=35">35</a></td>
+<td align=right><code><a href="./static/show/#problem_id=35&pose_url=%2Fbest_solution%3Fproblem_id%3D35"> 6852</a> /  6852 [    +0] ( 6852 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=36">36</a></td>
-<td align=right><code><a href="/static/show/#problem_id=36&pose_url=%2Fbest_solution%3Fproblem_id%3D36"> 6196</a> /  6583 [<span style="color:red">  -387</span>] ( 6204 [  -379])</code></td>
+<tr><td><a href="./static/show#problem_id=36">36</a></td>
+<td align=right><code><a href="./static/show/#problem_id=36&pose_url=%2Fbest_solution%3Fproblem_id%3D36"> 6196</a> /  6583 [<span style="color:red">  -387</span>] ( 6204 [  -379])</code></td>
 <td>(1444 / 1440 / 1444 / 1279)</td></tr>
-<tr><td><a href="/static/show#problem_id=37">37</a></td>
-<td align=right><code><a href="/static/show/#problem_id=37&pose_url=%2Fbest_solution%3Fproblem_id%3D37"> 7151</a> /  7170 [   -19] ( 7323 [  +153])</code></td>
+<tr><td><a href="./static/show#problem_id=37">37</a></td>
+<td align=right><code><a href="./static/show/#problem_id=37&pose_url=%2Fbest_solution%3Fproblem_id%3D37"> 7151</a> /  7170 [   -19] ( 7323 [  +153])</code></td>
 <td>(1683 / 1605 / 1683 / 1674)</td></tr>
-<tr><td><a href="/static/show#problem_id=38">38</a></td>
-<td align=right><code><a href="/static/show/#problem_id=38&pose_url=%2Fbest_solution%3Fproblem_id%3D38"> 7104</a> /  7104 [    +0] ( 7104 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=38">38</a></td>
+<td align=right><code><a href="./static/show/#problem_id=38&pose_url=%2Fbest_solution%3Fproblem_id%3D38"> 7104</a> /  7104 [    +0] ( 7104 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=39">39</a></td>
-<td align=right><code><a href="/static/show/#problem_id=39&pose_url=%2Fbest_solution%3Fproblem_id%3D39"> 7170</a> /  7170 [    +0] ( 7170 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=39">39</a></td>
+<td align=right><code><a href="./static/show/#problem_id=39&pose_url=%2Fbest_solution%3Fproblem_id%3D39"> 7170</a> /  7170 [    +0] ( 7170 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=40">40</a></td>
-<td align=right><code><a href="/static/show/#problem_id=40&pose_url=%2Fbest_solution%3Fproblem_id%3D40"> 7211</a> /  7418 [<span style="color:red">  -207</span>] ( 7252 [  -166])</code></td>
+<tr><td><a href="./static/show#problem_id=40">40</a></td>
+<td align=right><code><a href="./static/show/#problem_id=40&pose_url=%2Fbest_solution%3Fproblem_id%3D40"> 7211</a> /  7418 [<span style="color:red">  -207</span>] ( 7252 [  -166])</code></td>
 <td>(3768 / 3725 / 3768 / 3560)</td></tr>
-<tr><td><a href="/static/show#problem_id=41">41</a></td>
-<td align=right><code><a href="/static/show/#problem_id=41&pose_url=%2Fbest_solution%3Fproblem_id%3D41"> 7644</a> /  7644 [    +0] ( 7644 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=41">41</a></td>
+<td align=right><code><a href="./static/show/#problem_id=41&pose_url=%2Fbest_solution%3Fproblem_id%3D41"> 7644</a> /  7644 [    +0] ( 7644 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=42">42</a></td>
-<td align=right><code><a href="/static/show/#problem_id=42&pose_url=%2Fbest_solution%3Fproblem_id%3D42"> 7257</a> /  7545 [  -288] ( 7545 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=42">42</a></td>
+<td align=right><code><a href="./static/show/#problem_id=42&pose_url=%2Fbest_solution%3Fproblem_id%3D42"> 7257</a> /  7545 [  -288] ( 7545 [    +0])</code></td>
 <td>(1655 / 1531 / 1531 / 1531)</td></tr>
-<tr><td><a href="/static/show#problem_id=43">43</a></td>
-<td align=right><code><a href="/static/show/#problem_id=43&pose_url=%2Fbest_solution%3Fproblem_id%3D43"> 7830</a> /  7830 [    +0] ( 7830 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=43">43</a></td>
+<td align=right><code><a href="./static/show/#problem_id=43&pose_url=%2Fbest_solution%3Fproblem_id%3D43"> 7830</a> /  7830 [    +0] ( 7830 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=44">44</a></td>
-<td align=right><code><a href="/static/show/#problem_id=44&pose_url=%2Fbest_solution%3Fproblem_id%3D44"> 7466</a> /  7508 [   -42] ( 7568 [   +60])</code></td>
+<tr><td><a href="./static/show#problem_id=44">44</a></td>
+<td align=right><code><a href="./static/show/#problem_id=44&pose_url=%2Fbest_solution%3Fproblem_id%3D44"> 7466</a> /  7508 [   -42] ( 7568 [   +60])</code></td>
 <td>(8804 / 8569 / 8804 / 8706)</td></tr>
-<tr><td><a href="/static/show#problem_id=45">45</a></td>
-<td align=right><code><a href="/static/show/#problem_id=45&pose_url=%2Fbest_solution%3Fproblem_id%3D45"> 7508</a> /  7508 [    +0] ( 7641 [  +133])</code></td>
+<tr><td><a href="./static/show#problem_id=45">45</a></td>
+<td align=right><code><a href="./static/show/#problem_id=45&pose_url=%2Fbest_solution%3Fproblem_id%3D45"> 7508</a> /  7508 [    +0] ( 7641 [  +133])</code></td>
 <td>(6379 / 6159 / 6379 / 6379)</td></tr>
-<tr><td><a href="/static/show#problem_id=46">46</a></td>
-<td align=right><code><a href="/static/show/#problem_id=46&pose_url=%2Fbest_solution%3Fproblem_id%3D46"> 8200</a> /  8200 [    +0] ( 8200 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=46">46</a></td>
+<td align=right><code><a href="./static/show/#problem_id=46&pose_url=%2Fbest_solution%3Fproblem_id%3D46"> 8200</a> /  8200 [    +0] ( 8200 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=47">47</a></td>
-<td align=right><code><a href="/static/show/#problem_id=47&pose_url=%2Fbest_solution%3Fproblem_id%3D47"> 8104</a> /  8104 [    +0] ( 8104 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=47">47</a></td>
+<td align=right><code><a href="./static/show/#problem_id=47&pose_url=%2Fbest_solution%3Fproblem_id%3D47"> 8104</a> /  8104 [    +0] ( 8104 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=48">48</a></td>
-<td align=right><code><a href="/static/show/#problem_id=48&pose_url=%2Fbest_solution%3Fproblem_id%3D48"> 7579</a> /  8267 [<span style="color:red">  -688</span>] ( 7705 [  -562])</code></td>
+<tr><td><a href="./static/show#problem_id=48">48</a></td>
+<td align=right><code><a href="./static/show/#problem_id=48&pose_url=%2Fbest_solution%3Fproblem_id%3D48"> 7579</a> /  8267 [<span style="color:red">  -688</span>] ( 7705 [  -562])</code></td>
 <td>(3617 / 3500 / 3617 / 3040)</td></tr>
-<tr><td><a href="/static/show#problem_id=49">49</a></td>
-<td align=right><code><a href="/static/show/#problem_id=49&pose_url=%2Fbest_solution%3Fproblem_id%3D49"> 8508</a> /  8508 [    +0] ( 8508 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=49">49</a></td>
+<td align=right><code><a href="./static/show/#problem_id=49&pose_url=%2Fbest_solution%3Fproblem_id%3D49"> 8508</a> /  8508 [    +0] ( 8508 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=50">50</a></td>
-<td align=right><code><a href="/static/show/#problem_id=50&pose_url=%2Fbest_solution%3Fproblem_id%3D50"> 8340</a> /  8340 [    +0] ( 8564 [  +224])</code></td>
+<tr><td><a href="./static/show#problem_id=50">50</a></td>
+<td align=right><code><a href="./static/show/#problem_id=50&pose_url=%2Fbest_solution%3Fproblem_id%3D50"> 8340</a> /  8340 [    +0] ( 8564 [  +224])</code></td>
 <td>(3299 / 3129 / 3299 / 3299)</td></tr>
-<tr><td><a href="/static/show#problem_id=51">51</a></td>
-<td align=right><code><a href="/static/show/#problem_id=51&pose_url=%2Fbest_solution%3Fproblem_id%3D51"> 8830</a> /  8830 [    +0] ( 8830 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=51">51</a></td>
+<td align=right><code><a href="./static/show/#problem_id=51&pose_url=%2Fbest_solution%3Fproblem_id%3D51"> 8830</a> /  8830 [    +0] ( 8830 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=52">52</a></td>
-<td align=right><code><a href="/static/show/#problem_id=52&pose_url=%2Fbest_solution%3Fproblem_id%3D52"> 8785</a> /  8785 [    +0] ( 8785 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=52">52</a></td>
+<td align=right><code><a href="./static/show/#problem_id=52&pose_url=%2Fbest_solution%3Fproblem_id%3D52"> 8785</a> /  8785 [    +0] ( 8785 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=53">53</a></td>
-<td align=right><code><a href="/static/show/#problem_id=53&pose_url=%2Fbest_solution%3Fproblem_id%3D53"> 8923</a> /  8923 [    +0] ( 8923 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=53">53</a></td>
+<td align=right><code><a href="./static/show/#problem_id=53&pose_url=%2Fbest_solution%3Fproblem_id%3D53"> 8923</a> /  8923 [    +0] ( 8923 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=54">54</a></td>
-<td align=right><code><a href="/static/show/#problem_id=54&pose_url=%2Fbest_solution%3Fproblem_id%3D54"> 8968</a> /  8968 [    +0] ( 8968 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=54">54</a></td>
+<td align=right><code><a href="./static/show/#problem_id=54&pose_url=%2Fbest_solution%3Fproblem_id%3D54"> 8968</a> /  8968 [    +0] ( 8968 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=55">55</a></td>
-<td align=right><code><a href="/static/show/#problem_id=55&pose_url=%2Fbest_solution%3Fproblem_id%3D55"> 8966</a> /  8966 [    +0] ( 8966 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=55">55</a></td>
+<td align=right><code><a href="./static/show/#problem_id=55&pose_url=%2Fbest_solution%3Fproblem_id%3D55"> 8966</a> /  8966 [    +0] ( 8966 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=56">56</a></td>
-<td align=right><code><a href="/static/show/#problem_id=56&pose_url=%2Fbest_solution%3Fproblem_id%3D56"> 8911</a> /  9030 [  -119] ( 9096 [   +66])</code></td>
+<tr><td><a href="./static/show#problem_id=56">56</a></td>
+<td align=right><code><a href="./static/show/#problem_id=56&pose_url=%2Fbest_solution%3Fproblem_id%3D56"> 8911</a> /  9030 [  -119] ( 9096 [   +66])</code></td>
 <td>(3102 / 2977 / 3102 / 3021)</td></tr>
-<tr><td><a href="/static/show#problem_id=57">57</a></td>
-<td align=right><code><a href="/static/show/#problem_id=57&pose_url=%2Fbest_solution%3Fproblem_id%3D57"> 9070</a> /  9340 [  -270] ( 9340 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=57">57</a></td>
+<td align=right><code><a href="./static/show/#problem_id=57&pose_url=%2Fbest_solution%3Fproblem_id%3D57"> 9070</a> /  9340 [  -270] ( 9340 [    +0])</code></td>
 <td>(4514 / 4256 / 4256 / 4256)</td></tr>
-<tr><td><a href="/static/show#problem_id=58">58</a></td>
-<td align=right><code><a href="/static/show/#problem_id=58&pose_url=%2Fbest_solution%3Fproblem_id%3D58"> 9077</a> /  9077 [    +0] ( 9346 [  +269])</code></td>
+<tr><td><a href="./static/show#problem_id=58">58</a></td>
+<td align=right><code><a href="./static/show/#problem_id=58&pose_url=%2Fbest_solution%3Fproblem_id%3D58"> 9077</a> /  9077 [    +0] ( 9346 [  +269])</code></td>
 <td>(2171 / 2048 / 2171 / 2171)</td></tr>
-<tr><td><a href="/static/show#problem_id=59">59</a></td>
-<td align=right><code><a href="/static/show/#problem_id=59&pose_url=%2Fbest_solution%3Fproblem_id%3D59"> 9229</a> /  9229 [    +0] ( 9229 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=59">59</a></td>
+<td align=right><code><a href="./static/show/#problem_id=59&pose_url=%2Fbest_solution%3Fproblem_id%3D59"> 9229</a> /  9229 [    +0] ( 9229 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=60">60</a></td>
-<td align=right><code><a href="/static/show/#problem_id=60&pose_url=%2Fbest_solution%3Fproblem_id%3D60"> 7294</a> / 12081 [<span style="color:red"> -4787</span>] ( 8294 [ -3787])</code></td>
+<tr><td><a href="./static/show#problem_id=60">60</a></td>
+<td align=right><code><a href="./static/show/#problem_id=60&pose_url=%2Fbest_solution%3Fproblem_id%3D60"> 7294</a> / 12081 [<span style="color:red"> -4787</span>] ( 8294 [ -3787])</code></td>
 <td>(202 / 156 / 168 / 73)</td></tr>
-<tr><td><a href="/static/show#problem_id=61">61</a></td>
-<td align=right><code><a href="/static/show/#problem_id=61&pose_url=%2Fbest_solution%3Fproblem_id%3D61">10415</a> / 10415 [    +0] (10712 [  +297])</code></td>
+<tr><td><a href="./static/show#problem_id=61">61</a></td>
+<td align=right><code><a href="./static/show/#problem_id=61&pose_url=%2Fbest_solution%3Fproblem_id%3D61">10415</a> / 10415 [    +0] (10712 [  +297])</code></td>
 <td>(12587 / 11899 / 20671 / 12587)</td></tr>
-<tr><td><a href="/static/show#problem_id=62">62</a></td>
-<td align=right><code><a href="/static/show/#problem_id=62&pose_url=%2Fbest_solution%3Fproblem_id%3D62">12086</a> / 14385 [ -2299] (14393 [    +8])</code></td>
+<tr><td><a href="./static/show#problem_id=62">62</a></td>
+<td align=right><code><a href="./static/show/#problem_id=62&pose_url=%2Fbest_solution%3Fproblem_id%3D62">12086</a> / 14385 [ -2299] (14393 [    +8])</code></td>
 <td>(4059 / 2862 / 2865 / 2865)</td></tr>
-<tr><td><a href="/static/show#problem_id=63">63</a></td>
-<td align=right><code><a href="/static/show/#problem_id=63&pose_url=%2Fbest_solution%3Fproblem_id%3D63">12456</a> / 12456 [    +0] (12456 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=63">63</a></td>
+<td align=right><code><a href="./static/show/#problem_id=63&pose_url=%2Fbest_solution%3Fproblem_id%3D63">12456</a> / 12456 [    +0] (12456 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=64">64</a></td>
-<td align=right><code><a href="/static/show/#problem_id=64&pose_url=%2Fbest_solution%3Fproblem_id%3D64">16627</a> / 16627 [    +0] (16627 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=64">64</a></td>
+<td align=right><code><a href="./static/show/#problem_id=64&pose_url=%2Fbest_solution%3Fproblem_id%3D64">16627</a> / 16627 [    +0] (16627 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=65">65</a></td>
-<td align=right><code><a href="/static/show/#problem_id=65&pose_url=%2Fbest_solution%3Fproblem_id%3D65">15023</a> / 15023 [    +0] (15023 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=65">65</a></td>
+<td align=right><code><a href="./static/show/#problem_id=65&pose_url=%2Fbest_solution%3Fproblem_id%3D65">15023</a> / 15023 [    +0] (15023 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=66">66</a></td>
-<td align=right><code><a href="/static/show/#problem_id=66&pose_url=%2Fbest_solution%3Fproblem_id%3D66"> 9595</a> /  9662 [   -67] ( 9869 [  +207])</code></td>
+<tr><td><a href="./static/show#problem_id=66">66</a></td>
+<td align=right><code><a href="./static/show/#problem_id=66&pose_url=%2Fbest_solution%3Fproblem_id%3D66"> 9595</a> /  9662 [   -67] ( 9869 [  +207])</code></td>
 <td>(7691 / 7271 / 8713 / 7585)</td></tr>
-<tr><td><a href="/static/show#problem_id=67">67</a></td>
-<td align=right><code><a href="/static/show/#problem_id=67&pose_url=%2Fbest_solution%3Fproblem_id%3D67">10452</a> / 10452 [    +0] (10452 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=67">67</a></td>
+<td align=right><code><a href="./static/show/#problem_id=67&pose_url=%2Fbest_solution%3Fproblem_id%3D67">10452</a> / 10452 [    +0] (10452 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=68">68</a></td>
-<td align=right><code><a href="/static/show/#problem_id=68&pose_url=%2Fbest_solution%3Fproblem_id%3D68">17042</a> / 17042 [    +0] (17042 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=68">68</a></td>
+<td align=right><code><a href="./static/show/#problem_id=68&pose_url=%2Fbest_solution%3Fproblem_id%3D68">17042</a> / 17042 [    +0] (17042 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=69">69</a></td>
-<td align=right><code><a href="/static/show/#problem_id=69&pose_url=%2Fbest_solution%3Fproblem_id%3D69">11594</a> / 11668 [   -74] (15678 [ +4010])</code></td>
+<tr><td><a href="./static/show#problem_id=69">69</a></td>
+<td align=right><code><a href="./static/show/#problem_id=69&pose_url=%2Fbest_solution%3Fproblem_id%3D69">11594</a> / 11668 [   -74] (15678 [ +4010])</code></td>
 <td>(714 / 390 / 714 / 705)</td></tr>
-<tr><td><a href="/static/show#problem_id=70">70</a></td>
-<td align=right><code><a href="/static/show/#problem_id=70&pose_url=%2Fbest_solution%3Fproblem_id%3D70">15276</a> / 15276 [    +0] (15276 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=70">70</a></td>
+<td align=right><code><a href="./static/show/#problem_id=70&pose_url=%2Fbest_solution%3Fproblem_id%3D70">15276</a> / 15276 [    +0] (15276 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=71">71</a></td>
-<td align=right><code><a href="/static/show/#problem_id=71&pose_url=%2Fbest_solution%3Fproblem_id%3D71">10535</a> / 14548 [<span style="color:red"> -4013</span>] (11189 [ -3359])</code></td>
+<tr><td><a href="./static/show#problem_id=71">71</a></td>
+<td align=right><code><a href="./static/show/#problem_id=71&pose_url=%2Fbest_solution%3Fproblem_id%3D71">10535</a> / 14548 [<span style="color:red"> -4013</span>] (11189 [ -3359])</code></td>
 <td>(9974 / 8842 / 10006 / 5230)</td></tr>
-<tr><td><a href="/static/show#problem_id=72">72</a></td>
-<td align=right><code><a href="/static/show/#problem_id=72&pose_url=%2Fbest_solution%3Fproblem_id%3D72">12235</a> / 12235 [    +0] (12235 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=72">72</a></td>
+<td align=right><code><a href="./static/show/#problem_id=72&pose_url=%2Fbest_solution%3Fproblem_id%3D72">12235</a> / 12235 [    +0] (12235 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=73">73</a></td>
-<td align=right><code><a href="/static/show/#problem_id=73&pose_url=%2Fbest_solution%3Fproblem_id%3D73">11456</a> / 11456 [    +0] (11456 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=73">73</a></td>
+<td align=right><code><a href="./static/show/#problem_id=73&pose_url=%2Fbest_solution%3Fproblem_id%3D73">11456</a> / 11456 [    +0] (11456 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=74">74</a></td>
-<td align=right><code><a href="/static/show/#problem_id=74&pose_url=%2Fbest_solution%3Fproblem_id%3D74">10869</a> / 16851 [<span style="color:red"> -5982</span>] (16013 [  -838])</code></td>
+<tr><td><a href="./static/show#problem_id=74">74</a></td>
+<td align=right><code><a href="./static/show/#problem_id=74&pose_url=%2Fbest_solution%3Fproblem_id%3D74">10869</a> / 16851 [<span style="color:red"> -5982</span>] (16013 [  -838])</code></td>
 <td>(5729 / 2639 / 5729 / 2383)</td></tr>
-<tr><td><a href="/static/show#problem_id=75">75</a></td>
-<td align=right><code><a href="/static/show/#problem_id=75&pose_url=%2Fbest_solution%3Fproblem_id%3D75">18146</a> / 18146 [    +0] (18146 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=75">75</a></td>
+<td align=right><code><a href="./static/show/#problem_id=75&pose_url=%2Fbest_solution%3Fproblem_id%3D75">18146</a> / 18146 [    +0] (18146 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=76">76</a></td>
-<td align=right><code><a href="/static/show/#problem_id=76&pose_url=%2Fbest_solution%3Fproblem_id%3D76">14240</a> / 14240 [    +0] (14240 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=76">76</a></td>
+<td align=right><code><a href="./static/show/#problem_id=76&pose_url=%2Fbest_solution%3Fproblem_id%3D76">14240</a> / 14240 [    +0] (14240 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=77">77</a></td>
-<td align=right><code><a href="/static/show/#problem_id=77&pose_url=%2Fbest_solution%3Fproblem_id%3D77">14295</a> / 14295 [    +0] (14295 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=77">77</a></td>
+<td align=right><code><a href="./static/show/#problem_id=77&pose_url=%2Fbest_solution%3Fproblem_id%3D77">14295</a> / 14295 [    +0] (14295 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=78">78</a></td>
-<td align=right><code><a href="/static/show/#problem_id=78&pose_url=%2Fbest_solution%3Fproblem_id%3D78">14889</a> / 16263 [ -1374] (195830 [+179567])</code></td>
+<tr><td><a href="./static/show#problem_id=78">78</a></td>
+<td align=right><code><a href="./static/show/#problem_id=78&pose_url=%2Fbest_solution%3Fproblem_id%3D78">14889</a> / 16263 [ -1374] (195830 [+179567])</code></td>
 <td>(172 / 0 / 172 / 144)</td></tr>
-<tr><td><a href="/static/show#problem_id=79">79</a></td>
-<td align=right><code><a href="/static/show/#problem_id=79&pose_url=%2Fbest_solution%3Fproblem_id%3D79">12008</a> / 13240 [ -1232] (13240 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=79">79</a></td>
+<td align=right><code><a href="./static/show/#problem_id=79&pose_url=%2Fbest_solution%3Fproblem_id%3D79">12008</a> / 13240 [ -1232] (13240 [    +0])</code></td>
 <td>(21381 / 17586 / 17586 / 17586)</td></tr>
-<tr><td><a href="/static/show#problem_id=80">80</a></td>
-<td align=right><code><a href="/static/show/#problem_id=80&pose_url=%2Fbest_solution%3Fproblem_id%3D80">15825</a> / 15825 [    +0] (15825 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=80">80</a></td>
+<td align=right><code><a href="./static/show/#problem_id=80&pose_url=%2Fbest_solution%3Fproblem_id%3D80">15825</a> / 15825 [    +0] (15825 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=81">81</a></td>
-<td align=right><code><a href="/static/show/#problem_id=81&pose_url=%2Fbest_solution%3Fproblem_id%3D81">13372</a> / 13372 [    +0] (13372 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=81">81</a></td>
+<td align=right><code><a href="./static/show/#problem_id=81&pose_url=%2Fbest_solution%3Fproblem_id%3D81">13372</a> / 13372 [    +0] (13372 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=82">82</a></td>
-<td align=right><code><a href="/static/show/#problem_id=82&pose_url=%2Fbest_solution%3Fproblem_id%3D82"> 2548</a> / 14349 [-11801] (14349 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=82">82</a></td>
+<td align=right><code><a href="./static/show/#problem_id=82&pose_url=%2Fbest_solution%3Fproblem_id%3D82"> 2548</a> / 14349 [-11801] (14349 [    +0])</code></td>
 <td>(1078 / 33 / 33 / 33)</td></tr>
-<tr><td><a href="/static/show#problem_id=83">83</a></td>
-<td align=right><code><a href="/static/show/#problem_id=83&pose_url=%2Fbest_solution%3Fproblem_id%3D83">10500</a> / 13771 [<span style="color:red"> -3271</span>] (12327 [ -1444])</code></td>
+<tr><td><a href="./static/show#problem_id=83">83</a></td>
+<td align=right><code><a href="./static/show/#problem_id=83&pose_url=%2Fbest_solution%3Fproblem_id%3D83">10500</a> / 13771 [<span style="color:red"> -3271</span>] (12327 [ -1444])</code></td>
 <td>(5761 / 4180 / 5761 / 3349)</td></tr>
-<tr><td><a href="/static/show#problem_id=84">84</a></td>
-<td align=right><code><a href="/static/show/#problem_id=84&pose_url=%2Fbest_solution%3Fproblem_id%3D84">11861</a> / 11861 [    +0] (11861 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=84">84</a></td>
+<td align=right><code><a href="./static/show/#problem_id=84&pose_url=%2Fbest_solution%3Fproblem_id%3D84">11861</a> / 11861 [    +0] (11861 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=85">85</a></td>
-<td align=right><code><a href="/static/show/#problem_id=85&pose_url=%2Fbest_solution%3Fproblem_id%3D85">17619</a> / 17619 [    +0] (17619 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=85">85</a></td>
+<td align=right><code><a href="./static/show/#problem_id=85&pose_url=%2Fbest_solution%3Fproblem_id%3D85">17619</a> / 17619 [    +0] (17619 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=86">86</a></td>
-<td align=right><code><a href="/static/show/#problem_id=86&pose_url=%2Fbest_solution%3Fproblem_id%3D86">14905</a> / 14914 [    -9] (16305 [ +1391])</code></td>
+<tr><td><a href="./static/show#problem_id=86">86</a></td>
+<td align=right><code><a href="./static/show/#problem_id=86&pose_url=%2Fbest_solution%3Fproblem_id%3D86">14905</a> / 14914 [    -9] (16305 [ +1391])</code></td>
 <td>(5360 / 4479 / 5360 / 5354)</td></tr>
-<tr><td><a href="/static/show#problem_id=87">87</a></td>
-<td align=right><code><a href="/static/show/#problem_id=87&pose_url=%2Fbest_solution%3Fproblem_id%3D87">10989</a> / 15724 [ -4735] (15764 [   +40])</code></td>
+<tr><td><a href="./static/show#problem_id=87">87</a></td>
+<td align=right><code><a href="./static/show/#problem_id=87&pose_url=%2Fbest_solution%3Fproblem_id%3D87">10989</a> / 15724 [ -4735] (15764 [   +40])</code></td>
 <td>(5193 / 2523 / 2536 / 2536)</td></tr>
-<tr><td><a href="/static/show#problem_id=88">88</a></td>
-<td align=right><code><a href="/static/show/#problem_id=88&pose_url=%2Fbest_solution%3Fproblem_id%3D88">10152</a> / 10152 [    +0] (10596 [  +444])</code></td>
+<tr><td><a href="./static/show#problem_id=88">88</a></td>
+<td align=right><code><a href="./static/show/#problem_id=88&pose_url=%2Fbest_solution%3Fproblem_id%3D88">10152</a> / 10152 [    +0] (10596 [  +444])</code></td>
 <td>(9908 / 9095 / 9908 / 9908)</td></tr>
-<tr><td><a href="/static/show#problem_id=89">89</a></td>
-<td align=right><code><a href="/static/show/#problem_id=89&pose_url=%2Fbest_solution%3Fproblem_id%3D89">14257</a> / 14778 [  -521] (15340 [  +562])</code></td>
+<tr><td><a href="./static/show#problem_id=89">89</a></td>
+<td align=right><code><a href="./static/show/#problem_id=89&pose_url=%2Fbest_solution%3Fproblem_id%3D89">14257</a> / 14778 [  -521] (15340 [  +562])</code></td>
 <td>(88959 / 76841 / 88959 / 82795)</td></tr>
-<tr><td><a href="/static/show#problem_id=90">90</a></td>
-<td align=right><code><a href="/static/show/#problem_id=90&pose_url=%2Fbest_solution%3Fproblem_id%3D90">18763</a> / 18763 [    +0] (18763 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=90">90</a></td>
+<td align=right><code><a href="./static/show/#problem_id=90&pose_url=%2Fbest_solution%3Fproblem_id%3D90">18763</a> / 18763 [    +0] (18763 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=91">91</a></td>
-<td align=right><code><a href="/static/show/#problem_id=91&pose_url=%2Fbest_solution%3Fproblem_id%3D91">14506</a> / 14597 [   -91] (16097 [ +1500])</code></td>
+<tr><td><a href="./static/show#problem_id=91">91</a></td>
+<td align=right><code><a href="./static/show/#problem_id=91&pose_url=%2Fbest_solution%3Fproblem_id%3D91">14506</a> / 14597 [   -91] (16097 [ +1500])</code></td>
 <td>(12938 / 10506 / 12938 / 12777)</td></tr>
-<tr><td><a href="/static/show#problem_id=92">92</a></td>
-<td align=right><code><a href="/static/show/#problem_id=92&pose_url=%2Fbest_solution%3Fproblem_id%3D92">12004</a> / 12551 [<span style="color:red">  -547</span>] (12185 [  -366])</code></td>
+<tr><td><a href="./static/show#problem_id=92">92</a></td>
+<td align=right><code><a href="./static/show/#problem_id=92&pose_url=%2Fbest_solution%3Fproblem_id%3D92">12004</a> / 12551 [<span style="color:red">  -547</span>] (12185 [  -366])</code></td>
 <td>(36902 / 35816 / 78696 / 33754)</td></tr>
-<tr><td><a href="/static/show#problem_id=93">93</a></td>
-<td align=right><code><a href="/static/show/#problem_id=93&pose_url=%2Fbest_solution%3Fproblem_id%3D93">17707</a> / 17707 [    +0] (17707 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=93">93</a></td>
+<td align=right><code><a href="./static/show/#problem_id=93&pose_url=%2Fbest_solution%3Fproblem_id%3D93">17707</a> / 17707 [    +0] (17707 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=94">94</a></td>
-<td align=right><code><a href="/static/show/#problem_id=94&pose_url=%2Fbest_solution%3Fproblem_id%3D94">13369</a> / 14258 [  -889] (16658 [ +2400])</code></td>
+<tr><td><a href="./static/show#problem_id=94">94</a></td>
+<td align=right><code><a href="./static/show/#problem_id=94&pose_url=%2Fbest_solution%3Fproblem_id%3D94">13369</a> / 14258 [  -889] (16658 [ +2400])</code></td>
 <td>(1713 / 1103 / 1713 / 1506)</td></tr>
-<tr><td><a href="/static/show#problem_id=95">95</a></td>
-<td align=right><code><a href="/static/show/#problem_id=95&pose_url=%2Fbest_solution%3Fproblem_id%3D95">16112</a> / 16526 [  -414] (19606 [ +3080])</code></td>
+<tr><td><a href="./static/show#problem_id=95">95</a></td>
+<td align=right><code><a href="./static/show/#problem_id=95&pose_url=%2Fbest_solution%3Fproblem_id%3D95">16112</a> / 16526 [  -414] (19606 [ +3080])</code></td>
 <td>(5556 / 3752 / 5556 / 5281)</td></tr>
-<tr><td><a href="/static/show#problem_id=96">96</a></td>
-<td align=right><code><a href="/static/show/#problem_id=96&pose_url=%2Fbest_solution%3Fproblem_id%3D96">14853</a> / 14853 [    +0] (17336 [ +2483])</code></td>
+<tr><td><a href="./static/show#problem_id=96">96</a></td>
+<td align=right><code><a href="./static/show/#problem_id=96&pose_url=%2Fbest_solution%3Fproblem_id%3D96">14853</a> / 14853 [    +0] (17336 [ +2483])</code></td>
 <td>(13649 / 10018 / 13649 / 13649)</td></tr>
-<tr><td><a href="/static/show#problem_id=97">97</a></td>
-<td align=right><code><a href="/static/show/#problem_id=97&pose_url=%2Fbest_solution%3Fproblem_id%3D97">15479</a> / 15479 [    +0] (15479 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=97">97</a></td>
+<td align=right><code><a href="./static/show/#problem_id=97&pose_url=%2Fbest_solution%3Fproblem_id%3D97">15479</a> / 15479 [    +0] (15479 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=98">98</a></td>
-<td align=right><code><a href="/static/show/#problem_id=98&pose_url=%2Fbest_solution%3Fproblem_id%3D98">14594</a> / 14971 [  -377] (16071 [ +1100])</code></td>
+<tr><td><a href="./static/show#problem_id=98">98</a></td>
+<td align=right><code><a href="./static/show/#problem_id=98&pose_url=%2Fbest_solution%3Fproblem_id%3D98">14594</a> / 14971 [  -377] (16071 [ +1100])</code></td>
 <td>(29897 / 24653 / 29897 / 28409)</td></tr>
-<tr><td><a href="/static/show#problem_id=99">99</a></td>
-<td align=right><code><a href="/static/show/#problem_id=99&pose_url=%2Fbest_solution%3Fproblem_id%3D99">14392</a> / 15086 [  -694] (17800 [ +2714])</code></td>
+<tr><td><a href="./static/show#problem_id=99">99</a></td>
+<td align=right><code><a href="./static/show/#problem_id=99&pose_url=%2Fbest_solution%3Fproblem_id%3D99">14392</a> / 15086 [  -694] (17800 [ +2714])</code></td>
 <td>(6376 / 4168 / 6376 / 5803)</td></tr>
-<tr><td><a href="/static/show#problem_id=100">100</a></td>
-<td align=right><code><a href="/static/show/#problem_id=100&pose_url=%2Fbest_solution%3Fproblem_id%3D100">15474</a> / 15774 [  -300] (24099 [ +8325])</code></td>
+<tr><td><a href="./static/show#problem_id=100">100</a></td>
+<td align=right><code><a href="./static/show/#problem_id=100&pose_url=%2Fbest_solution%3Fproblem_id%3D100">15474</a> / 15774 [  -300] (24099 [ +8325])</code></td>
 <td>(3557 / 1466 / 3557 / 3423)</td></tr>
-<tr><td><a href="/static/show#problem_id=101">101</a></td>
-<td align=right><code><a href="/static/show/#problem_id=101&pose_url=%2Fbest_solution%3Fproblem_id%3D101">14356</a> / 15033 [  -677] (17350 [ +2317])</code></td>
+<tr><td><a href="./static/show#problem_id=101">101</a></td>
+<td align=right><code><a href="./static/show/#problem_id=101&pose_url=%2Fbest_solution%3Fproblem_id%3D101">14356</a> / 15033 [  -677] (17350 [ +2317])</code></td>
 <td>(8313 / 5691 / 8313 / 7581)</td></tr>
-<tr><td><a href="/static/show#problem_id=102">102</a></td>
-<td align=right><code><a href="/static/show/#problem_id=102&pose_url=%2Fbest_solution%3Fproblem_id%3D102">14945</a> / 15391 [  -446] (17485 [ +2094])</code></td>
+<tr><td><a href="./static/show#problem_id=102">102</a></td>
+<td align=right><code><a href="./static/show/#problem_id=102&pose_url=%2Fbest_solution%3Fproblem_id%3D102">14945</a> / 15391 [  -446] (17485 [ +2094])</code></td>
 <td>(63498 / 46388 / 63498 / 59868)</td></tr>
-<tr><td><a href="/static/show#problem_id=103">103</a></td>
-<td align=right><code><a href="/static/show/#problem_id=103&pose_url=%2Fbest_solution%3Fproblem_id%3D103">14273</a> / 14553 [<span style="color:red">  -280</span>] (14525 [   -28])</code></td>
+<tr><td><a href="./static/show#problem_id=103">103</a></td>
+<td align=right><code><a href="./static/show/#problem_id=103&pose_url=%2Fbest_solution%3Fproblem_id%3D103">14273</a> / 14553 [<span style="color:red">  -280</span>] (14525 [   -28])</code></td>
 <td>(49852 / 48134 / 49852 / 47952)</td></tr>
-<tr><td><a href="/static/show#problem_id=104">104</a></td>
-<td align=right><code><a href="/static/show/#problem_id=104&pose_url=%2Fbest_solution%3Fproblem_id%3D104">13787</a> / 13788 [    -1] (14966 [ +1178])</code></td>
+<tr><td><a href="./static/show#problem_id=104">104</a></td>
+<td align=right><code><a href="./static/show/#problem_id=104&pose_url=%2Fbest_solution%3Fproblem_id%3D104">13787</a> / 13788 [    -1] (14966 [ +1178])</code></td>
 <td>(14652 / 12434 / 14652 / 14650)</td></tr>
-<tr><td><a href="/static/show#problem_id=105">105</a></td>
-<td align=right><code><a href="/static/show/#problem_id=105&pose_url=%2Fbest_solution%3Fproblem_id%3D105">19962</a> / 19962 [    +0] (19962 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=105">105</a></td>
+<td align=right><code><a href="./static/show/#problem_id=105&pose_url=%2Fbest_solution%3Fproblem_id%3D105">19962</a> / 19962 [    +0] (19962 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=106">106</a></td>
-<td align=right><code><a href="/static/show/#problem_id=106&pose_url=%2Fbest_solution%3Fproblem_id%3D106">18315</a> / 18315 [    +0] (18315 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=106">106</a></td>
+<td align=right><code><a href="./static/show/#problem_id=106&pose_url=%2Fbest_solution%3Fproblem_id%3D106">18315</a> / 18315 [    +0] (18315 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=107">107</a></td>
-<td align=right><code><a href="/static/show/#problem_id=107&pose_url=%2Fbest_solution%3Fproblem_id%3D107"> 8313</a> / 16477 [<span style="color:red"> -8164</span>] (10560 [ -5917])</code></td>
+<tr><td><a href="./static/show#problem_id=107">107</a></td>
+<td align=right><code><a href="./static/show/#problem_id=107&pose_url=%2Fbest_solution%3Fproblem_id%3D107"> 8313</a> / 16477 [<span style="color:red"> -8164</span>] (10560 [ -5917])</code></td>
 <td>(5170 / 3203 / 5170 / 1315)</td></tr>
-<tr><td><a href="/static/show#problem_id=108">108</a></td>
-<td align=right><code><a href="/static/show/#problem_id=108&pose_url=%2Fbest_solution%3Fproblem_id%3D108">12159</a> / 12168 [    -9] (12941 [  +773])</code></td>
+<tr><td><a href="./static/show#problem_id=108">108</a></td>
+<td align=right><code><a href="./static/show/#problem_id=108&pose_url=%2Fbest_solution%3Fproblem_id%3D108">12159</a> / 12168 [    -9] (12941 [  +773])</code></td>
 <td>(18302 / 16155 / 19036 / 18274)</td></tr>
-<tr><td><a href="/static/show#problem_id=109">109</a></td>
-<td align=right><code><a href="/static/show/#problem_id=109&pose_url=%2Fbest_solution%3Fproblem_id%3D109"> 2414</a> / 13354 [<span style="color:red">-10940</span>] ( 3984 [ -9370])</code></td>
+<tr><td><a href="./static/show#problem_id=109">109</a></td>
+<td align=right><code><a href="./static/show/#problem_id=109&pose_url=%2Fbest_solution%3Fproblem_id%3D109"> 2414</a> / 13354 [<span style="color:red">-10940</span>] ( 3984 [ -9370])</code></td>
 <td>(642 / 235 / 249 / 20)</td></tr>
-<tr><td><a href="/static/show#problem_id=110">110</a></td>
-<td align=right><code><a href="/static/show/#problem_id=110&pose_url=%2Fbest_solution%3Fproblem_id%3D110">13893</a> / 14172 [  -279] (15782 [ +1610])</code></td>
+<tr><td><a href="./static/show#problem_id=110">110</a></td>
+<td align=right><code><a href="./static/show/#problem_id=110&pose_url=%2Fbest_solution%3Fproblem_id%3D110">13893</a> / 14172 [  -279] (15782 [ +1610])</code></td>
 <td>(12313 / 9541 / 12313 / 11833)</td></tr>
-<tr><td><a href="/static/show#problem_id=111">111</a></td>
-<td align=right><code><a href="/static/show/#problem_id=111&pose_url=%2Fbest_solution%3Fproblem_id%3D111">12746</a> / 14556 [<span style="color:red"> -1810</span>] (13085 [ -1471])</code></td>
+<tr><td><a href="./static/show#problem_id=111">111</a></td>
+<td align=right><code><a href="./static/show/#problem_id=111&pose_url=%2Fbest_solution%3Fproblem_id%3D111">12746</a> / 14556 [<span style="color:red"> -1810</span>] (13085 [ -1471])</code></td>
 <td>(20298 / 19261 / 20298 / 15564)</td></tr>
-<tr><td><a href="/static/show#problem_id=112">112</a></td>
-<td align=right><code><a href="/static/show/#problem_id=112&pose_url=%2Fbest_solution%3Fproblem_id%3D112">13197</a> / 14177 [  -980] (14185 [    +8])</code></td>
+<tr><td><a href="./static/show#problem_id=112">112</a></td>
+<td align=right><code><a href="./static/show/#problem_id=112&pose_url=%2Fbest_solution%3Fproblem_id%3D112">13197</a> / 14177 [  -980] (14185 [    +8])</code></td>
 <td>(19511 / 16886 / 16905 / 16905)</td></tr>
-<tr><td><a href="/static/show#problem_id=113">113</a></td>
-<td align=right><code><a href="/static/show/#problem_id=113&pose_url=%2Fbest_solution%3Fproblem_id%3D113">13114</a> / 14293 [<span style="color:red"> -1179</span>] (14124 [  -169])</code></td>
+<tr><td><a href="./static/show#problem_id=113">113</a></td>
+<td align=right><code><a href="./static/show/#problem_id=113&pose_url=%2Fbest_solution%3Fproblem_id%3D113">13114</a> / 14293 [<span style="color:red"> -1179</span>] (14124 [  -169])</code></td>
 <td>(11119 / 9586 / 11824 / 9360)</td></tr>
-<tr><td><a href="/static/show#problem_id=114">114</a></td>
-<td align=right><code><a href="/static/show/#problem_id=114&pose_url=%2Fbest_solution%3Fproblem_id%3D114">20429</a> / 20429 [    +0] (20429 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=114">114</a></td>
+<td align=right><code><a href="./static/show/#problem_id=114&pose_url=%2Fbest_solution%3Fproblem_id%3D114">20429</a> / 20429 [    +0] (20429 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=115">115</a></td>
-<td align=right><code><a href="/static/show/#problem_id=115&pose_url=%2Fbest_solution%3Fproblem_id%3D115">13499</a> / 15531 [ -2032] (15594 [   +63])</code></td>
+<tr><td><a href="./static/show#problem_id=115">115</a></td>
+<td align=right><code><a href="./static/show/#problem_id=115&pose_url=%2Fbest_solution%3Fproblem_id%3D115">13499</a> / 15531 [ -2032] (15594 [   +63])</code></td>
 <td>(36780 / 27562 / 27787 / 27787)</td></tr>
-<tr><td><a href="/static/show#problem_id=116">116</a></td>
-<td align=right><code><a href="/static/show/#problem_id=116&pose_url=%2Fbest_solution%3Fproblem_id%3D116">10510</a> / 14384 [<span style="color:red"> -3874</span>] (12341 [ -2043])</code></td>
+<tr><td><a href="./static/show#problem_id=116">116</a></td>
+<td align=right><code><a href="./static/show/#problem_id=116&pose_url=%2Fbest_solution%3Fproblem_id%3D116">10510</a> / 14384 [<span style="color:red"> -3874</span>] (12341 [ -2043])</code></td>
 <td>(7678 / 5569 / 9619 / 4099)</td></tr>
-<tr><td><a href="/static/show#problem_id=117">117</a></td>
-<td align=right><code><a href="/static/show/#problem_id=117&pose_url=%2Fbest_solution%3Fproblem_id%3D117">14475</a> / 14858 [  -383] (16094 [ +1236])</code></td>
+<tr><td><a href="./static/show#problem_id=117">117</a></td>
+<td align=right><code><a href="./static/show/#problem_id=117&pose_url=%2Fbest_solution%3Fproblem_id%3D117">14475</a> / 14858 [  -383] (16094 [ +1236])</code></td>
 <td>(30244 / 24465 / 31110 / 28703)</td></tr>
-<tr><td><a href="/static/show#problem_id=118">118</a></td>
-<td align=right><code><a href="/static/show/#problem_id=118&pose_url=%2Fbest_solution%3Fproblem_id%3D118">15581</a> / 15671 [   -90] (25450 [ +9779])</code></td>
+<tr><td><a href="./static/show#problem_id=118">118</a></td>
+<td align=right><code><a href="./static/show/#problem_id=118&pose_url=%2Fbest_solution%3Fproblem_id%3D118">15581</a> / 15671 [   -90] (25450 [ +9779])</code></td>
 <td>(3825 / 1433 / 3825 / 3781)</td></tr>
-<tr><td><a href="/static/show#problem_id=119">119</a></td>
-<td align=right><code><a href="/static/show/#problem_id=119&pose_url=%2Fbest_solution%3Fproblem_id%3D119">13497</a> / 14630 [ -1133] (15306 [  +676])</code></td>
+<tr><td><a href="./static/show#problem_id=119">119</a></td>
+<td align=right><code><a href="./static/show/#problem_id=119&pose_url=%2Fbest_solution%3Fproblem_id%3D119">13497</a> / 14630 [ -1133] (15306 [  +676])</code></td>
 <td>(21550 / 16757 / 18341 / 18341)</td></tr>
-<tr><td><a href="/static/show#problem_id=120">120</a></td>
-<td align=right><code><a href="/static/show/#problem_id=120&pose_url=%2Fbest_solution%3Fproblem_id%3D120">11104</a> / 15155 [<span style="color:red"> -4051</span>] (14374 [  -781])</code></td>
+<tr><td><a href="./static/show#problem_id=120">120</a></td>
+<td align=right><code><a href="./static/show/#problem_id=120&pose_url=%2Fbest_solution%3Fproblem_id%3D120">11104</a> / 15155 [<span style="color:red"> -4051</span>] (14374 [  -781])</code></td>
 <td>(18491 / 11034 / 11034 / 9926)</td></tr>
-<tr><td><a href="/static/show#problem_id=121">121</a></td>
-<td align=right><code><a href="/static/show/#problem_id=121&pose_url=%2Fbest_solution%3Fproblem_id%3D121">14420</a> / 14980 [  -560] (17526 [ +2546])</code></td>
+<tr><td><a href="./static/show#problem_id=121">121</a></td>
+<td align=right><code><a href="./static/show/#problem_id=121&pose_url=%2Fbest_solution%3Fproblem_id%3D121">14420</a> / 14980 [  -560] (17526 [ +2546])</code></td>
 <td>(11933 / 8078 / 13084 / 11058)</td></tr>
-<tr><td><a href="/static/show#problem_id=122">122</a></td>
-<td align=right><code><a href="/static/show/#problem_id=122&pose_url=%2Fbest_solution%3Fproblem_id%3D122">19530</a> / 19530 [    +0] (19530 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=122">122</a></td>
+<td align=right><code><a href="./static/show/#problem_id=122&pose_url=%2Fbest_solution%3Fproblem_id%3D122">19530</a> / 19530 [    +0] (19530 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=123">123</a></td>
-<td align=right><code><a href="/static/show/#problem_id=123&pose_url=%2Fbest_solution%3Fproblem_id%3D123">13515</a> / 13641 [  -126] (15359 [ +1718])</code></td>
+<tr><td><a href="./static/show#problem_id=123">123</a></td>
+<td align=right><code><a href="./static/show/#problem_id=123&pose_url=%2Fbest_solution%3Fproblem_id%3D123">13515</a> / 13641 [  -126] (15359 [ +1718])</code></td>
 <td>(13278 / 10281 / 13278 / 13035)</td></tr>
-<tr><td><a href="/static/show#problem_id=124">124</a></td>
-<td align=right><code><a href="/static/show/#problem_id=124&pose_url=%2Fbest_solution%3Fproblem_id%3D124">13986</a> / 13986 [    +0] (15625 [ +1639])</code></td>
+<tr><td><a href="./static/show#problem_id=124">124</a></td>
+<td align=right><code><a href="./static/show/#problem_id=124&pose_url=%2Fbest_solution%3Fproblem_id%3D124">13986</a> / 13986 [    +0] (15625 [ +1639])</code></td>
 <td>(13548 / 10854 / 13548 / 13548)</td></tr>
-<tr><td><a href="/static/show#problem_id=125">125</a></td>
-<td align=right><code><a href="/static/show/#problem_id=125&pose_url=%2Fbest_solution%3Fproblem_id%3D125">19936</a> / 19936 [    +0] (19936 [    +0])</code></td>
+<tr><td><a href="./static/show#problem_id=125">125</a></td>
+<td align=right><code><a href="./static/show/#problem_id=125&pose_url=%2Fbest_solution%3Fproblem_id%3D125">19936</a> / 19936 [    +0] (19936 [    +0])</code></td>
 <td>(0 / 0 / 0 / 0)</td></tr>
-<tr><td><a href="/static/show#problem_id=126">126</a></td>
-<td align=right><code><a href="/static/show/#problem_id=126&pose_url=%2Fbest_solution%3Fproblem_id%3D126"> 9182</a> / 18420 [<span style="color:red"> -9238</span>] (14412 [ -4008])</code></td>
+<tr><td><a href="./static/show#problem_id=126">126</a></td>
+<td align=right><code><a href="./static/show/#problem_id=126&pose_url=%2Fbest_solution%3Fproblem_id%3D126"> 9182</a> / 18420 [<span style="color:red"> -9238</span>] (14412 [ -4008])</code></td>
 <td>(8620 / 3498 / 4057 / 2141)</td></tr>
-<tr><td><a href="/static/show#problem_id=127">127</a></td>
-<td align=right><code><a href="/static/show/#problem_id=127&pose_url=%2Fbest_solution%3Fproblem_id%3D127">10638</a> / 10638 [    +0] (11212 [  +574])</code></td>
+<tr><td><a href="./static/show#problem_id=127">127</a></td>
+<td align=right><code><a href="./static/show/#problem_id=127&pose_url=%2Fbest_solution%3Fproblem_id%3D127">10638</a> / 10638 [    +0] (11212 [  +574])</code></td>
 <td>(16597 / 14940 / 16597 / 16597)</td></tr>
-<tr><td><a href="/static/show#problem_id=128">128</a></td>
-<td align=right><code><a href="/static/show/#problem_id=128&pose_url=%2Fbest_solution%3Fproblem_id%3D128">14593</a> / 14578 [   +15] (16346 [ +1768])</code></td>
+<tr><td><a href="./static/show#problem_id=128">128</a></td>
+<td align=right><code><a href="./static/show/#problem_id=128&pose_url=%2Fbest_solution%3Fproblem_id%3D128">14593</a> / 14578 [   +15] (16346 [ +1768])</code></td>
 <td>(9833 / 7837 / 10787 / 9853)</td></tr>
-<tr><td><a href="/static/show#problem_id=129">129</a></td>
-<td align=right><code><a href="/static/show/#problem_id=129&pose_url=%2Fbest_solution%3Fproblem_id%3D129">15918</a> / 16126 [  -208] (20285 [ +4159])</code></td>
+<tr><td><a href="./static/show#problem_id=129">129</a></td>
+<td align=right><code><a href="./static/show/#problem_id=129&pose_url=%2Fbest_solution%3Fproblem_id%3D129">15918</a> / 16126 [  -208] (20285 [ +4159])</code></td>
 <td>(8202 / 5050 / 8202 / 7992)</td></tr>
-<tr><td><a href="/static/show#problem_id=130">130</a></td>
-<td align=right><code><a href="/static/show/#problem_id=130&pose_url=%2Fbest_solution%3Fproblem_id%3D130">14051</a> / 15013 [  -962] (15828 [  +815])</code></td>
+<tr><td><a href="./static/show#problem_id=130">130</a></td>
+<td align=right><code><a href="./static/show/#problem_id=130&pose_url=%2Fbest_solution%3Fproblem_id%3D130">14051</a> / 15013 [  -962] (15828 [  +815])</code></td>
 <td>(7387 / 5821 / 7387 / 6470)</td></tr>
-<tr><td><a href="/static/show#problem_id=131">131</a></td>
-<td align=right><code><a href="/static/show/#problem_id=131&pose_url=%2Fbest_solution%3Fproblem_id%3D131">14125</a> / 14746 [  -621] (15225 [  +479])</code></td>
+<tr><td><a href="./static/show#problem_id=131">131</a></td>
+<td align=right><code><a href="./static/show/#problem_id=131&pose_url=%2Fbest_solution%3Fproblem_id%3D131">14125</a> / 14746 [  -621] (15225 [  +479])</code></td>
 <td>(17162 / 14772 / 17162 / 15748)</td></tr>
-<tr><td><a href="/static/show#problem_id=132">132</a></td>
-<td align=right><code><a href="/static/show/#problem_id=132&pose_url=%2Fbest_solution%3Fproblem_id%3D132">13406</a> / 15515 [ -2109] (15672 [  +157])</code></td>
+<tr><td><a href="./static/show#problem_id=132">132</a></td>
+<td align=right><code><a href="./static/show/#problem_id=132&pose_url=%2Fbest_solution%3Fproblem_id%3D132">13406</a> / 15515 [ -2109] (15672 [  +157])</code></td>
 <td>(17213 / 12595 / 12851 / 12851)</td></tr></table><code>Team Total Score:  1807329</code> 
 </div>
 </body>
